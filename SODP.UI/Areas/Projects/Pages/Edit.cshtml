@@ -1,0 +1,75 @@
+﻿@page
+@model SODP.UI.Areas.Projects.Pages.EditModel
+@{
+    ViewData["Title"] = "Edycja projektu";
+}
+
+<br />
+<div class="container row p-0 m-0">
+    <div class="col-8">
+        <h2 class="text-info">@ViewData["Title"]</h2>
+    </div>
+</div>
+<div class="container border" style="padding:30px;">
+    <form method="post">
+        @if(@Model.ErrorMessage.Length > 0)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <h4 class ="alert-heading">Błąd</h4>
+                <p>@Model.ErrorMessage</p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        <input type="hidden" asp-for="Project.Id" />
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        
+        
+        <div class="form-group row">
+            <div class="col-2">
+                @Html.Label("Numer:")
+            </div>
+            <div class="col-12 col-sm-10 col-md-6">
+                <input asp-for="Project.Number" class="form-control" readonly="@(true)" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-2">
+                @Html.Label("Stadium:")
+            </div>
+            <div class="col-12 col-sm-10 col-md-6">
+                <input asp-for="Project.StageSign" class="form-control" readonly="@(true)" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-2">
+                @Html.Label("Tytuł:")
+            </div>
+            <div class="col-12 col-sm-10 col-md-6">
+                <input asp-for="Project.Title" class="form-control" />
+            </div>
+            <span asp-validation-for="Project.Title" class="text-danger  offset-1 offset-sm-3 offset-md-0"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-2">
+                @Html.Label("Opis:")
+            </div>
+            <div class="col-12 col-sm-10 col-md-6">
+                <input asp-for="Project.Description" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-3 offset-2">
+                <input type="submit" value="Zapisz" class="btn btn-primary form-control" />
+            </div>
+            <div class="col-3">
+                <a asp-page="Index" class="btn btn-success form-control">Powrót</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts{
+    <partial name="/Pages/Shared/_ValidationScriptsPartial.cshtml" />
+}

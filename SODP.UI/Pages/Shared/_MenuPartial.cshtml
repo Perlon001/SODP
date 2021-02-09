@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using SODP.Model
+@inject SignInManager<User> SignInManager
+
+<ul class="navbar-nav flex-grow-1">
+    <li class="nav-item">
+        <a class="nav-link text-white-50" asp-area="Projects" asp-page="/Index">Projekty</a>
+    </li>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white-50" asp-area="Stages" asp-page="/Index">Stadia</a>
+        </li>
+    }
+</ul>

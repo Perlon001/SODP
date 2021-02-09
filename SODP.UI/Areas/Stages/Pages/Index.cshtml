@@ -1,0 +1,101 @@
+﻿@page
+@model SODP.UI.Areas.Stages.Pages.IndexModel
+@{
+    ViewData["Title"] = "Stadia";
+}
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+
+<br />
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Lista stadiów</h2>
+    </div>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <div class="col-3">
+            <a role="button" class="btn btn-info form-control text-white" asp-area="Stages" asp-page="/Create">Nowe stadium</a>
+        </div>
+    }
+
+    <div class="col-12" style="text-align:center">
+        <br />
+        <span class="h4 text-info">TABELA</span>
+        <br />
+    </div>
+
+    <div class="col-12">
+        <table id="StageDataTable" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Opis</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div class="col-12" style="text-align:center">
+        <br />
+        <span class="h4 text-info">LISTA</span>
+        <br />
+    </div>
+
+    <div id="StageTable" class="col-12 p-3 mt-3">
+        <form method="post">
+            @if (Model.Stages.Data.Collection.Count() > 0)
+            {
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Opis</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var stage in Model.Stages.Data.Collection.AsEnumerable())
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(m => stage.Sign)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(m => stage.Description)
+                                </td>
+                                <td>
+                                    @if (SignInManager.IsSignedIn(User))
+                                    {
+                                        <div class="row group justify-content-end">
+                                            <div>
+                                                <a role="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1" asp-page="Edit"
+                                                   asp-route-sign="@stage.Sign">Edycja</a>
+                                            </div>
+                                            <div>
+                                                <button asp-page-handler="Delete" asp-route-sign="@stage.Sign"
+                                                        onclick="return confirm('Czy na pewno skasować?')"
+                                                        class="btn btn-sm btn-danger mb-0 mt-0 ml-1 mr-1 p-1">
+                                                    Usuń
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p> Lista stadiów jest pusta</p>
+            }
+        </form>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/js/stageList.js"></script>
+}

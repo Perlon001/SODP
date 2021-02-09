@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SODP.UI", "SODP.UI\SODP.UI.csproj", "{6A6A2E49-FD2C-4F43-AF75-55190192B519}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SODP.Model", "SODP.Model\SODP.Model.csproj", "{615FE69D-43E1-49C4-90FC-A8E9D61A1A54}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SODP.DataAccess", "SODP.DataAccess\SODP.DataAccess.csproj", "{102D11A3-DC63-408E-878E-355A3A6E2A25}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{23331CB3-7520-4F9A-A3C5-A28265384985}"
+	ProjectSection(SolutionItems) = preProject
+		AddMigration.cmd = AddMigration.cmd
+		DatabaseUpdate.cmd = DatabaseUpdate.cmd
+		RemoveMigration.cmd = RemoveMigration.cmd
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SODP.Application", "SODP.Application\SODP.Application.csproj", "{62DB0C8B-24F5-49E5-ABE9-6657D3F6BC2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SODP.Domain", "SODP.Domain\SODP.Domain.csproj", "{F23011DE-AF0A-4570-A505-0FF568D5A618}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SODP.Api", "SODP.Api\SODP.Api.csproj", "{E08ED25B-2347-4AC7-B741-DC05B1360012}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A6A2E49-FD2C-4F43-AF75-55190192B519}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A6A2E49-FD2C-4F43-AF75-55190192B519}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A6A2E49-FD2C-4F43-AF75-55190192B519}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A6A2E49-FD2C-4F43-AF75-55190192B519}.Release|Any CPU.Build.0 = Release|Any CPU
+		{615FE69D-43E1-49C4-90FC-A8E9D61A1A54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{615FE69D-43E1-49C4-90FC-A8E9D61A1A54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{615FE69D-43E1-49C4-90FC-A8E9D61A1A54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{615FE69D-43E1-49C4-90FC-A8E9D61A1A54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{102D11A3-DC63-408E-878E-355A3A6E2A25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{102D11A3-DC63-408E-878E-355A3A6E2A25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{102D11A3-DC63-408E-878E-355A3A6E2A25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{102D11A3-DC63-408E-878E-355A3A6E2A25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62DB0C8B-24F5-49E5-ABE9-6657D3F6BC2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62DB0C8B-24F5-49E5-ABE9-6657D3F6BC2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62DB0C8B-24F5-49E5-ABE9-6657D3F6BC2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62DB0C8B-24F5-49E5-ABE9-6657D3F6BC2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F23011DE-AF0A-4570-A505-0FF568D5A618}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F23011DE-AF0A-4570-A505-0FF568D5A618}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F23011DE-AF0A-4570-A505-0FF568D5A618}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F23011DE-AF0A-4570-A505-0FF568D5A618}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E08ED25B-2347-4AC7-B741-DC05B1360012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E08ED25B-2347-4AC7-B741-DC05B1360012}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E08ED25B-2347-4AC7-B741-DC05B1360012}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E08ED25B-2347-4AC7-B741-DC05B1360012}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {85F926F2-6278-4722-91F0-A69721942CC6}
+	EndGlobalSection
+EndGlobal

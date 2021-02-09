@@ -1,0 +1,1 @@
+dotnet ef database update %1 --startup-project SODP.UI --project SODP.DataAccess --context SODPDBContext -v

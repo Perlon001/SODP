@@ -15,9 +15,9 @@ $(document).ready(function () {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<div class="text-center">
-                                <a href='/Projects/CreateUpdate?id=${data}' class='btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1' style="cursor:pointer; width=70px;">Edytuj</a>
-                                <a onclick='Delete("/api/Projects/${data}")' class='btn btn-sm btn-danger text-white mb-0 mt-0 ml-1 mr-1 p-1' style="cursor:pointer; width=70px;">Usuń</a>
+                        return `<div class="row group justify-content-center">
+                                <a href='/Projects/CreateUpdate?id=${data}' class='btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1' style="cursor:pointer; width=70px;"><i class="far fa-edit"></i></a>
+                                <a onclick='Delete("/api/Projects/${data}")' class='btn btn-sm btn-danger text-white mb-0 mt-0 ml-1 mr-1 p-1' style="cursor:pointer; width=70px;"><i class="far fa-trash-alt"></i></a>
                             </div>`;
                     },
                     width: "15%"

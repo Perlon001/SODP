@@ -1,0 +1,47 @@
+﻿@page
+@model SODP.UI.Areas.Stages.Pages.CreateUpdateModel
+@{
+//ViewData["Title"] = "Edycja stadium";
+}
+
+
+<br />
+<div class="container row p-0 m-0">
+    <div class="col-8">
+        <h2 class="text-info">@(Model.Stage.Sign == null ? "Nowe stadium" : "Edycja stadium")</h2>
+    </div>
+</div>
+<div class="border container" style="padding:30px;">
+    <form method="post">
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        <div class="form-group row">
+            <div class="col-2">
+                @Html.Label("Stadium:")
+            </div>
+            <div class="col-6">
+                <input asp-for="Stage.Sign" class="form-control" readonly="@(Model.Stage.Sign == null ? false : true)" />
+            </div>
+            <span asp-validation-for="Stage.Sign" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-2">
+                @Html.Label("Opis:")
+            </div>
+            <div class="col-6">
+                <input asp-for="Stage.Description" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-3 offset-2">
+                <input type="submit" value="Zapisz" class="btn btn-primary form-control" />
+            </div>
+            <div class="col-3">
+                <a asp-page="Index" class="btn btn-success form-control">Powrót do listy</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts{
+    <partial name="/Pages/Shared/_ValidationScriptsPartial.cshtml" />
+}

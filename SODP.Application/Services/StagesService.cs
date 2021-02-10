@@ -82,7 +82,10 @@ namespace WebSODP.Application.Services
             try
             {
                 var stage = await _context.Stages.FindAsync(updateStage.Sign);
-
+                if(stage == null)
+                {
+                    return await CreateAsync(updateStage);
+                }
                 stage.Description = updateStage.Description;
                 stage.Normalize();
                 _context.Stages.Update(stage);
@@ -109,11 +112,13 @@ namespace WebSODP.Application.Services
                 else
                 {
                     serviceResponse.SetError("Istnieją projekty w tym stadium.", 409);
+                    return serviceResponse;
                 }
             }
             catch (Exception ex)
             {
                 serviceResponse.SetError(ex.Message);
+                return serviceResponse;
             }
             serviceResponse.Message = "Operacja zakończona powodzeniem.";
             return serviceResponse;

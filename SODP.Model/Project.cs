@@ -5,7 +5,7 @@ namespace SODP.Model
 {
     public class Project
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Number { get; set; }
         public string StageSign { get; set; }
         public virtual Stage Stage { get; set; }

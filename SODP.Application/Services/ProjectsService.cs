@@ -50,7 +50,7 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Project>> GetAsync(int id)
+        public async Task<ServiceResponse<Project>> GetAsync(int? id)
         {
             var serviceResponse = new ServiceResponse<Project>();
             try

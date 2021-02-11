@@ -93,10 +93,10 @@ namespace WebSODP.Application.Services
                 }
 
                 project.Normalize();
-                var result = await _folderManager.CreateOrUpdateFolder(project);
-                if (!result.Item2)
+                var (Command, Success) = await _folderManager.CreateOrUpdateFolder(project);
+                if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Create folder error: {0}.\n {1}\n ",project.ToString(), result.Item1));
+                    serviceResponse.SetError(string.Format("Create folder error: {0}.\n {1}\n ",project.ToString(), Command));
                     return serviceResponse;
                 }
 
@@ -139,10 +139,10 @@ namespace WebSODP.Application.Services
                 }
 
                 newProject.Normalize();
-                var result = await _folderManager.CreateOrUpdateFolder(newProject);
-                if (!result.Item2)
+                var (Command, Success) = await _folderManager.CreateOrUpdateFolder(newProject);
+                if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Create/Modify folder error: {0}. {1}", newProject.ToString(), result.Item1));
+                    serviceResponse.SetError(string.Format("Create/Modify folder error: {0}. {1}", newProject.ToString(), Command));
                     return serviceResponse;
                 }
 
@@ -173,10 +173,10 @@ namespace WebSODP.Application.Services
                     serviceResponse.SetError(string.Format("Project Id:{0} not exist.",id.ToString()));
                     return serviceResponse;
                 }
-                var result = await _folderManager.DeleteFolder(project);
-                if (!result.Item2)
+                var (Command, Success) = await _folderManager.DeleteFolder(project);
+                if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Delete folder error: {0}.\n {1}\n ", project.Symbol, result.Item1));
+                    serviceResponse.SetError(string.Format("Delete folder error: {0}.\n {1}\n ", project.Symbol, Command));
                     return serviceResponse;
                 }
                 _context.Entry(project).State = EntityState.Deleted;
@@ -190,10 +190,6 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        private (string number, string sign) SymbolResolve(string catalog)
-        {
-            var symbol = Path.GetFileName(catalog).GetUntilOrEmpty("_");
-            return (symbol.Substring(0,4), symbol[4..]);
-        }
+
     }
 }

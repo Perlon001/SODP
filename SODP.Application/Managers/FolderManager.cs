@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SODP.Domain.Managers;
+using SODP.Model;
+using SODP.Model.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using SODP.Model;
-using SODP.Model.Extensions;
 
 namespace SODP.Application.Managers
 {
@@ -21,36 +21,36 @@ namespace SODP.Application.Managers
             _projectFolder = _configuration.GetSection("AppSettings:ProjectFolder").Value;
         }
 
-        public async Task<(string,bool)> CreateOrUpdateFolder(Project project)
+        public async Task<(string Command, bool Success)> CreateOrUpdateFolder(Project project)
         {
-            var command = GetCreateOrRenameFolderCommand(project);
-            if (command.Item2)
+            var (Command, Success) = GetCreateOrRenameFolderCommand(project);
+            if (Success)
             {
-                return (command.Item1, await FolderOperationTask(command.Item1, project.ToString()));
+                return (Command, await FolderOperationTask(Command, project.ToString()));
             }
             else
             {
-                return (command.Item1, false);
+                return (Command, false);
             }
         }
 
-        public async Task<(string,bool)> DeleteFolder(Project project)
+        public async Task<(string Command, bool Success)> DeleteFolder(Project project)
         {
-            var command = GetDeleteFolderCommand(project);
-            if(command.Item2)
+            var (Command, Success) = GetDeleteFolderCommand(project);
+            if(Success)
             {
-                if(command.Item1.Equals("Nothing to do."))
+                if(Command.Equals("Nothing to do."))
                 {
-                    return (command.Item1, true);
+                    return (Command, true);
                 }
                 else
                 {
-                    return (command.Item1, !await FolderOperationTask(command.Item1, project.ToString()));
+                    return (Command, !await FolderOperationTask(Command, project.ToString()));
                 }
             }
             else
             {
-                return (command.Item1, false);
+                return (Command, false);
             }
         }
 
@@ -67,7 +67,7 @@ namespace SODP.Application.Managers
             });
         }
 
-        private (string, bool) GetCreateOrRenameFolderCommand(Project project)
+        private (string Command, bool Success) GetCreateOrRenameFolderCommand(Project project)
         {
             var projectPath = _projectFolder + project.ToString();
             var catalog = GetFolders(project.Number, project.StageSign);
@@ -90,27 +90,33 @@ namespace SODP.Application.Managers
             }
         }
 
-        private (string,bool) GetDeleteFolderCommand(Project project)
+        private (string Command, bool Success) GetDeleteFolderCommand(Project project)
         {
+            (string, bool) result;
             var projectPath = _projectFolder + project.ToString();
             var catalog = GetFolders(project.Number, project.StageSign);
             switch(catalog.Count())
             {
                 case 0:
-                    return ("Nothing to do.", true);
+                    result = ("Nothing to do.", true);
+                    break;
                 case 1:
                     if (FolderIsEmpty(projectPath))
                     {
-                        return (" " + _configuration.GetSection("AppSettings:RemoveCommand").Value + " " +
+                        result = (" " + _configuration.GetSection("AppSettings:RemoveCommand").Value + " " +
                             (Environment.OSVersion.Platform.Equals(PlatformID.Win32NT) ? _projectFolder + " " + project.ToString() : projectPath), true);
                     }
                     else
                     {
-                        return("Folder is not empty.", false);
+                        result = ("Folder is not empty.", false);
                     }
+                    break;
                 default:
-                    return ("Too many folders.", false);
+                    result = ("Too many folders.", false);
+                    break;
             }
+
+            return result;
         }
 
         private bool FolderIsEmpty(string folder)
@@ -125,6 +131,13 @@ namespace SODP.Application.Managers
                 var symbol = Path.GetFileName(x).GetUntilOrEmpty("_");
                 return ((symbol.Substring(0, 4) == number) && (symbol[4..] == sign));
             }).ToList();
+        }
+
+        public static (string Number, string Sign) ProjectSymbolResolve(string catalog)
+        {
+            var symbol = Path.GetFileName(catalog).GetUntilOrEmpty("_");
+
+            return (symbol.Substring(0, 4), symbol[4..]);
         }
     }
 }

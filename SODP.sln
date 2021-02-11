@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SODP.Domain", "SODP.Domain\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SODP.Api", "SODP.Api\SODP.Api.csproj", "{E08ED25B-2347-4AC7-B741-DC05B1360012}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{2E9D40A2-3B2A-437A-8BC2-2E46FB8CBF69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{E08ED25B-2347-4AC7-B741-DC05B1360012}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E08ED25B-2347-4AC7-B741-DC05B1360012}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E08ED25B-2347-4AC7-B741-DC05B1360012}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E9D40A2-3B2A-437A-8BC2-2E46FB8CBF69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E9D40A2-3B2A-437A-8BC2-2E46FB8CBF69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E9D40A2-3B2A-437A-8BC2-2E46FB8CBF69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E9D40A2-3B2A-437A-8BC2-2E46FB8CBF69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

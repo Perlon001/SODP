@@ -19,8 +19,6 @@ namespace SODP.UI.Areas.Stages.Pages
         [BindProperty]
         public ServicePageResponse<Stage> Stages { get; set; }
 
-        public string ErrorMessage { get; set; } = "";
-
         public async Task OnGet()
         {
             Stages = await _stagesService.GetAllAsync();
@@ -32,7 +30,6 @@ namespace SODP.UI.Areas.Stages.Pages
             if (!response.Success)
             {
                 Stages = await _stagesService.GetAllAsync();
-                ErrorMessage = response.Message;
                 return Page();
             }
 

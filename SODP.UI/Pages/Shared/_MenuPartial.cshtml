@@ -6,10 +6,10 @@
     <li class="nav-item">
         <a class="nav-link text-white-50" asp-area="Projects" asp-page="/Index">Projekty</a>
     </li>
-    @if (SignInManager.IsSignedIn(User))
-    {
-        <li class="nav-item">
-            <a class="nav-link text-white-50" asp-area="Stages" asp-page="/Index">Stadia</a>
-        </li>
-    }
+    <li class="nav-item">
+        <a class="nav-link text-white-50" asp-area="Stages" asp-page="/Index">Stadia</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white-50" asp-area="Users" asp-page="/Index">Użytkownicy</a>
+    </li>
 </ul>

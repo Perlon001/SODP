@@ -18,7 +18,7 @@
         </div>
     }
 
-    <div class="col-12" style="text-align:center">
+    @*<div class="col-12" style="text-align:center">
         <br />
         <span class="h4 text-info">TABELA</span>
         <br />
@@ -34,13 +34,13 @@
                 </tr>
             </thead>
         </table>
-    </div>
+    </div>*@
 
-    <div class="col-12" style="text-align:center">
+    @*<div class="col-12" style="text-align:center">
         <br />
         <span class="h4 text-info">LISTA</span>
         <br />
-    </div>
+    </div>*@
 
     <div id="StageTable" class="col-12 p-3 mt-3">
         <form method="post">
@@ -57,33 +57,33 @@
                     <tbody>
                         @foreach (var stage in Model.Stages.Data.Collection.AsEnumerable())
                         {
-                            <tr>
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => stage.Sign)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => stage.Description)
+                            </td>
+                            @if (SignInManager.IsSignedIn(User))
+                            {
                                 <td>
-                                    @Html.DisplayFor(m => stage.Sign)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(m => stage.Description)
-                                </td>
-                                <td>
-                                    @if (SignInManager.IsSignedIn(User))
-                                    {
-                                        <div class="row group justify-content-end">
-                                            <div>
-                                                <a role="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1" asp-page="Edit"
-                                                   asp-route-sign="@stage.Sign">
-                                                   <i class="far fa-edit"></i>
-                                                </a>
-                                            </div>
-                                            <div>
-                                                <a onclick='Delete("/api/Stages/@stage.Sign")'
-                                                   class="btn btn-sm btn-danger mb-0 mt-0 ml-1 mr-1 p-1 text-white">
-                                                   <i class="far fa-trash-alt"></i>
-                                                </a>
-                                            </div>
+                                    <div class="row group justify-content-end">
+                                        <div>
+                                            <a role="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1" asp-page="Edit"
+                                               asp-route-sign="@stage.Sign">
+                                                <i class="far fa-edit"></i>
+                                            </a>
                                         </div>
-                                    }
+                                        <div>
+                                            <a onclick='Delete("/api/Stages/@stage.Sign")'
+                                               class="btn btn-sm btn-danger mb-0 mt-0 ml-1 mr-1 p-1 text-white">
+                                                <i class="far fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </td>
-                            </tr>
+                            }
+                        </tr>
                         }
                     </tbody>
                 </table>

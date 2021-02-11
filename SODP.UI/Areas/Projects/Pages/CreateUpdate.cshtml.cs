@@ -13,13 +13,11 @@ namespace SODP.UI.Areas.Projects.Pages
 {
     public class CreateUpdateModel : PageModel
     {
-        private readonly IMapper _mapper;
         private readonly IStagesService _stagesService;
         private readonly IProjectsService _projectsService;
 
-        public CreateUpdateModel(IMapper mapper, IProjectsService projectsService, IStagesService stagesService)
+        public CreateUpdateModel(IProjectsService projectsService, IStagesService stagesService)
         {
-            _mapper = mapper;
             _projectsService = projectsService;
             _stagesService = stagesService;
         }
@@ -29,14 +27,12 @@ namespace SODP.UI.Areas.Projects.Pages
 
         public IList<SelectListItem> Stages { get; set; }
 
-        public string ErrorMessage { get; set; } = "";
-
         public async Task<IActionResult> OnGet(int? id)
         {
             if(id == null)
             {
-                var page = await _stagesService.GetAllAsync();
-                Stages = page.Data.Collection.Select(x => new SelectListItem()
+                var stagesResponse = await _stagesService.GetAllAsync();
+                Stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
                 {
                     Text = x.Description,
                     Value = x.Sign
@@ -70,14 +66,13 @@ namespace SODP.UI.Areas.Projects.Pages
                 
                 if (!response.Success)
                 {
-                    ErrorMessage = response.Message;
-                    return RedirectToPage();
+                    return Page();
                 }
                 return RedirectToPage("Index");
             }
             else
             {
-                return RedirectToPage();
+                return Page();
             }
         }
     }

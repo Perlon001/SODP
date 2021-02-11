@@ -12,12 +12,10 @@ namespace SODP.UI.Areas.Stages.Pages
 {
     public class CreateUpdateModel : PageModel
     {
-        private readonly IMapper _mapper;
         private readonly IStagesService _stagesService;
 
-        public CreateUpdateModel(IMapper mapper, IStagesService stagesService)
+        public CreateUpdateModel(IStagesService stagesService)
         {
-            _mapper = mapper;
             _stagesService = stagesService;
         }
 

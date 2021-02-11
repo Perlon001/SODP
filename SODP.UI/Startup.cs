@@ -11,7 +11,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using SODP.Application.Managers;
-using SODP.Application.Validators;
 using SODP.DataAccess;
 using SODP.Domain.Managers;
 using SODP.Domain.Services;
@@ -19,6 +18,7 @@ using SODP.Model;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SODP.UI
 {
@@ -43,7 +43,6 @@ namespace SODP.UI
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
@@ -86,6 +85,11 @@ namespace SODP.UI
                     .AddClasses(classes => classes.AssignableTo(typeof(IAppService)))
                     .AsImplementedInterfaces()
                     .WithScopedLifetime();
+                scan
+                    .FromAssemblies(app)
+                    .AddClasses(classes => classes.AssignableTo(typeof(IValidator)))
+                    .AsImplementedInterfaces()
+                    .WithTransientLifetime();
             });
 
             services.AddScoped<IFolderManager, FolderManager>();
@@ -119,11 +123,10 @@ namespace SODP.UI
                 .AddRazorRuntimeCompilation()
                 .AddFluentValidation();
 
-            services.AddTransient<IValidator<Project>, ProjectValidator>();
-            services.AddTransient<IValidator<Stage>, StageValidator>();
+
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -152,6 +155,50 @@ namespace SODP.UI
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
             });
+
+            CreateRoleAndUserAdmin(serviceProvider);
+        }
+
+        private void CreateRoleAndUserAdmin(IServiceProvider serviceProvider)
+        {
+            const string Administrator = "Administrator";
+
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+
+            CreateRoleIfNotExist(roleManager, "Administrator").Wait();
+            CreateRoleIfNotExist(roleManager, "User").Wait();
+            CreateRoleIfNotExist(roleManager, "ProjectManager").Wait();
+
+            Task<User> testUser = userManager.FindByNameAsync(Administrator);
+            testUser.Wait();
+
+            if (testUser.Result == null)
+            {
+                var administrator = new User(Administrator);
+
+                Task<IdentityResult> newUser = userManager.CreateAsync(administrator, "admin");
+                newUser.Wait();
+
+                if (newUser.Result.Succeeded)
+                {
+                    Task<IdentityResult> newUserRole = userManager.AddToRoleAsync(administrator, "Administrator");
+                    newUserRole.Wait();
+                }
+            }
+
+            static async Task<bool> CreateRoleIfNotExist(RoleManager<Role> roleManager, string role)
+            {
+                var result = await roleManager.RoleExistsAsync(role);
+
+                if (!result)
+                {
+                    var roleResult = await roleManager.CreateAsync(new Role(role));
+                    result = roleResult.Succeeded;
+                }
+
+                return result;
+            }
         }
     }
 }

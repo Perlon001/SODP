@@ -20,6 +20,11 @@ namespace SODP.DataAccess.Configurations
 
             // Limit the size of columns to use efficient database types
             builder.Property(u => u.UserName)
+                .HasMaxLength(256)
+                .IsRequired();
+            builder.Property(u => u.Forename)
+                .HasMaxLength(256);
+            builder.Property(u => u.Surname)
                 .HasMaxLength(256);
             builder.Property(u => u.NormalizedUserName)
                 .HasMaxLength(256);

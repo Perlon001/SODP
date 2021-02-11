@@ -1,0 +1,50 @@
+﻿@page
+@model SODP.UI.Areas.Users.Pages.EditModel
+@{
+    ViewData["Title"] = "Edycja użytkownika";
+}
+
+
+<br />
+<div class="container row p-0 m-0">
+    <div class="col-8">
+        <h2 class="text-info">Edycja użytkownika</h2>
+    </div>
+</div>
+<div class="container border" style="padding:30px;">
+    <form method="post">
+        <input type="hidden" asp-for="CurrentUser.Id" />
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+
+        <div class="form-group row">
+            <div class="col-12 col-md-7">
+                <input asp-for="CurrentUser.UserName" class="form-control" readonly="@(true)" />
+            </div>
+            <span asp-validation-for="CurrentUser.UserName" style="font-size:14px" class="text-danger"></span>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-12 col-md-7">
+                <input asp-for="CurrentUser.Forename" class="form-control" />
+            </div>
+            <span asp-validation-for="CurrentUser.Forename" style="font-size:14px" class="text-danger"></span>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-12 col-md-7">
+                <input asp-for="CurrentUser.Surname" class="form-control" />
+            </div>
+            <span asp-validation-for="CurrentUser.Surname" style="font-size:14px" class="text-danger"></span>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-12 col-md-7">
+                <partial name="_SubmitAndBackButtonPartial" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts{
+    <partial name="/Pages/Shared/_ValidationScriptsPartial.cshtml" />
+}

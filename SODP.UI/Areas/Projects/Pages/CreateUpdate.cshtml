@@ -11,16 +11,6 @@
 </div>
 <div class="container border" style="padding:30px;">
     <form method="post">
-        @if (@Model.ErrorMessage.Length > 0)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <h4 class="alert-heading">Błąd</h4>
-                <p>@Model.ErrorMessage</p>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        }
         <input type="hidden" asp-for="Project.Id" />
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
 
@@ -62,12 +52,9 @@
                 <textarea asp-for="Project.Description" class="form-control" placeholder="Opis (opcjonalny)"></textarea>
             </div>
         </div>
-        <div class="form-group row col-12 col-md-7 justify-content-center">
-            <div class="col-6">
-                <input type="submit" value="Zapisz" class="btn btn-primary form-control justify-content-center" />
-            </div>
-            <div class="col-6">
-                <a asp-page="Index" class="btn btn-success form-control justify-content-center">Powrót</a>
+        <div class="form-group row">
+            <div class="col-12 col-md-7">
+                <partial name="_SubmitAndBackButtonPartial" />
             </div>
         </div>
     </form>

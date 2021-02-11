@@ -7,6 +7,15 @@ namespace SODP.Model
 {
     public class User : IdentityUser<int>
     {
-        // public ICollection<Token> Tokens { get; set; }
+        public User() : base() { }
+        public User(string userName) : base(userName) { }
+
+        public string Forename { get; set; }
+        public string Surname { get; set; }
+
+        public override string ToString()
+        {
+            return Forename.ToString().Trim() + " " + Surname.ToString().Trim();
+        }
     }
 }

@@ -17,8 +17,6 @@ namespace SODP.UI.Areas.Projects.Pages
         }
         public ServicePageResponse<Project> Projects { get; set; }
 
-        public string ErrorMessage {get; set;} = "";
-
         public async Task OnGet()
         {
             Projects = await _projectsService.GetAllAsync();
@@ -30,7 +28,6 @@ namespace SODP.UI.Areas.Projects.Pages
             if (!response.Success)
             {
                 Projects = await _projectsService.GetAllAsync();
-                ErrorMessage = response.Message;
                 return Page();
             }
             return RedirectToPage("Index");

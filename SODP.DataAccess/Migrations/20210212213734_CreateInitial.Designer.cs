@@ -9,7 +9,7 @@ using SODP.DataAccess;
 namespace SODP.DataAccess.Migrations
 {
     [DbContext(typeof(SODPDBContext))]
-    [Migration("20210211195711_CreateInitial")]
+    [Migration("20210212213734_CreateInitial")]
     partial class CreateInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -120,7 +120,7 @@ namespace SODP.DataAccess.Migrations
 
             modelBuilder.Entity("SODP.Model.Project", b =>
                 {
-                    b.Property<int?>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -184,13 +184,13 @@ namespace SODP.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
                     b.Property<string>("Sign")
                         .IsRequired()
                         .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
                         .HasMaxLength(10);
+
+                    b.Property<string>("Title")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 

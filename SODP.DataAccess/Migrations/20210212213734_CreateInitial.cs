@@ -30,7 +30,7 @@ namespace SODP.DataAccess.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Sign = table.Column<string>(maxLength: 10, nullable: false),
-                    Description = table.Column<string>(nullable: true)
+                    Title = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

@@ -18,8 +18,12 @@ namespace SODP.DataAccess.Configurations
             //    .HasColumnType("Text")
             //    .HasDefaultValue("");
 
-            builder.HasKey(s => s.Sign)
-                .HasName("PK_Stages");
+            //builder.HasKey(s => s.Id)
+            //    .HasName("PK_Stages");
+
+            builder.Property(p => p.Sign)
+                .HasMaxLength(10)
+                .IsRequired();
 
             builder.ToTable("Stages");
         }

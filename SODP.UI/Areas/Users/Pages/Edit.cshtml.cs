@@ -22,6 +22,8 @@ namespace SODP.UI.Areas.Users.Pages
         [BindProperty]
         public User CurrentUser { get; set; }
 
+        public string ReturnUrl { get; } = "/Users"; 
+
         public async Task<IActionResult> OnGet(int id)
         {
             var response = await _usersService.GetAsync(id);

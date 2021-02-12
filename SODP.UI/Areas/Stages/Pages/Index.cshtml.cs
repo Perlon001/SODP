@@ -2,18 +2,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SODP.Domain.Services;
 using SODP.Model;
+using SODP.UI.Pages.Shared;
 using System.Threading.Tasks;
 
 
 namespace SODP.UI.Areas.Stages.Pages
 {
-    public class IndexModel : PageModel
+    public class IndexModel : SODPPageModel
     {
         private readonly IStagesService _stagesService;
 
         public IndexModel(IStagesService stagesService)
         {
             _stagesService = stagesService;
+            ReturnUrl = "/Stages";
         }
 
         [BindProperty]

@@ -45,15 +45,18 @@ namespace SODP.DataAccess.Configurations
 
             builder.Ignore(p => p.Symbol);
             
-            builder.HasIndex(p => new { p.Number, p.StageSign })
+            builder.HasIndex(p => new { p.Number, p.StageId })
                 .IsUnique()
-                .HasName("IX_NumberStageSign");
+                .HasName("IX_NumberStage");
+
+            builder.HasIndex(p => p.StageId)
+                .HasName("IX_Stage");
 
             builder.ToTable("Projects");
 
             builder.HasOne("SODP.Model.Stage", "Stage")
                 .WithMany()
-                .HasForeignKey("StageSign")
+                .HasForeignKey("StageId")
                 .HasConstraintName("FK_Stage")
                 .OnDelete(DeleteBehavior.Restrict);
         }

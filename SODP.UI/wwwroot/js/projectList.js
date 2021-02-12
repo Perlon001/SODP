@@ -10,7 +10,7 @@ $(document).ready(function () {
             },
             columns: [
                 { data: "number" },
-                { data: "stageSign" },
+                { data: "stage.sign" },
                 { data: "title" },
                 {
                     data: "id",

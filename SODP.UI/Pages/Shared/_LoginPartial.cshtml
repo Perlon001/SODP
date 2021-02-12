@@ -18,7 +18,7 @@
 else
 {
     <li class="nav-item">
-        <a class="nav-link text-white-50" asp-area="Identity" asp-page="/Account/Login">Zaloguj</a>
+        <a class="nav-link text-white-50" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Model.ReturnUrl">Zaloguj</a>
     </li>
 }
 </ul>

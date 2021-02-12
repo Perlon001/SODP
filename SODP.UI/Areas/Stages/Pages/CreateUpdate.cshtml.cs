@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -20,30 +21,39 @@ namespace SODP.UI.Areas.Stages.Pages
         }
 
         [BindProperty]
-        public Stage Stage { get; set; }
+        public InputModel Input { get; set; }
 
         public string ErrorMessage { get; set; } = "";
 
-        public async Task<IActionResult> OnGet(string sign)
+        public async Task<IActionResult> OnGet(int? id)
         {
-            if(sign == null)
+            Input = new InputModel();
+            if (id != null)
             {
-                Stage = new Stage();
-                return Page();
+                var response = await _stagesService.GetAsync((int)id);
+                if (!response.Success)
+                {
+                    return NotFound();
+                }
+                Input.Id = (int)id;
+                Input.Sign = response.Data.Sign;
+                Input.Title = response.Data.Title;
             }
-            var response = await _stagesService.GetAsync(sign);
-            if (!response.Success)
-            {
-                return NotFound();
-            }
-            Stage = response.Data;
+
             return Page();
         }
 
-        public async Task<IActionResult> OnPost(Stage stage)
+        public async Task<IActionResult> OnPost()
         {
             if (ModelState.IsValid)
             {
+                var stage = new Stage
+                {
+                    Id = Input.Id,
+                    Sign = Input.Sign,
+                    Title = Input.Title
+                };
+
                 var response = await _stagesService.UpdateAsync(stage);
                 if (!response.Success)
                 {
@@ -58,5 +68,18 @@ namespace SODP.UI.Areas.Stages.Pages
             }
         }
 
+        public class InputModel
+        {
+            public int Id { get; set; }
+            
+            [Required(ErrorMessage = "Ozneczenie stadium jest wymagane.")]
+            [RegularExpression(@"^([a-zA-Z]{2})([a-zA-Z _]{0,})$", ErrorMessage = "Znak moze zawieraæ litery i podkreœlenie. Na pocz¹tku minimum 2 litery")]
+            public string Sign { get; set; }
+
+            [Required(ErrorMessage ="Tytu³ stadium jest wymagany.")]
+            public string Title { get; set; }
+
+
+        }
     }
 }

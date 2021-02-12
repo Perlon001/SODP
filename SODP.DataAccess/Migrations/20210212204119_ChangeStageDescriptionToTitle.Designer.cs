@@ -9,8 +9,8 @@ using SODP.DataAccess;
 namespace SODP.DataAccess.Migrations
 {
     [DbContext(typeof(SODPDBContext))]
-    [Migration("20210205200349_CreateInit")]
-    partial class CreateInit
+    [Migration("20210212204119_ChangeStageDescriptionToTitle")]
+    partial class ChangeStageDescriptionToTitle
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -133,19 +133,20 @@ namespace SODP.DataAccess.Migrations
                     b.Property<string>("Number")
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                    b.Property<string>("StageSign")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                    b.Property<int>("StageId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StageSign");
+                    b.HasIndex("StageId")
+                        .HasName("IX_Stage");
 
-                    b.HasIndex("Number", "StageSign")
+                    b.HasIndex("Number", "StageId")
                         .IsUnique()
-                        .HasName("IX_NumberStageSign");
+                        .HasName("IX_NumberStage");
 
                     b.ToTable("Projects");
                 });
@@ -175,41 +176,23 @@ namespace SODP.DataAccess.Migrations
                         .HasName("RoleNameIndex");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ConcurrencyStamp = "fa340de8-3547-4387-a485-73905ff02698",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ConcurrencyStamp = "57c5b71d-1b76-4621-abb2-8341a6df2334",
-                            Name = "ProjectManager",
-                            NormalizedName = "PROJECTMANAGER"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ConcurrencyStamp = "6375be1f-9336-472c-9efc-ce6ed1c62fd2",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("SODP.Model.Stage", b =>
                 {
-                    b.Property<string>("Sign")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Sign")
+                        .IsRequired()
+                        .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
+                        .HasMaxLength(10);
+
+                    b.Property<string>("Title")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.HasKey("Sign")
-                        .HasName("PK_Stages");
+                    b.HasKey("Id");
 
                     b.ToTable("Stages");
                 });
@@ -231,7 +214,8 @@ namespace SODP.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasName("IX_User");
 
                     b.ToTable("Tokens");
                 });
@@ -247,6 +231,7 @@ namespace SODP.DataAccess.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Email")
@@ -255,6 +240,10 @@ namespace SODP.DataAccess.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Forename")
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -282,39 +271,32 @@ namespace SODP.DataAccess.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<string>("Surname")
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasMaxLength(256);
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
-                        .HasName("IX_NormalizedEmail");
+                        .HasName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("IX_NormalizedUserName");
+                        .HasName("UserNameIndex");
+
+                    b.HasIndex("UserName")
+                        .IsUnique()
+                        .HasName("IX_UserName");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "5270d229-23c3-4fe5-aa90-d4beccb3060e",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAENnbiLN8yU9C0WilhlZYo8hOLZU/dVpUQDHrSx6hgyx0ozViGEKLrcbChhHuNqzp/g==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "",
-                            TwoFactorEnabled = false,
-                            UserName = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -372,9 +354,10 @@ namespace SODP.DataAccess.Migrations
                 {
                     b.HasOne("SODP.Model.Stage", "Stage")
                         .WithMany()
-                        .HasForeignKey("StageSign")
+                        .HasForeignKey("StageId")
                         .HasConstraintName("FK_Stage")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SODP.Model.Token", b =>
@@ -382,7 +365,8 @@ namespace SODP.DataAccess.Migrations
                     b.HasOne("SODP.Model.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_User")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

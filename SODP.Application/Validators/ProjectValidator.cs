@@ -21,12 +21,12 @@ namespace SODP.Application.Validators
                 .WithMessage("Numer musi sk³adaæ siê z 4 cyfr.")
                 .WithName("Numer");
 
-            RuleFor(u => u.StageSign)
+            RuleFor(u => u.StageId)
                 .NotNull()
                 .NotEmpty()
                 .WithMessage("Stadium jest wymagane.")
-                .MustAsync((sign, cancellation) => StageExist(sign))
-                .WithMessage(u => string.Format("Stadium:{0} nie wystêpuje w bazie.", u.StageSign))
+                .MustAsync((stageId, cancellation) => StageExist(stageId))
+                .WithMessage(u => string.Format("Stadium:{0} nie wystêpuje w bazie.", u.StageId))
                 .WithName("Stadium");
 
             RuleFor(u => u.Title)
@@ -38,9 +38,9 @@ namespace SODP.Application.Validators
                 .WithName("Tytu³");
         }
 
-        private async Task<bool> StageExist(string sign)
+        private async Task<bool> StageExist(int stageId)
         {
-            return await _stagesService.ExistAsync(sign);
+            return await _stagesService.ExistAsync(stageId);
         }
     }
 }

@@ -36,6 +36,22 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<Stage>> GetAsync(int id)
+        {
+            var serviceResponse = new ServiceResponse<Stage>();
+            try
+            {
+                serviceResponse.Data = await _context.Stages.FirstOrDefaultAsync(x => x.Id == id);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+
+            return serviceResponse;
+        }
+
+
         public async Task<ServiceResponse<Stage>> GetAsync(string sign)
         {
             var serviceResponse = new ServiceResponse<Stage>();
@@ -81,12 +97,12 @@ namespace WebSODP.Application.Services
             var serviceResponse = new ServiceResponse<Stage>();
             try
             {
-                var stage = await _context.Stages.FindAsync(updateStage.Sign);
+                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Sign == updateStage.Sign);
                 if(stage == null)
                 {
                     return await CreateAsync(updateStage);
                 }
-                stage.Description = updateStage.Description;
+                stage.Title = updateStage.Title;
                 stage.Normalize();
                 _context.Stages.Update(stage);
                 await _context.SaveChangesAsync();
@@ -98,12 +114,44 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<Stage>> DeleteAsync(int id)
+        {
+            var serviceResponse = new ServiceResponse<Stage>();
+            try
+            {
+                var project = await _context.Projects.FirstOrDefaultAsync(x => x.Stage.Id == id);
+                if (project == null)
+                {
+                    var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == id);
+                    if(stage == null)
+                    {
+                        serviceResponse.SetError(string.Format("Nie znaleziono stadium id:{0}.", id), 404);
+                    }
+                    else
+                    {
+                        var result = _context.Stages.Remove(stage);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                else
+                {
+                    serviceResponse.SetError(string.Format("Istnieją projekty w stadium id:{0}.",id), 409);
+                }
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse<Stage>> DeleteAsync(string sign)
         {
             var serviceResponse = new ServiceResponse<Stage>();
             try
             {
-                var project = await _context.Projects.FirstOrDefaultAsync(x => x.StageSign == sign);
+                var project = await _context.Projects.FirstOrDefaultAsync(x => x.Stage.Sign == sign);
                 if(project == null)
                 {
                     var stage = _context.Stages.Remove(await _context.Stages.FindAsync(sign));
@@ -127,6 +175,13 @@ namespace WebSODP.Application.Services
         public async Task<bool> ExistAsync(string sign)
         {
             var result = await _context.Stages.FirstOrDefaultAsync(x => x.Sign == sign);
+
+            return result != null;
+        }
+
+        public async Task<bool> ExistAsync(int id)
+        {
+            var result = await _context.Stages.FirstOrDefaultAsync(x => x.Id == id);
 
             return result != null;
         }

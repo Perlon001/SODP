@@ -30,13 +30,19 @@ namespace SODP.DataAccess.Configurations
             //    .HasColumnType("VarChar(36)")
             //    .IsRequired();
 
-            builder.HasKey(s => s.Id);
+            //builder.HasKey(s => s.Id);
             //.HasName("IX_KEY");
 
-            //builder.HasIndex(s => s.UserId)
-            //    .HasName("IX_UserId");
+            builder.HasIndex(s => s.UserId)
+                .HasName("IX_User");
 
             builder.ToTable("Tokens");
+
+            builder.HasOne("SODP.Model.User", "User")
+                .WithMany()
+                .HasForeignKey("UserId")
+                .HasConstraintName("FK_User")
+                .OnDelete(DeleteBehavior.Restrict);
 
             //builder.HasOne("WebSODP.Model.User", null)
             //    .WithMany("Tokens")

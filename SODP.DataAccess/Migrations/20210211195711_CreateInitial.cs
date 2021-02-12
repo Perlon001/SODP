@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SODP.DataAccess.Migrations
 {
-    public partial class CreateInit : Migration
+    public partial class CreateInitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,12 +27,14 @@ namespace SODP.DataAccess.Migrations
                 name: "Stages",
                 columns: table => new
                 {
-                    Sign = table.Column<string>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Sign = table.Column<string>(maxLength: 10, nullable: false),
                     Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Stages", x => x.Sign);
+                    table.PrimaryKey("PK_Stages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -41,7 +43,7 @@ namespace SODP.DataAccess.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserName = table.Column<string>(maxLength: 256, nullable: true),
+                    UserName = table.Column<string>(maxLength: 256, nullable: false),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
@@ -54,7 +56,9 @@ namespace SODP.DataAccess.Migrations
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    Forename = table.Column<string>(maxLength: 256, nullable: true),
+                    Surname = table.Column<string>(maxLength: 256, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -89,7 +93,7 @@ namespace SODP.DataAccess.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Number = table.Column<string>(nullable: true),
-                    StageSign = table.Column<string>(nullable: true),
+                    StageId = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Location = table.Column<string>(nullable: true)
@@ -99,9 +103,9 @@ namespace SODP.DataAccess.Migrations
                     table.PrimaryKey("PK_Projects", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Stage",
-                        column: x => x.StageSign,
+                        column: x => x.StageId,
                         principalTable: "Stages",
-                        principalColumn: "Sign",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -204,27 +208,12 @@ namespace SODP.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Tokens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tokens_Users_UserId",
+                        name: "FK_User",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
-
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { 1, "fa340de8-3547-4387-a485-73905ff02698", "Admin", "ADMIN" },
-                    { 2, "57c5b71d-1b76-4621-abb2-8341a6df2334", "ProjectManager", "PROJECTMANAGER" },
-                    { 3, "6375be1f-9336-472c-9efc-ce6ed1c62fd2", "User", "USER" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, "5270d229-23c3-4fe5-aa90-d4beccb3060e", null, false, false, null, null, "ADMIN", "AQAAAAEAACcQAAAAENnbiLN8yU9C0WilhlZYo8hOLZU/dVpUQDHrSx6hgyx0ozViGEKLrcbChhHuNqzp/g==", null, false, "", false, "Admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -247,14 +236,14 @@ namespace SODP.DataAccess.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Projects_StageSign",
+                name: "IX_Stage",
                 table: "Projects",
-                column: "StageSign");
+                column: "StageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NumberStageSign",
+                name: "IX_NumberStage",
                 table: "Projects",
-                columns: new[] { "Number", "StageSign" },
+                columns: new[] { "Number", "StageId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -264,19 +253,25 @@ namespace SODP.DataAccess.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tokens_UserId",
+                name: "IX_User",
                 table: "Tokens",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NormalizedEmail",
+                name: "EmailIndex",
                 table: "Users",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NormalizedUserName",
+                name: "UserNameIndex",
                 table: "Users",
                 column: "NormalizedUserName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserName",
+                table: "Users",
+                column: "UserName",
                 unique: true);
         }
 

@@ -5,9 +5,9 @@ namespace SODP.Model
 {
     public class Project
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public string Number { get; set; }
-        public string StageSign { get; set; }
+        public int StageId { get; set; }
         public virtual Stage Stage { get; set; }
         public string Title { get; set; } 
         public string Description { get; set; }
@@ -17,13 +17,13 @@ namespace SODP.Model
         {
             get 
             {
-                return Number.Trim() + StageSign.Trim();
+                return Number.Trim() + Stage.Sign.Trim();
             }
         }
 
         public override string ToString()
         {
-            return Number.Trim() + StageSign.Trim() + "_" + Title.Trim();
+            return Number.Trim() + Stage.Sign.Trim() + "_" + Title.Trim();
         }
 
         public void Normalize()

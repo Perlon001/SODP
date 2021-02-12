@@ -21,7 +21,7 @@ namespace SODP.Application.Managers
             _projectFolder = _configuration.GetSection("AppSettings:ProjectFolder").Value;
         }
 
-        public async Task<(string Command, bool Success)> CreateOrUpdateFolder(Project project)
+        public async Task<(string Command, bool Success)> CreateOrUpdateFolderAsync(Project project)
         {
             var (Command, Success) = GetCreateOrRenameFolderCommand(project);
             if (Success)
@@ -34,7 +34,7 @@ namespace SODP.Application.Managers
             }
         }
 
-        public async Task<(string Command, bool Success)> DeleteFolder(Project project)
+        public async Task<(string Command, bool Success)> DeleteFolderAsync(Project project)
         {
             var (Command, Success) = GetDeleteFolderCommand(project);
             if(Success)
@@ -70,7 +70,7 @@ namespace SODP.Application.Managers
         private (string Command, bool Success) GetCreateOrRenameFolderCommand(Project project)
         {
             var projectPath = _projectFolder + project.ToString();
-            var catalog = GetFolders(project.Number, project.StageSign);
+            var catalog = GetFolders(project.Number, project.Stage.Sign);
             switch (catalog.Count())
             {
                 case 0:
@@ -94,7 +94,7 @@ namespace SODP.Application.Managers
         {
             (string, bool) result;
             var projectPath = _projectFolder + project.ToString();
-            var catalog = GetFolders(project.Number, project.StageSign);
+            var catalog = GetFolders(project.Number, project.Stage.Sign);
             switch(catalog.Count())
             {
                 case 0:

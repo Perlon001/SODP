@@ -2,24 +2,26 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SODP.Domain.Services;
 using SODP.Model;
+using SODP.UI.Pages.Shared;
 using System.Threading.Tasks;
 
 
 namespace SODP.UI.Areas.Projects.Pages
 {
-    public class IndexModel : PageModel
+    public class IndexModel : SODPPageModel
     {
         private readonly IProjectsService _projectsService;
 
         public IndexModel(IProjectsService projectsService)
         {
             _projectsService = projectsService;
+            ReturnUrl = "/Projects";
         }
         public ServicePageResponse<Project> Projects { get; set; }
 
-        public async Task OnGet()
+        public void OnGet()
         {
-            Projects = await _projectsService.GetAllAsync();
+            //Projects = await _projectsService.GetAllAsync();
         }
 
         public async Task<IActionResult> OnPostDelete(int id)

@@ -14,33 +14,9 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <div class="col-3">
-            <a role="button" class="btn btn-info form-control text-white" asp-area="Stages" asp-page="/CreateUpdate"><i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium</a>
+            <a role="button" class="btn btn-info form-control text-white" asp-area="Stages" asp-page="CreateUpdate"><i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium</a>
         </div>
     }
-
-    @*<div class="col-12" style="text-align:center">
-        <br />
-        <span class="h4 text-info">TABELA</span>
-        <br />
-    </div>
-
-    <div class="col-12">
-        <table id="StageDataTable" class="table table-striped table-bordered" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Symbol</th>
-                    <th>Opis</th>
-                    <th></th>
-                </tr>
-            </thead>
-        </table>
-    </div>*@
-
-    @*<div class="col-12" style="text-align:center">
-        <br />
-        <span class="h4 text-info">LISTA</span>
-        <br />
-    </div>*@
 
     <div id="StageTable" class="col-12 p-3 mt-3">
         <form method="post">
@@ -57,33 +33,30 @@
                     <tbody>
                         @foreach (var stage in Model.Stages.Data.Collection.AsEnumerable())
                         {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(m => stage.Sign)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => stage.Description)
-                            </td>
-                            @if (SignInManager.IsSignedIn(User))
-                            {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(m => stage.Sign)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(m => stage.Title)
+                                </td>
                                 <td>
                                     <div class="row group justify-content-end">
                                         <div>
-                                            <a role="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1" asp-page="Edit"
-                                               asp-route-sign="@stage.Sign">
+                                            <a role="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1" asp-page="CreateUpdate"
+                                               asp-route-Id="@stage.Id">
                                                 <i class="far fa-edit"></i>
                                             </a>
                                         </div>
                                         <div>
-                                            <a onclick='Delete("/api/Stages/@stage.Sign")'
+                                            <a onclick='Delete("/api/Stages/@stage.Id")'
                                                class="btn btn-sm btn-danger mb-0 mt-0 ml-1 mr-1 p-1 text-white">
                                                 <i class="far fa-trash-alt"></i>
                                             </a>
                                         </div>
                                     </div>
                                 </td>
-                            }
-                        </tr>
+                            </tr>
                         }
                     </tbody>
                 </table>

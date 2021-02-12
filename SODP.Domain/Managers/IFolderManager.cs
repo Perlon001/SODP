@@ -5,7 +5,7 @@ namespace SODP.Domain.Managers
 {
     public interface IFolderManager
     {
-        Task<(string Command, bool Success)> CreateOrUpdateFolder(Project project);
-        Task<(string Command ,bool Success)> DeleteFolder(Project project);
+        Task<(string Command, bool Success)> CreateOrUpdateFolderAsync(Project project);
+        Task<(string Command ,bool Success)> DeleteFolderAsync(Project project);
     }
 }

@@ -70,7 +70,6 @@ namespace SODP.UI
                 });
             });
 
-
             var app = AppDomain.CurrentDomain
                     .GetAssemblies()
                     .Where(x => x.GetName()
@@ -84,7 +83,7 @@ namespace SODP.UI
                     .FromAssemblies(app)
                     .AddClasses(classes => classes.AssignableTo(typeof(IAppService)))
                     .AsImplementedInterfaces()
-                    .WithScopedLifetime();
+                    .WithTransientLifetime();
                 scan
                     .FromAssemblies(app)
                     .AddClasses(classes => classes.AssignableTo(typeof(IValidator)))
@@ -120,8 +119,8 @@ namespace SODP.UI
 
             services.AddControllers();
             services.AddRazorPages()
-                .AddRazorRuntimeCompilation()
-                .AddFluentValidation();
+                .AddRazorRuntimeCompilation();
+                // .AddFluentValidation();
 
 
         }

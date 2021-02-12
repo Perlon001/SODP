@@ -18,30 +18,34 @@ namespace SODP.DataAccess.Configurations
             builder.Property(u => u.ConcurrencyStamp)
                 .IsConcurrencyToken();
 
-            // Limit the size of columns to use efficient database types
             builder.Property(u => u.UserName)
                 .HasMaxLength(256)
                 .IsRequired();
-            builder.Property(u => u.Forename)
-                .HasMaxLength(256);
-            builder.Property(u => u.Surname)
-                .HasMaxLength(256);
+
             builder.Property(u => u.NormalizedUserName)
                 .HasMaxLength(256);
+
             builder.Property(u => u.Email)
                 .HasMaxLength(256);
+
             builder.Property(u => u.NormalizedEmail)
                 .HasMaxLength(256);
 
-            // Primary key
+            builder.Property(u => u.Forename)
+                .HasMaxLength(256);
+
+            builder.Property(u => u.Surname)
+                .HasMaxLength(256);
+
+            builder.Property(u => u.ConcurrencyStamp)
+                .ValueGeneratedOnAddOrUpdate()
+                .IsConcurrencyToken();
+
             builder.HasKey(u => u.Id);
 
-            // Indexes for "normalized" username and email, to allow efficient lookups
-            builder.HasIndex(u => u.NormalizedUserName)
-                .HasName("IX_NormalizedUserName")
+            builder.HasIndex(u => u.UserName)
+                .HasName("IX_UserName")
                 .IsUnique();
-            builder.HasIndex(u => u.NormalizedEmail)
-                .HasName("IX_NormalizedEmail");
 
             builder.ToTable("Users");
 

@@ -71,10 +71,10 @@ namespace SODP.Api.Controllers
         //}
 
         //[AllowAnonymous]
-        [HttpDelete("{sign}")]
-        public async Task<ActionResult> Delete(string sign)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
         {
-            return Ok(await _stagesService.DeleteAsync(sign));
+            return Ok(await _stagesService.DeleteAsync(id));
         }
 
     }

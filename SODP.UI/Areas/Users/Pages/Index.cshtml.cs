@@ -6,16 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SODP.Domain.Services;
 using SODP.Model;
+using SODP.UI.Pages.Shared;
 
 namespace SODP.UI.Areas.Users.Pages
 {
-    public class IndexModel : PageModel
+    public class IndexModel : SODPPageModel
     {
         private readonly IUsersService _usersService;
 
         public IndexModel(IUsersService usersService)
         {
             _usersService = usersService;
+            ReturnUrl = "/Users";
         }
         public ServicePageResponse<User> Users { get; set; }
 

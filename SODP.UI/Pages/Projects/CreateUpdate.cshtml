@@ -1,7 +1,8 @@
 ﻿@page
-@model SODP.UI.Areas.Projects.Pages.CreateUpdateModel
+@model SODP.UI.Pages.Projects.CreateUpdateModel
 @{
 }
+
 
 <br />
 <div class="container row p-0 m-0">
@@ -16,7 +17,7 @@
 
         <div class="form-group row">
             <div class="col-12 col-md-7">
-                <input asp-for="Input.Number" class="form-control" readonly="@(Model.Input.Id == null ? false : true)" placeholder="Numer"/>
+                <input asp-for="Input.Number" class="form-control" readonly="@(Model.Input.Id == null ? false : true)" placeholder="Numer" />
             </div>
             <span asp-validation-for="Input.Number" style="font-size:14px" class="text-danger"></span>
         </div>

@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SODP.Domain.Services;
 using SODP.Model;
 
-namespace SODP.UI.Areas.Users.Pages
+namespace SODP.UI.Pages.Users
 {
     public class EditModel : PageModel
     {
@@ -22,7 +21,7 @@ namespace SODP.UI.Areas.Users.Pages
         [BindProperty]
         public User CurrentUser { get; set; }
 
-        public string ReturnUrl { get; } = "/Users"; 
+        public string ReturnUrl { get; } = "/Users";
 
         public async Task<IActionResult> OnGet(int id)
         {

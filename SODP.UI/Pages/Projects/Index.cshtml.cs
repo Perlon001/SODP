@@ -1,12 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SODP.Domain.Services;
 using SODP.Model;
 using SODP.UI.Pages.Shared;
-using System.Threading.Tasks;
 
-
-namespace SODP.UI.Areas.Projects.Pages
+namespace SODP.UI.Pages.Projects
 {
     public class IndexModel : SODPPageModel
     {

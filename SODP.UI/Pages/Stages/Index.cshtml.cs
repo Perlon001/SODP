@@ -1,12 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SODP.Domain.Services;
 using SODP.Model;
 using SODP.UI.Pages.Shared;
-using System.Threading.Tasks;
 
-
-namespace SODP.UI.Areas.Stages.Pages
+namespace SODP.UI.Pages.Stages
 {
     public class IndexModel : SODPPageModel
     {
@@ -19,11 +21,12 @@ namespace SODP.UI.Areas.Stages.Pages
         }
 
         [BindProperty]
-        public ServicePageResponse<Stage> Stages { get; set; }
+        public IEnumerable<Stage> Stages { get; set; }
 
         public async Task OnGet()
         {
-            Stages = await _stagesService.GetAllAsync();
+            var serviceResponse = await _stagesService.GetAllAsync();
+            Stages = serviceResponse.Data.Collection;
         }
 
         public async Task<IActionResult> OnPostDelete(string sign)
@@ -31,11 +34,13 @@ namespace SODP.UI.Areas.Stages.Pages
             var response = await _stagesService.DeleteAsync(sign);
             if (!response.Success)
             {
-                Stages = await _stagesService.GetAllAsync();
+                var serviceResponse = await _stagesService.GetAllAsync();
+                Stages = serviceResponse.Data.Collection;
                 return Page();
             }
 
             return RedirectToPage("Index");
         }
     }
+
 }

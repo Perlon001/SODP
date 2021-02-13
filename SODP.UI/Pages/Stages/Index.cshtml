@@ -1,9 +1,10 @@
 ﻿@page
-@model SODP.UI.Areas.Stages.Pages.IndexModel
+@model SODP.UI.Pages.Stages.IndexModel
 @{
     ViewData["Title"] = "Stadia";
 }
 @using Microsoft.AspNetCore.Identity
+@using SODP.Model
 @inject SignInManager<User> SignInManager
 
 <br />
@@ -14,13 +15,13 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <div class="col-3">
-            <a role="button" class="btn btn-info form-control text-white" asp-area="Stages" asp-page="CreateUpdate"><i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium</a>
+            <a role="button" class="btn btn-info form-control text-white" asp-area="" asp-page="/Stages/CreateUpdate"><i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium</a>
         </div>
     }
 
     <div id="StageTable" class="col-12 p-3 mt-3">
         <form method="post">
-            @if (Model.Stages.Data.Collection.Count() > 0)
+            @if (Model.Stages.Count() > 0)
             {
                 <table class="table table-sm table-hover">
                     <thead class="thead-light">
@@ -31,7 +32,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var stage in Model.Stages.Data.Collection.AsEnumerable())
+                        @foreach (var stage in Model.Stages)
                         {
                             <tr>
                                 <td>
@@ -49,7 +50,7 @@
                                             </a>
                                         </div>
                                         <div>
-                                            <a onclick='Delete("/api/Stages/@stage.Id")'
+                                            <a onclick='DeleteStage("/api/Stages/@stage.Id")'
                                                class="btn btn-sm btn-danger mb-0 mt-0 ml-1 mr-1 p-1 text-white">
                                                 <i class="far fa-trash-alt"></i>
                                             </a>
@@ -73,4 +74,10 @@
 @section Scripts{
     <script src="~/js/delete.js"></script>
     <script src="~/js/stageList.js"></script>
+    <script>
+        function DeleteStage(url) {
+            Delete(url);
+            Reload();
+        }
+    </script>
 }

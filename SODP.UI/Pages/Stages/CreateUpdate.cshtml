@@ -1,7 +1,8 @@
 ﻿@page
-@model SODP.UI.Areas.Stages.Pages.CreateUpdateModel
+@model SODP.UI.Pages.Stages.CreateUpdateModel
 @{
 }
+
 
 <br />
 <div class="container row p-0 m-0">
@@ -10,7 +11,7 @@
     </div>
 </div>
 <div class="border container" style="padding:30px;">
-    @if(Model.ErrorMessage != "")
+    @if (Model.ErrorMessage != "")
     {
         <div class="text-danger">
             @Model.ErrorMessage

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,11 +8,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SODP.Domain.Services;
 using SODP.Model;
+using SODP.UI.Pages.Shared;
 
-namespace SODP.UI.Areas.Projects.Pages
+namespace SODP.UI.Pages.Projects
 {
-    [BindProperties]
-    public class CreateUpdateModel : PageModel
+    public class CreateUpdateModel : SODPPageModel
     {
         private readonly IStagesService _stagesService;
         private readonly IProjectsService _projectsService;
@@ -95,11 +96,11 @@ namespace SODP.UI.Areas.Projects.Pages
         {
             public int? Id { get; set; }
 
-            [Required(ErrorMessage ="Numer jest wymagany")]
+            [Required(ErrorMessage = "Numer jest wymagany")]
             [RegularExpression(@"^([1-9]{1})([0-9]{3})$", ErrorMessage = "Numer musi sk³adaæ siê z 4 cyfr.")]
             public string Number { get; set; }
-            
-            [Required(ErrorMessage ="Stadium jest wymagane")]
+
+            [Required(ErrorMessage = "Stadium jest wymagane")]
             public int StageId { get; set; }
 
             public string StageTitle { get; set; }

@@ -8,7 +8,7 @@ using SODP.Domain.Services;
 using SODP.Model;
 using SODP.UI.Pages.Shared;
 
-namespace SODP.UI.Areas.Users.Pages
+namespace SODP.UI.Pages.Users
 {
     public class IndexModel : SODPPageModel
     {
@@ -19,11 +19,12 @@ namespace SODP.UI.Areas.Users.Pages
             _usersService = usersService;
             ReturnUrl = "/Users";
         }
-        public ServicePageResponse<User> Users { get; set; }
+        public IEnumerable<User> Users { get; set; }
 
         public async Task OnGet()
         {
-            Users = await _usersService.GetAllAsync();
+            var serviceResponse = await _usersService.GetAllAsync();
+            Users = serviceResponse.Data.Collection;
         }
 
         public async Task<IActionResult> OnPostDelete(int id)
@@ -31,7 +32,8 @@ namespace SODP.UI.Areas.Users.Pages
             var response = await _usersService.DeleteAsync(id);
             if (!response.Success)
             {
-                Users = await _usersService.GetAllAsync();
+                var serviceResponse = await _usersService.GetAllAsync();
+                Users = serviceResponse.Data.Collection;
                 return Page();
             }
             return RedirectToPage("Index");

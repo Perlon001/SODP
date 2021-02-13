@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SODP.Domain.Services;
 using SODP.Model;
+using SODP.UI.Pages.Shared;
 
-namespace SODP.UI.Areas.Stages.Pages
+namespace SODP.UI.Pages.Stages
 {
-    public class CreateUpdateModel : PageModel
+    public class CreateUpdateModel : SODPPageModel
     {
         private readonly IStagesService _stagesService;
 
         public CreateUpdateModel(IStagesService stagesService)
         {
             _stagesService = stagesService;
+            ReturnUrl = "/Stages";
         }
 
         [BindProperty]
@@ -71,15 +72,16 @@ namespace SODP.UI.Areas.Stages.Pages
         public class InputModel
         {
             public int Id { get; set; }
-            
+
             [Required(ErrorMessage = "Ozneczenie stadium jest wymagane.")]
             [RegularExpression(@"^([a-zA-Z]{2})([a-zA-Z _]{0,})$", ErrorMessage = "Znak moze zawieraæ litery i podkreœlenie. Na pocz¹tku minimum 2 litery")]
             public string Sign { get; set; }
 
-            [Required(ErrorMessage ="Tytu³ stadium jest wymagany.")]
+            [Required(ErrorMessage = "Tytu³ stadium jest wymagany.")]
             public string Title { get; set; }
 
 
         }
     }
+
 }

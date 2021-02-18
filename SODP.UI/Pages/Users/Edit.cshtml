@@ -3,7 +3,6 @@
 @{
 }
 
-
 <br />
 <div class="container row p-0 m-0">
     <div class="col-8">
@@ -19,28 +18,41 @@
             <div class="col-12 col-md-7">
                 <input asp-for="CurrentUser.UserName" class="form-control" readonly="@(true)" />
             </div>
-            <span asp-validation-for="CurrentUser.UserName" style="font-size:14px" class="text-danger"></span>
         </div>
 
         <div class="form-group row">
             <div class="col-12 col-md-7">
-                <input asp-for="CurrentUser.Forename" class="form-control" />
+                <input asp-for="CurrentUser.Forename" class="form-control" placeholder="Imię" />
             </div>
             <span asp-validation-for="CurrentUser.Forename" style="font-size:14px" class="text-danger"></span>
         </div>
 
         <div class="form-group row">
             <div class="col-12 col-md-7">
-                <input asp-for="CurrentUser.Surname" class="form-control" />
+                <input asp-for="CurrentUser.Surname" class="form-control" placeholder="Nazwisko" />
             </div>
             <span asp-validation-for="CurrentUser.Surname" style="font-size:14px" class="text-danger"></span>
         </div>
+
+        @foreach (var role in Model.AllRoles)
+        {
+            <div class="form-group row">
+                <div class="col-12">
+                    <input asp-for="AllRoles[role.Key]" type="checkbox" checked="@Model.CurrentUser.Roles.Contains(role.Key)" />
+                    <label>@role.Key</label>
+                </div>
+            </div>
+        }
+
 
         <div class="form-group row">
             <div class="col-12 col-md-7">
                 <partial name="_SubmitAndBackButtonPartial" />
             </div>
         </div>
+        
+
+
     </form>
 </div>
 

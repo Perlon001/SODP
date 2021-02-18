@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SODP.Domain.DTO;
 using SODP.Domain.Services;
-using SODP.Model;
 using SODP.UI.Pages.Shared;
 
 namespace SODP.UI.Pages.Stages
 {
+    [Authorize(Roles = "Administrator, ProjectManager")]
     public class CreateUpdateModel : SODPPageModel
     {
         private readonly IStagesService _stagesService;
@@ -22,13 +24,13 @@ namespace SODP.UI.Pages.Stages
         }
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public StageDTO Input { get; set; }
 
         public string ErrorMessage { get; set; } = "";
 
         public async Task<IActionResult> OnGet(int? id)
         {
-            Input = new InputModel();
+            Input = new StageDTO();
             if (id != null)
             {
                 var response = await _stagesService.GetAsync((int)id);
@@ -36,9 +38,7 @@ namespace SODP.UI.Pages.Stages
                 {
                     return NotFound();
                 }
-                Input.Id = (int)id;
-                Input.Sign = response.Data.Sign;
-                Input.Title = response.Data.Title;
+                Input = response.Data;
             }
 
             return Page();
@@ -46,16 +46,28 @@ namespace SODP.UI.Pages.Stages
 
         public async Task<IActionResult> OnPost()
         {
+            ServiceResponse response;
             if (ModelState.IsValid)
             {
-                var stage = new Stage
-                {
-                    Id = Input.Id,
-                    Sign = Input.Sign,
-                    Title = Input.Title
-                };
 
-                var response = await _stagesService.UpdateAsync(stage);
+                if (Input.Id.Equals(0))
+                {
+                    var stage = new StageCreateDTO
+                    {
+                        Sign = Input.Sign,
+                        Title = Input.Title
+                    };
+                    response = await _stagesService.CreateAsync(stage);
+                }
+                else 
+                {
+                    var stage = new StageUpdateDTO
+                    {
+                        Id = Input.Id,
+                        Title = Input.Title
+                    };
+                    response = await _stagesService.UpdateAsync(stage);
+                }
                 if (!response.Success)
                 {
                     ErrorMessage = response.Message;
@@ -68,20 +80,5 @@ namespace SODP.UI.Pages.Stages
                 return Page();
             }
         }
-
-        public class InputModel
-        {
-            public int Id { get; set; }
-
-            [Required(ErrorMessage = "Ozneczenie stadium jest wymagane.")]
-            [RegularExpression(@"^([a-zA-Z]{2})([a-zA-Z _]{0,})$", ErrorMessage = "Znak moze zawieraæ litery i podkreœlenie. Na pocz¹tku minimum 2 litery")]
-            public string Sign { get; set; }
-
-            [Required(ErrorMessage = "Tytu³ stadium jest wymagany.")]
-            public string Title { get; set; }
-
-
-        }
     }
-
 }

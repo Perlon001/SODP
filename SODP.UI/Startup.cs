@@ -15,6 +15,7 @@ using SODP.DataAccess;
 using SODP.Domain.Managers;
 using SODP.Domain.Services;
 using SODP.Model;
+using SODP.UI.Areas.Identity;
 using System;
 using System.IO;
 using System.Linq;
@@ -93,6 +94,8 @@ namespace SODP.UI
 
             services.AddScoped<IFolderManager, FolderManager>();
 
+            services.AddTransient<IdentityErrorDescriber, CustomIdentityErrorDescriber>();
+
             services.AddDbContext<SODPDBContext>(options =>
             {
                 options.UseMySql(
@@ -102,6 +105,7 @@ namespace SODP.UI
 
             services.AddIdentity<User, Role>(options => 
                 {
+                    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
                     options.Password.RequiredLength = int.Parse(Configuration.GetSection("PasswordPolicy:RequiredLength").Value);
                     options.Password.RequireLowercase = bool.Parse(Configuration.GetSection("PasswordPolicy:RequireLowercase").Value);
                     options.Password.RequireUppercase = bool.Parse(Configuration.GetSection("PasswordPolicy:RequireUppercase").Value);
@@ -109,8 +113,15 @@ namespace SODP.UI
                     options.Password.RequireDigit = bool.Parse(Configuration.GetSection("PasswordPolicy:RequireDigit").Value);
                 })
                 .AddEntityFrameworkStores<SODPDBContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddDefaultUI();
 
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.LoginPath = $"/Identity/Account/Login";
+            //    options.LogoutPath = $"/Identity/Account/Logout";
+            //    options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+            //});
 
             services.AddAutoMapper(app);
 
@@ -120,9 +131,6 @@ namespace SODP.UI
             services.AddControllers();
             services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
-                // .AddFluentValidation();
-
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)

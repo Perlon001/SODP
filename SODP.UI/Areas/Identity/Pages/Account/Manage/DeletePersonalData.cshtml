@@ -5,11 +5,9 @@
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
-<h4>@ViewData["Title"]</h4>
-
 <div class="alert alert-warning" role="alert">
     <p>
-        <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+        <strong>Skasowanie danych usunie całkowicie twoje konto. Cofnięcie operacji nie jest możliwe.</strong>
     </p>
 </div>
 
@@ -24,7 +22,7 @@
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
         }
-        <button class="btn btn-danger" type="submit">Delete data and close my account</button>
+        <button class="btn btn-danger" type="submit">Usuń dane i zamknij moje konto</button>
     </form>
 </div>
 

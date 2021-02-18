@@ -7,26 +7,45 @@ using SODP.Model;
 using SODP.Domain.Services;
 using SODP.DataAccess;
 using SODP.Domain.DTO;
+using System.Collections.Generic;
+using FluentValidation;
+using SODP.Domain.Helpers;
 
 namespace WebSODP.Application.Services
 {
     public class StagesService : IStagesService
     {
         private readonly IMapper _mapper;
+        private readonly IValidator<Stage> _validator;
         private readonly SODPDBContext _context;
 
-        public StagesService(IMapper mapper, SODPDBContext context)
+        public StagesService(IMapper mapper, IValidator<Stage> validator, SODPDBContext context)
         {
             _mapper = mapper;
+            _validator = validator;
             _context = context;
         }
         
-        public async Task<ServicePageResponse<Stage>> GetAllAsync()
+        public async Task<ServicePageResponse<StageDTO>> GetAllAsync(int currentPage = 0, int pageSize = 0)
         {
-            var serviceResponse = new ServicePageResponse<Stage>();
+            var serviceResponse = new ServicePageResponse<StageDTO>();
             try
             {
-                serviceResponse.Data.Collection = await _context.Stages.OrderBy(x => x.Sign).ToListAsync();
+                if (pageSize == 0)
+                {
+                    pageSize = serviceResponse.Data.TotalCount;
+                }
+
+                var st = await _context.Stages
+                    .OrderBy(x => x.Sign)
+                    .Skip((currentPage-1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                serviceResponse.Data.TotalCount = await _context.Stages.CountAsync();
+                serviceResponse.Data.PageNumber = Math.Min(currentPage, (int)Math.Ceiling(decimal.Divide(serviceResponse.Data.TotalCount, pageSize)));
+                serviceResponse.Data.PageSize = pageSize;
+                serviceResponse.SetData(_mapper.Map<IList<StageDTO>>(st));
             }
             catch (Exception ex)
             {
@@ -36,12 +55,14 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Stage>> GetAsync(int id)
+        public async Task<ServiceResponse<StageDTO>> GetAsync(int stageId)
         {
-            var serviceResponse = new ServiceResponse<Stage>();
+            var serviceResponse = new ServiceResponse<StageDTO>();
             try
             {
-                serviceResponse.Data = await _context.Stages.FirstOrDefaultAsync(x => x.Id == id);
+                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == stageId);
+
+                serviceResponse.SetData(_mapper.Map<StageDTO>(stage));
             }
             catch (Exception ex)
             {
@@ -52,12 +73,14 @@ namespace WebSODP.Application.Services
         }
 
 
-        public async Task<ServiceResponse<Stage>> GetAsync(string sign)
+        public async Task<ServiceResponse<StageDTO>> GetAsync(string sign)
         {
-            var serviceResponse = new ServiceResponse<Stage>();
+            var serviceResponse = new ServiceResponse<StageDTO>();
             try
             {
-                serviceResponse.Data = await _context.Stages.FirstOrDefaultAsync(x => x.Sign == sign);
+                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Sign == sign);
+
+                serviceResponse.SetData(_mapper.Map<StageDTO>(stage));
             }
             catch (Exception ex)
             {
@@ -67,22 +90,30 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Stage>> CreateAsync(Stage newStage)
+        public async Task<ServiceResponse<StageDTO>> CreateAsync(StageCreateDTO createStage)
         {
-            var serviceResponse = new ServiceResponse<Stage>();
+            var serviceResponse = new ServiceResponse<StageDTO>();
             try
             {
-                var stage = _mapper.Map<Stage>(newStage);
-                var exist = await _context.Stages.FirstOrDefaultAsync(x => x.Sign.ToUpper() == stage.Sign.ToUpper());
+                var exist = await _context.Stages.FirstOrDefaultAsync(x => x.Sign.ToUpper() == createStage.Sign.ToUpper());
                 if(exist != null)
                 {
-                    serviceResponse.SetError(string.Format("Stage {0} already exist.", stage.Sign.ToUpper()));
+                    serviceResponse.SetError(string.Format("Stadium Id:{0} już istnieje.", createStage.Sign.ToUpper()), 400);
                     return serviceResponse;
                 }
+                var stage = _mapper.Map<Stage>(createStage);
+                var validationResult = await _validator.ValidateAsync(stage);
+                if (!validationResult.IsValid)
+                {
+                    serviceResponse.ValidationErrorProcess(validationResult);
+                    return serviceResponse;
+                }
+
                 stage.Normalize();
                 var entity = await _context.AddAsync(stage);
                 await _context.SaveChangesAsync();
-                serviceResponse.Data = entity.Entity;
+
+                serviceResponse.SetData(_mapper.Map<StageDTO>(entity.Entity));
             }
             catch (Exception ex)
             {
@@ -92,15 +123,16 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Stage>> UpdateAsync(Stage updateStage)
+        public async Task<ServiceResponse> UpdateAsync(StageUpdateDTO updateStage)
         {
-            var serviceResponse = new ServiceResponse<Stage>();
+            var serviceResponse = new ServiceResponse();
             try
             {
-                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Sign == updateStage.Sign);
+                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == updateStage.Id);
                 if(stage == null)
                 {
-                    return await CreateAsync(updateStage);
+                    serviceResponse.SetError(string.Format("Stadium Id:{0} nie odnalezione.",updateStage.Id), 404);
+                    return serviceResponse;
                 }
                 stage.Title = updateStage.Title;
                 stage.Normalize();
@@ -114,29 +146,25 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Stage>> DeleteAsync(int id)
+        public async Task<ServiceResponse> DeleteAsync(int stageId)
         {
-            var serviceResponse = new ServiceResponse<Stage>();
+            var serviceResponse = new ServiceResponse();
             try
             {
-                var project = await _context.Projects.FirstOrDefaultAsync(x => x.Stage.Id == id);
-                if (project == null)
+                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == stageId);
+                if (stage == null)
                 {
-                    var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == id);
-                    if(stage == null)
-                    {
-                        serviceResponse.SetError(string.Format("Nie znaleziono stadium id:{0}.", id), 404);
-                    }
-                    else
-                    {
-                        var result = _context.Stages.Remove(stage);
-                        await _context.SaveChangesAsync();
-                    }
+                    serviceResponse.SetError(string.Format("Stadium Id:{0} nie odnalezione..", stageId), 404);
+                    return serviceResponse;
                 }
-                else
+                var project = await _context.Projects.FirstOrDefaultAsync(x => x.Stage.Id == stageId);
+                if(project != null)
                 {
-                    serviceResponse.SetError(string.Format("Istnieją projekty w stadium id:{0}.",id), 409);
+                    serviceResponse.SetError(string.Format("Stadium {0} posiada powiązane projekty.", project.Stage.Sign), 400);
+                    return serviceResponse;
                 }
+                _context.Entry(stage).State = EntityState.Deleted;
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -146,29 +174,32 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Stage>> DeleteAsync(string sign)
+        public async Task<ServiceResponse> DeleteAsync(string sign)
         {
-            var serviceResponse = new ServiceResponse<Stage>();
+            var serviceResponse = new ServiceResponse();
             try
             {
-                var project = await _context.Projects.FirstOrDefaultAsync(x => x.Stage.Sign == sign);
-                if(project == null)
+                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Sign == sign);
+                if (stage == null)
                 {
-                    var stage = _context.Stages.Remove(await _context.Stages.FindAsync(sign));
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    serviceResponse.SetError("Istnieją projekty w tym stadium.", 409);
+                    serviceResponse.SetError(string.Format("Stadium Sign:{0} nie odnalezione.", sign), 404);
                     return serviceResponse;
                 }
+                var project = await _context.Projects.FirstOrDefaultAsync(x => x.Stage.Sign == sign);
+                if(project != null)
+                {
+                    serviceResponse.SetError(string.Format("Stadium {0} posiada powiązane projekty.", sign), 409);
+                    return serviceResponse;
+                }
+                _context.Entry(stage).State = EntityState.Deleted;
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 serviceResponse.SetError(ex.Message);
                 return serviceResponse;
             }
-            serviceResponse.Message = "Operacja zakończona powodzeniem.";
+
             return serviceResponse;
         }
 

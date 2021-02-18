@@ -14,6 +14,7 @@
                     if (data.success) {
                         toastr.success(data.message);
                         myTable.ajax.reload();                  // refresh only dataTable not whole page :(
+                        window.location.reload(true);
                     }
                     else {
                         toastr.error(data.message);

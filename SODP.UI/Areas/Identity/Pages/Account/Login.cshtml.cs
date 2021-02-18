@@ -15,7 +15,6 @@ using SODP.Model;
 
 namespace SODP.UI.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
     public class LoginModel : PageModel
     {
         private readonly UserManager<User> _userManager;
@@ -44,10 +43,12 @@ namespace SODP.UI.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            [Display(Name = "Nazwa użytkownika (Login)")]
             public string Login { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
+            [Display(Name = "Hasło")]
             public string Password { get; set; }
 
             [Display(Name = "Zapamiętaj mnie")]

@@ -2,10 +2,13 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using SODP.DataAccess;
+using SODP.Domain.DTO;
+using SODP.Domain.Helpers;
 using SODP.Domain.Managers;
 using SODP.Domain.Services;
 using SODP.Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,35 +29,30 @@ namespace WebSODP.Application.Services
             _context = context;
         }
 
-        public async Task<ServicePageResponse<Project>> GetAllAsync(int page_number = 0, int page_size = 0)
+        public async Task<ServicePageResponse<ProjectDTO>> GetAllAsync()
         {
-            var serviceResponse = new ServicePageResponse<Project>();
-
-            serviceResponse.Data.TotalCount = await _context.Projects.CountAsync();
-            if (page_size == 0)
-            {
-                page_size = serviceResponse.Data.TotalCount;
-            }
-            serviceResponse.Data.Collection = await _context.Projects.Include(s => s.Stage)
-                .OrderBy(x => x.Number)
-                .ThenBy(y => y.Stage.Sign)
-                .Skip(page_number * page_size)
-                .Take(page_size)
-                .ToListAsync();
-            serviceResponse.Data.PageNumber = page_number;
-            serviceResponse.Data.PageSize = page_size;
-
-            return serviceResponse;
+            return await GetAllAsync( 0, 0);
         }
 
-        public async Task<ServiceResponse<Project>> GetAsync(int id)
+        public async Task<ServicePageResponse<ProjectDTO>> GetAllAsync(int currentPage = 0, int pageSize = 0)
         {
-            var serviceResponse = new ServiceResponse<Project>();
+            var serviceResponse = new ServicePageResponse<ProjectDTO>();
             try
             {
-                serviceResponse.Data = await _context.Projects
-                    .Include(s => s.Stage)
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                serviceResponse.Data.TotalCount = await _context.Projects.CountAsync();
+                if (pageSize == 0)
+                {
+                    pageSize = serviceResponse.Data.TotalCount;
+                }
+                var projects = await _context.Projects.Include(s => s.Stage)
+                   .OrderBy(x => x.Number)
+                   .ThenBy(y => y.Stage.Sign)
+                   .Skip(currentPage * pageSize)
+                   .Take(pageSize)
+                   .ToListAsync();
+                serviceResponse.Data.PageNumber = currentPage;
+                serviceResponse.Data.PageSize = pageSize;
+                serviceResponse.SetData(_mapper.Map<IList<ProjectDTO>>(projects));
             }
             catch (Exception ex)
             {
@@ -64,93 +62,21 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Project>> CreateAsync(Project createProject)
+        public async Task<ServiceResponse<ProjectDTO>> GetAsync(int projectId)
         {
-            var serviceResponse = new ServiceResponse<Project>();
+            var serviceResponse = new ServiceResponse<ProjectDTO>();
             try
             {
-                var exist = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Number == createProject.Number && x.Stage.Id == createProject.StageId);
-                if(exist != null)
+                var project = await _context.Projects
+                    .Include(s => s.Stage)
+                    .FirstOrDefaultAsync(x => x.Id == projectId);
+                if (project == null)
                 {
-                    serviceResponse.SetError(string.Format("Project {0} already exist.", exist.Symbol));
-                    return serviceResponse;
+                    serviceResponse.SetError(string.Format("Project Id:{0} nie odnaleziony.", projectId), 404);
                 }
-
-                var validationResult = await _validator.ValidateAsync(createProject);
-                if (!validationResult.IsValid)
-                {
-                    var error = "";
-                    foreach(var item in validationResult.Errors)
-                    {
-                        error += string.Format("{0}: {1}\n ",item.PropertyName, item.ErrorMessage);
-                    }
-                    serviceResponse.SetError(error);
-                    return serviceResponse;
-                }
-
-                createProject.Normalize();
-                createProject.Stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == createProject.StageId);
-                var (Command, Success) = await _folderManager.CreateOrUpdateFolderAsync(createProject);
-                if (!Success)
-                {
-                    serviceResponse.SetError(string.Format("Create folder error: {0}.\n {1}\n ", createProject.ToString(), Command));
-                    return serviceResponse;
-                }
-
-                createProject.Location = createProject.ToString();
-                var entity = await _context.AddAsync(createProject);
-                await _context.SaveChangesAsync();
-                serviceResponse.Data = entity.Entity;
-                return serviceResponse;
+                serviceResponse.SetData(_mapper.Map<ProjectDTO>(project));
             }
-            catch(Exception ex)
-            {
-                serviceResponse.SetError(ex.Message);
-                return serviceResponse;
-            }
-        }
-
-        public async Task<ServiceResponse<Project>> UpdateAsync(Project updateProject)
-        {
-            var serviceResponse = new ServiceResponse<Project>();
-            try
-            {
-                var oldProject = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Id == updateProject.Id);
-                if(oldProject == null)
-                {
-                    serviceResponse.SetError(string.Format("Project Id:{0} not exist.", updateProject.Id));
-                    return serviceResponse;
-                }
-
-                updateProject.Stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == updateProject.StageId);
-                var validationResult = await _validator.ValidateAsync(updateProject);
-                if(!validationResult.IsValid)
-                {
-                    var error = "";
-                    foreach(var item in validationResult.Errors)
-                    {
-                        error += string.Format("{0}: {1}\n ",item.PropertyName, item.ErrorMessage);
-                    }
-                    serviceResponse.SetError(error);
-                    return serviceResponse;
-                }
-
-                updateProject.Normalize();
-                var (Command, Success) = await _folderManager.CreateOrUpdateFolderAsync(updateProject);
-                if (!Success)
-                {
-                    serviceResponse.SetError(string.Format("Create/Modify folder error: {0}. {1}", updateProject.ToString(), Command));
-                    return serviceResponse;
-                }
-
-                oldProject.Title = updateProject.Title;
-                oldProject.Description = updateProject.Description;
-                oldProject.Location = updateProject.ToString();
-                _context.Projects.Update(oldProject);
-                await _context.SaveChangesAsync();
-                serviceResponse.Data = oldProject;
-            }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 serviceResponse.SetError(ex.Message);
             }
@@ -158,21 +84,111 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Project>> DeleteAsync(int id)
+        public async Task<ServiceResponse<ProjectDTO>> CreateAsync(ProjectCreateDTO createProject)
+        {
+            var serviceResponse = new ServiceResponse<ProjectDTO>();
+            try
+            {
+                var exist = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Number == createProject.Number && x.Stage.Id == createProject.StageId);
+                if(exist != null)
+                {
+                    serviceResponse.SetError(string.Format("Projekt {0} już istnieje.", exist.Symbol), 400);
+                    return serviceResponse;
+                }
+                var project = _mapper.Map<Project>(createProject);
+                var validationResult = await _validator.ValidateAsync(project);
+                if (!validationResult.IsValid)
+                {
+                    serviceResponse.ValidationErrorProcess(validationResult);
+                    return serviceResponse;
+                }
+
+                project.Normalize();
+                project.Stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == project.StageId);
+                var (Command, Success) = await _folderManager.CreateOrUpdateFolderAsync(project);
+                if (!Success)
+                {
+                    serviceResponse.SetError(string.Format("Błąd tworzenia folderu roboczego: {0}, komenda: {1}", createProject.ToString(), Command), 500);
+                    
+                    return serviceResponse;
+                }
+
+                project.Location = createProject.ToString();
+                var entity = await _context.AddAsync(project);
+                await _context.SaveChangesAsync();
+                serviceResponse.SetData(_mapper.Map<ProjectDTO>(entity.Entity));
+            }
+            catch(Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+        
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse> UpdateAsync(ProjectUpdateDTO updateProject)
         {
             var serviceResponse = new ServiceResponse<Project>();
+            try
+            {
+                var oldProject = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Id == updateProject.Id);
+                if(oldProject == null)
+                {
+                    serviceResponse.SetError(string.Format("Project Id:{0} nie odnaleziony.", updateProject.Id), 401);
+                    return serviceResponse;
+                }
+                var project = _mapper.Map<Project>(updateProject);
+                project.Stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == project.StageId);
+                var validationResult = await _validator.ValidateAsync(project);
+                if(!validationResult.IsValid)
+                {
+                    var error = "";
+                    foreach(var item in validationResult.Errors)
+                    {
+                        error += string.Format("{0}: {1}",item.PropertyName, item.ErrorMessage);
+                    }
+                    serviceResponse.SetError(error, 400);
+                    return serviceResponse;
+                }
+
+                project.Normalize();
+                var (Command, Success) = await _folderManager.CreateOrUpdateFolderAsync(project);
+                if (!Success)
+                {
+                    serviceResponse.SetError(string.Format("Błąd tworzenia/modyfikacji folderu: {0}, komwnda: {1}", project.ToString(), Command));
+                    return serviceResponse;
+                }
+
+                oldProject.Title = project.Title;
+                oldProject.Description = project.Description;
+                oldProject.Location = project.ToString();
+                _context.Projects.Update(oldProject);
+                await _context.SaveChangesAsync();
+                serviceResponse.SetData( oldProject );
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse> DeleteAsync(int id)
+        {
+            var serviceResponse = new ServiceResponse();
             try
             {
                 var project = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Id == id); 
                 if(project == null)
                 {
-                    serviceResponse.SetError(string.Format("Project Id:{0} not exist.",id.ToString()));
+                    serviceResponse.SetError(string.Format("Project Id:{0} nie odnaleziony.", id.ToString()), 401);
                     return serviceResponse;
                 }
                 var (Command, Success) = await _folderManager.DeleteFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Delete folder error: {0}.\n {1}\n ", project.Symbol, Command));
+                    serviceResponse.SetError(string.Format("Błąd usuwania folderu: {0}, komenda: {1}", project.Symbol, Command));
                     return serviceResponse;
                 }
                 _context.Entry(project).State = EntityState.Deleted;
@@ -186,6 +202,35 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse> AddBrach(int projectId, int branchId)
+        {
+            var serviceResponse = new ServiceResponse();
+            try
+            {
+                var branch = await _context.Branches.FirstOrDefaultAsync(x => x.Id == branchId);
+                if (branch == null)
+                {
+                    serviceResponse.SetError(string.Format("Branża Id:{0} nie odnalziona.", branchId), 404);
+                    return serviceResponse;
+                }
+                var projectBranch = await _context.ProjectBranches.FirstOrDefaultAsync(x => x.ProjectId == projectId && x.BranchId == branchId);
+                if (projectBranch == null)
+                {
+                    projectBranch = new ProjectBranch
+                    {
+                        ProjectId = projectId,
+                        BranchId = branchId
+                    };
+                    var result = await _context.ProjectBranches.AddAsync(projectBranch);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
 
+            return serviceResponse;
+        }
     }
 }

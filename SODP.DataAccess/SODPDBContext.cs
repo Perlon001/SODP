@@ -10,8 +10,15 @@ namespace SODP.DataAccess
     {
         public SODPDBContext(DbContextOptions<SODPDBContext> options) : base(options) { }
 
-        public DbSet<Project> Projects { get; set; }
         public DbSet<Stage> Stages { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<ProjectBranch> ProjectBranches { get; set; }
+        public DbSet<Designer> Designers { get; set; }
+        public DbSet<Licence> Licences { get; set; }
+        public DbSet<Certificate> Certificates { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,21 +29,14 @@ namespace SODP.DataAccess
 
             new TokenEntityConfiguration().Configure(modelBuilder.Entity<Token>());
 
-            new ProjectEntityConfiguration().Configure(modelBuilder.Entity<Project>());
             new StageEntityConfiguration().Configure(modelBuilder.Entity<Stage>());
+            new ProjectEntityConfiguration().Configure(modelBuilder.Entity<Project>());
+            new BranchEntityConfiguration().Configure(modelBuilder.Entity<Branch>());
+            new ProjectBranchEntityConfiguration().Configure(modelBuilder.Entity<ProjectBranch>());
+            new DesignerEntityConfiguration().Configure(modelBuilder.Entity<Designer>());
+            new LicenceEntityConfiguration().Configure(modelBuilder.Entity<Licence>());
+            new CertificateEntityConfiguration().Configure(modelBuilder.Entity<Certificate>());
 
-            //modelBuilder.Entity<Role>().HasData(new Role { Id = 1, Name = "Admin", NormalizedName = "Admin".ToUpper() });
-            //modelBuilder.Entity<Role>().HasData(new Role { Id = 2, Name = "ProjectManager", NormalizedName = "ProjectManager".ToUpper() });
-            //modelBuilder.Entity<Role>().HasData(new Role { Id = 3, Name = "User", NormalizedName = "User".ToUpper() });
-
-            //var hasher = new PasswordHasher<User>();
-            //modelBuilder.Entity<User>().HasData(new User { Id = 1, UserName = "Admin", NormalizedUserName = "Admin".ToUpper(), PasswordHash = hasher.HashPassword(null, "Admin"), SecurityStamp = string.Empty });
-
-            //modelBuilder.Entity<IdentityUserRole<int>>().HasData(new IdentityUserRole<int>
-            //{
-            //    RoleId = Roles.FirstOrDefaultAsync(x => x.NormalizedName == "Admin".ToUpper()).Id,
-            //    UserId = Users.FirstOrDefaultAsync(x => x.NormalizedUserName == "Admin".ToUpper()).Id
-            //});
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

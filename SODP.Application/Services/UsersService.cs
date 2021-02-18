@@ -1,11 +1,16 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SODP.DataAccess;
+using SODP.Domain.DTO;
+using SODP.Domain.Enums;
+using SODP.Domain.Helpers;
 using SODP.Domain.Services;
+using SODP.Domain.Validators;
 using SODP.Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,40 +19,27 @@ namespace SODP.Application.Services
     public class UsersService : IUsersService
     {
         private readonly IMapper _mapper;
-        private readonly IValidator<User> _validator;
         private readonly UserManager<User> _userManager;
         private readonly SODPDBContext _context;
+        private readonly IServiceProvider _serviceProvider;
 
-        public UsersService(IMapper mapper, IValidator<User> validator, UserManager<User> userManager, SODPDBContext context)
+        public UsersService(IMapper mapper, UserManager<User> userManager, SODPDBContext context, IServiceProvider serviceProvider)
         {
             _mapper = mapper;
-            _validator = validator;
             _userManager = userManager;
             _context = context;
-
+            _serviceProvider = serviceProvider;
         }
-        public async Task<ServicePageResponse<User>> GetAllAsync()
+        public async Task<ServicePageResponse<UserDTO>> GetAllAsync()
         {
-            var serviceResponse = new ServicePageResponse<User>();
-            serviceResponse.Data.Collection = await _context.Users
-                .OrderBy(x => x.UserName)
-                .ToListAsync();
-
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<User>> GetAsync(int id)
-        {
-            var serviceResponse = new ServiceResponse<User>();
+            var serviceResponse = new ServicePageResponse<UserDTO>();
             try
             {
-                var user = await _userManager.FindByIdAsync(id.ToString());
-                if (user != null)
-                {
-                    serviceResponse.Data = user;
-                }
+                var users = await _context.Users.OrderBy(x => x.UserName).ToListAsync();
+                serviceResponse.Data.Collection = _mapper.Map<IList<UserDTO>>(users);
+                serviceResponse.StatusCode = 200;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 serviceResponse.SetError(ex.Message);
             }
@@ -55,17 +47,36 @@ namespace SODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<User>> DeleteAsync(int id)
+        public async Task<ServiceResponse<UserDTO>> GetAsync(int id)
         {
-            var serviceResponse = new ServiceResponse<User>();
+            var serviceResponse = new ServiceResponse<UserDTO>();
+            try
+            {
+                var user = await _userManager.FindByIdAsync(id.ToString());
+                if (user == null)
+                {
+                    serviceResponse.SetError("",404);
+                }
+                var userDTO = _mapper.Map<UserDTO>(user);
+                userDTO.Roles = await _userManager.GetRolesAsync(user);
+
+                serviceResponse.SetData(userDTO);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse> DeleteAsync(int id)
+        {
+            var serviceResponse = new ServiceResponse();
             try
             {
                 var user = await _userManager.FindByIdAsync(id.ToString());
                 var result = await _userManager.SetLockoutEnabledAsync(user, false);
-                if (result.Succeeded)
-                {
-                    serviceResponse.StatusCode = 204;
-                }
             }
             catch(Exception ex)
             {
@@ -75,25 +86,63 @@ namespace SODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<User>> UpdateAsync(User user)
+        public async Task<ServiceResponse> UpdateAsync(UserUpdateDTO user)
         {
-            var serviceResponse = new ServiceResponse<User>();
+            // required correct validation of user
+            var serviceResponse = new ServiceResponse();
+            if (user == null)
+            {
+                serviceResponse.SetError("Nieprawidłowe dane użytkownika.", 400);
+                return serviceResponse;
+            }
             try
             {
-                if(user == null || user.Id == 0)
+                var currentUser = await _userManager.FindByIdAsync(user.Id.ToString());
+                if (currentUser == null)
                 {
-                    serviceResponse.SetError("Użytkownik nie odnaleziony.");
-                    serviceResponse.StatusCode = 404;
+                    serviceResponse.SetError("Użytkownik nie odnaleziony.", 404);
                     return serviceResponse;
                 }
-                var currentUser = await _userManager.FindByIdAsync(user.Id.ToString());
                 currentUser.Surname = user.Surname;
                 currentUser.Forename = user.Forename;
                 var result = await _userManager.UpdateAsync(currentUser);
-                if (result.Succeeded)
+                if (!result.Succeeded)
                 {
-                    serviceResponse.StatusCode = 204;
+                    serviceResponse.IdentityResultErrorProcess(result);
+                    return serviceResponse;
                 }
+                (IdentityResult removeRolesResult, IdentityResult addRolesResult) = await _userManager.UpdateRolesAsync(currentUser, user.Roles);
+                if (!removeRolesResult.Succeeded)
+                {
+                    serviceResponse.IdentityResultErrorProcess(result);
+                    return serviceResponse;
+                }
+                if (!addRolesResult.Succeeded)
+                {
+                    serviceResponse.IdentityResultErrorProcess(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServicePageResponse<string>> GetRolesAsync(int userId)
+        {
+            var serviceResponse = new ServicePageResponse<string>();
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+                if (user == null)
+                {
+                    serviceResponse.SetError(string.Format("Użytkownik Id:{0} nie odnaleziony.", userId), 404);
+                    return serviceResponse;
+                }
+                var roles = await _userManager.GetRolesAsync(user);
+                serviceResponse.SetData(roles);
             }
             catch (Exception ex)
             {

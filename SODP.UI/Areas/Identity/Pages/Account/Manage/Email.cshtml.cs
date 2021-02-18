@@ -46,7 +46,7 @@ namespace SODP.UI.Areas.Identity.Pages.Account.Manage
         {
             [Required]
             [EmailAddress]
-            [Display(Name = "New email")]
+            [Display(Name = "Nowy email")]
             public string NewEmail { get; set; }
         }
 
@@ -68,7 +68,7 @@ namespace SODP.UI.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Nie mozna pobrać danych użytkownika Id:'{_userManager.GetUserId(User)}'.");
             }
 
             await LoadAsync(user);
@@ -80,7 +80,7 @@ namespace SODP.UI.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Nie mozna pobrać danych użytkownika Id:'{_userManager.GetUserId(User)}'.");
             }
 
             if (!ModelState.IsValid)
@@ -101,14 +101,14 @@ namespace SODP.UI.Areas.Identity.Pages.Account.Manage
                     protocol: Request.Scheme);
                 await _emailSender.SendEmailAsync(
                     Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    "Potwierdź swój email",
+                    $"Aby potwierdzić konto <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>kliknij tutaj</a>.");
 
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
                 return RedirectToPage();
             }
 
-            StatusMessage = "Your email is unchanged.";
+            StatusMessage = "Twó adres email nie został zmieniony.";
             return RedirectToPage();
         }
 
@@ -117,7 +117,7 @@ namespace SODP.UI.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Nie mozna pobrać danych użytkownika Id:'{_userManager.GetUserId(User)}'.");
             }
 
             if (!ModelState.IsValid)
@@ -137,10 +137,10 @@ namespace SODP.UI.Areas.Identity.Pages.Account.Manage
                 protocol: Request.Scheme);
             await _emailSender.SendEmailAsync(
                 email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                "Potwierdź twój email",
+                $"Aby potwierdzić adres email <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>kliknij w link</a>.");
 
-            StatusMessage = "Verification email sent. Please check your email.";
+            StatusMessage = "Mail weryfikacyjny wysłany. Zajrzyj do poczty.";
             return RedirectToPage();
         }
     }

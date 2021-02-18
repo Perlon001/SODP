@@ -1,36 +1,48 @@
-using System;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using SODP.Domain.DTO;
+using SODP.Domain.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using SODP.Domain.Services;
-using SODP.Model;
 
 namespace SODP.UI.Pages.Users
 {
+    // [Authorize(Roles = "Administrator")]
+    [ValidateAntiForgeryToken()]
     public class EditModel : PageModel
     {
+        private readonly IMapper _mapper;
         private readonly IUsersService _usersService;
+        private readonly IRolesService _rolesService;
 
-        public EditModel(IUsersService usersService)
+        public EditModel(IMapper mapper, IUsersService usersService, IRolesService rolesService)
         {
+            _mapper = mapper;
             _usersService = usersService;
+            _rolesService = rolesService;
         }
 
         [BindProperty]
-        public User CurrentUser { get; set; }
+        public UserDTO CurrentUser { get; set; }
+
+        [BindProperty]
+        public IDictionary<string,bool> AllRoles { get; set; }
 
         public string ReturnUrl { get; } = "/Users";
 
         public async Task<IActionResult> OnGet(int id)
         {
-            var response = await _usersService.GetAsync(id);
-            if (response == null)
+            var responseUsers = await _usersService.GetAsync(id);
+            if (!responseUsers.Success)
             {
-                return NotFound();
+                return NotFound(responseUsers.Message);
             }
-            CurrentUser = response.Data;
+            CurrentUser = responseUsers.Data;
+
+            AllRoles = _rolesService.GetAll().ToDictionary(x => x, x => false);
 
             return Page();
         }
@@ -39,7 +51,8 @@ namespace SODP.UI.Pages.Users
         {
             if (ModelState.IsValid)
             {
-                var response = await _usersService.UpdateAsync(CurrentUser);
+                CurrentUser.Roles = AllRoles.Where(x => x.Value).Select(x => x.Key).ToList();
+                var response = await _usersService.UpdateAsync(_mapper.Map<UserUpdateDTO>(CurrentUser));
 
                 if (!response.Success)
                 {

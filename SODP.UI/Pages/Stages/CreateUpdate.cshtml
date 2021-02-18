@@ -7,7 +7,7 @@
 <br />
 <div class="container row p-0 m-0">
     <div class="col-8">
-        <h2 class="text-info">@(Model.Input.Id == 0 ? "Nowe stadium" : "Edycja stadium")</h2>
+        <h2 class="text-info">@(Model.Input.Id.Equals(0) ? "Nowe stadium" : "Edycja stadium")</h2>
     </div>
 </div>
 <div class="border container" style="padding:30px;">

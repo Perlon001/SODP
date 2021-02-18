@@ -26,7 +26,7 @@ namespace SODP.Api.Controllers
             var req = HttpContext.Request.Query;
             int.TryParse(req["page_number"], out int page_number);
             int.TryParse(req["page_size"], out int page_size);
-            return Ok(await _projectsService.GetAllAsync(page_number: page_number, page_size: page_size));
+            return Ok(await _projectsService.GetAllAsync(currentPage: page_number, pageSize: page_size));
         }
 
         [HttpDelete("{id}")]

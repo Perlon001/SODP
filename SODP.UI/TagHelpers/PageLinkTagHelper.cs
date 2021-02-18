@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using SODP.Domain.Model;
 using SODP.Model;
 using System;
 using System.Collections.Generic;
@@ -14,12 +15,6 @@ namespace SODP.UI.TagHelpers
     [HtmlTargetElement("div", Attributes = "page-model")]
     public class PageLinkTagHelper : TagHelper
     {
-        private readonly IUrlHelperFactory _urlHelperFactory;
-
-        public PageLinkTagHelper(IUrlHelperFactory urlHelperFactory)
-        {
-            _urlHelperFactory = urlHelperFactory;
-        }
 
         [ViewContext]
         [HtmlAttributeNotBound]
@@ -33,10 +28,9 @@ namespace SODP.UI.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-//            var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
             var tagBuilder = new TagBuilder("div");
 
-            for(int i=1;i<PageModel.TotalItems; i++)
+            for(int i=1;i<=PageModel.TotalPages; i++)
             {
                 var url = PageModel.Url.Replace(":", i.ToString());
                 var tag = new TagBuilder("a");
@@ -48,6 +42,5 @@ namespace SODP.UI.TagHelpers
             }
             output.Content.AppendHtml(tagBuilder.InnerHtml);
         }
-
     }
 }

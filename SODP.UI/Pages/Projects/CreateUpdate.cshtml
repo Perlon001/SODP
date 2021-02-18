@@ -7,7 +7,7 @@
 <br />
 <div class="container row p-0 m-0">
     <div class="col-8">
-        <h2 class="text-info">@(Model.Input.Id == null ? "Nowy projekt" : "Edycja projektu")</h2>
+        <h2 class="text-info">@(Model.Input.Id.Equals(null) ? "Nowy projekt" : "Edycja projektu")</h2>
     </div>
 </div>
 <div class="container border" style="padding:30px;">
@@ -17,26 +17,26 @@
 
         <div class="form-group row">
             <div class="col-12 col-md-7">
-                <input asp-for="Input.Number" class="form-control" readonly="@(Model.Input.Id == null ? false : true)" placeholder="Numer" />
+                <input asp-for="Input.Number" class="form-control" readonly="@(Model.Input.Id.Equals(null) ? false : true)" placeholder="Numer" />
             </div>
             <span asp-validation-for="Input.Number" style="font-size:14px" class="text-danger"></span>
         </div>
 
-        @if (Model.Input.Id == null)
+        @if (Model.Input.Id.Equals(null))
         {
             <div class="form-group row">
                 <div class="col-12 col-md-7">
-                    @Html.DropDownListFor(model => model.Input.StageId, @Model.Stages, "-- Stadium --", new { @class = "form-control" })
+                    @Html.DropDownListFor(model => model.Input.Stage.Id, @Model.Stages, "-- Stadium --", new { @class = "form-control" })
                 </div>
-                <span asp-validation-for="@Model.Input.StageId" style="font-size:14px" class="text-danger"></span>
+                <span asp-validation-for="@Model.Input.Stage.Id" style="font-size:14px" class="text-danger"></span>
             </div>
         }
         else
         {
-            <input type="hidden" asp-for="Input.StageId" />
+            <input type="hidden" asp-for="Input.Stage.Id" />
             <div class="form-group row">
                 <div class="col-12 col-md-7">
-                    <input asp-for="Input.StageTitle" class="form-control" readonly="@(true)" />
+                    <input asp-for="Input.Stage.Title" class="form-control" readonly="@(true)" />
                 </div>
             </div>
 

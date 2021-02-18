@@ -17,7 +17,6 @@ using SODP.Model;
 
 namespace SODP.UI.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
@@ -44,7 +43,7 @@ namespace SODP.UI.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [Display(Name = "Login")]
+            [Display(Name = "Nazwa użytkownika (Login)")]
             public string Login { get; set; }
 
             [Required]

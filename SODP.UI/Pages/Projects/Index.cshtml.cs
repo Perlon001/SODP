@@ -1,15 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using SODP.Domain.DTO;
 using SODP.Domain.Services;
-using SODP.Model;
 using SODP.UI.Pages.Shared;
+using System;
+using System.Threading.Tasks;
 
 namespace SODP.UI.Pages.Projects
 {
+    [Authorize(Roles = "User, Administrator, ProjectManager")]
     public class IndexModel : SODPPageModel
     {
         private readonly IProjectsService _projectsService;
@@ -19,11 +18,12 @@ namespace SODP.UI.Pages.Projects
             _projectsService = projectsService;
             ReturnUrl = "/Projects";
         }
-        public ServicePageResponse<Project> Projects { get; set; }
+        public ServicePageResponse<ProjectDTO> Projects { get; set; }
 
-        public void OnGet()
+
+        public async Task OnGet()
         {
-            //Projects = await _projectsService.GetAllAsync();
+            Projects = await _projectsService.GetAllAsync(0,0);
         }
 
         public async Task<IActionResult> OnPostDelete(int id)

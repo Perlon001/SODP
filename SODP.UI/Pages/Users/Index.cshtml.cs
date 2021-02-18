@@ -2,14 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SODP.Domain.DTO;
 using SODP.Domain.Services;
-using SODP.Model;
 using SODP.UI.Pages.Shared;
 
 namespace SODP.UI.Pages.Users
 {
+    [Authorize(Roles = "Administrator")]
     public class IndexModel : SODPPageModel
     {
         private readonly IUsersService _usersService;
@@ -19,7 +21,7 @@ namespace SODP.UI.Pages.Users
             _usersService = usersService;
             ReturnUrl = "/Users";
         }
-        public IEnumerable<User> Users { get; set; }
+        public IEnumerable<UserDTO> Users { get; set; }
 
         public async Task OnGet()
         {

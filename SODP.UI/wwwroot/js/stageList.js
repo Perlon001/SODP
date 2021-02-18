@@ -25,11 +25,11 @@ $(document).ready(function () {
     });
 });
 
-function reload() {
-    var container = document.getElementById("StageTable");
-    var content = container.innerHTML;
-    container.innerHTML = content;
+function Reload() {
+    //var container = document.getElementById("StageTable");
+    //var content = container.innerHTML;
+    //container.innerHTML = content;
 
-    //this line is to watch the result in console , you can remove it later	
-    window.location.replace("/Stages");
+    ////this line is to watch the result in console , you can remove it later	
+    window.location.reload(true);
 }

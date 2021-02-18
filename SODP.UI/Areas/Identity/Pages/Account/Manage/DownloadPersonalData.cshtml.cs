@@ -47,7 +47,7 @@ namespace SODP.UI.Areas.Identity.Pages.Account.Manage
             var logins = await _userManager.GetLoginsAsync(user);
             foreach (var l in logins)
             {
-                personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
+                personalData.Add($"{l.LoginProvider} Klucz zewnętrznego operatora dostawcy logowania", l.ProviderKey);
             }
 
             Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");

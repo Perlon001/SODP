@@ -6,7 +6,7 @@ namespace SODP.Domain.Services
     {
         public bool Success { get; set; } = true;
         public string Message { get; set; } = "";
-        public int StatusCode { get; set; } = 200;
+        public int StatusCode { get; set; } = 204;
         public IList<string> ValidationErrors { get; set; } = new List<string>();
 
 
@@ -26,6 +26,11 @@ namespace SODP.Domain.Services
     public class ServiceResponse<T> : ServiceResponse
     {
         public T Data { get; set; }
+        public void SetData(T data)
+        {
+            Data = data;
+            StatusCode = 200;
+        }
     }
 
 }

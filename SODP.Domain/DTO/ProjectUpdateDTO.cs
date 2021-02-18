@@ -11,6 +11,8 @@ namespace SODP.Domain.DTO
         [RegularExpression(@"^([1-9]{1})([0-9]{3})$", ErrorMessage = "{Property} should contain 4 digits.")]
         public string Number { get; set; }
 
+        public int StageId { get; set; }
+
         [Required(ErrorMessage = "{Property} is required.")]
         public string StageSign { get; set; }
 
@@ -20,9 +22,5 @@ namespace SODP.Domain.DTO
 
         public string Description { get; set; }
 
-        public override string ToString()
-        {
-            return Number.Trim() + StageSign.Trim() + "_" + Title.Trim();
-        }
     }
 }

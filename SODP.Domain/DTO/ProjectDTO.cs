@@ -10,15 +10,11 @@ namespace SODP.Domain.DTO
 
         public string Number { get; set; }
 
-        public string StageSign { get; set; }
+        public StageDTO Stage { get; set; }
 
         public string Title { get; set; }
 
         public string Description { get; set; }
 
-        public override string ToString()
-        {
-            return Number.Trim() + StageSign.Trim() + "_" + Title.Trim();
-        }
     }
 }

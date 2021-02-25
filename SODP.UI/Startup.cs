@@ -168,8 +168,6 @@ namespace SODP.UI
 
         private void CreateRoleAndUserAdmin(IServiceProvider serviceProvider)
         {
-            const string Administrator = "Administrator";
-
             var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
@@ -177,22 +175,8 @@ namespace SODP.UI
             CreateRoleIfNotExist(roleManager, "User").Wait();
             CreateRoleIfNotExist(roleManager, "ProjectManager").Wait();
 
-            Task<User> testUser = userManager.FindByNameAsync(Administrator);
-            testUser.Wait();
-
-            if (testUser.Result == null)
-            {
-                var administrator = new User(Administrator);
-
-                Task<IdentityResult> newUser = userManager.CreateAsync(administrator, "admin");
-                newUser.Wait();
-
-                if (newUser.Result.Succeeded)
-                {
-                    Task<IdentityResult> newUserRole = userManager.AddToRoleAsync(administrator, "Administrator");
-                    newUserRole.Wait();
-                }
-            }
+            CreateUserIfNotExist(userManager, "Administrator", "Administrator").Wait();
+            AddToRoleIfNotExist(userManager, "Administrator", "Administrator").Wait();
 
             static async Task<bool> CreateRoleIfNotExist(RoleManager<Role> roleManager, string role)
             {
@@ -205,6 +189,32 @@ namespace SODP.UI
                 }
 
                 return result;
+            }
+
+            static async Task<bool> CreateUserIfNotExist(UserManager<User> userManager, string userName, string password)
+            {
+                var user = await userManager.FindByNameAsync(userName);
+
+                if (user == null)
+                {
+                    var result = await userManager.CreateAsync(new User(userName), password);
+                    return result.Succeeded;
+                }
+
+                return true;
+            }
+
+            static async Task<bool> AddToRoleIfNotExist(UserManager<User> userManager, string userName, string role)
+            {
+                var user = await userManager.FindByNameAsync(userName);
+
+                if (!(await userManager.IsInRoleAsync(user, "Administrator")))
+                {
+                    var result = await userManager.AddToRoleAsync(user, role);
+                    return result.Succeeded;
+                }
+
+                return true;
             }
         }
     }

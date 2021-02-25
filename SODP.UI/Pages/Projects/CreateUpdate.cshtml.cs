@@ -32,7 +32,6 @@ namespace SODP.UI.Pages.Projects
 
         public async Task<IActionResult> OnGet(int? id)
         {
-            Input = new ProjectDTO();
             if (id == null)
             {
                 var stagesResponse = await _stagesService.GetAllAsync(1,10);
@@ -41,6 +40,8 @@ namespace SODP.UI.Pages.Projects
                     Value = x.Id.ToString(),
                     Text = x.Title
                 }).ToList();
+
+                Input = new ProjectDTO();
 
                 return Page();
             }
@@ -61,7 +62,7 @@ namespace SODP.UI.Pages.Projects
             {
                 ServiceResponse response;
 
-                if (Input.Id.Equals(null))
+                if (Input.Id.Equals(0))
                 {
                     var project = new ProjectCreateDTO
                     {
@@ -76,17 +77,20 @@ namespace SODP.UI.Pages.Projects
                 {
                     var project = new ProjectUpdateDTO
                     {
+                        Id = Input.Id,
                         Number = Input.Number,
                         StageId = Input.Stage.Id,
                         Title = Input.Title,
                         Description = Input.Description
-                    }; response = await _projectsService.UpdateAsync(project);
+                    }; 
+                    response = await _projectsService.UpdateAsync(project);
                 }
 
                 if (!response.Success)
                 {
                     return Page();
                 }
+
                 return RedirectToPage("Index");
             }
             else

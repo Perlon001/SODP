@@ -59,6 +59,7 @@ namespace SODP.DataAccess.Configurations
                 .HasForeignKey("StageId")
                 .HasConstraintName("FK_Stage")
                 .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

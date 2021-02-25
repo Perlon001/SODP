@@ -13,6 +13,7 @@ namespace SODP.DataAccess.Configurations
         {
 
             builder.ToTable("Branches");
+
         }
     }
 }

@@ -16,6 +16,8 @@ namespace SODP.Domain
             CreateMap<StageUpdateDTO, Stage>();
 
             CreateMap<Project, ProjectDTO>();
+            CreateMap<ProjectCreateDTO,Project>();
+            CreateMap<ProjectUpdateDTO,Project>();
         }
     }
 }

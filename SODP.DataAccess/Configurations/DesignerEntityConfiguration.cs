@@ -12,6 +12,18 @@ namespace SODP.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Designer> builder)
         {
             builder.ToTable("Designers");
+
+            builder.HasMany(x => x.Certificates)
+                .WithOne(x => x.Designer)
+                .HasForeignKey(x => x.DesignerId)
+                .HasConstraintName("FK_Designer")
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(x => x.Licences)
+                .WithOne(x => x.Designer)
+                .HasForeignKey(x => x.DesignerId)
+                .HasConstraintName("FK_Designer")
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

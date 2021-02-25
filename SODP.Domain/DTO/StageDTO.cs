@@ -9,6 +9,7 @@ namespace SODP.Domain.DTO
     {
         public int Id { get; set; }
 
+        [MinLength(2)]
         public string Sign { get; set; }
 
         public string Title { get; set; }

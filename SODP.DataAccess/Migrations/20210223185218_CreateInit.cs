@@ -4,10 +4,39 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SODP.DataAccess.Migrations
 {
-    public partial class CreateInitial : Migration
+    public partial class CreateInit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Branches",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Sign = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Branches", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Designer",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Title = table.Column<string>(nullable: true),
+                    Forename = table.Column<string>(nullable: true),
+                    Surname = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Designer", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
@@ -63,6 +92,55 @@ namespace SODP.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Certificate",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DesignerId = table.Column<int>(nullable: false),
+                    Number = table.Column<string>(nullable: true),
+                    StartignDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Certificate", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Certificate_Designer_DesignerId",
+                        column: x => x.DesignerId,
+                        principalTable: "Designer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Licence",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DesignerId = table.Column<int>(nullable: false),
+                    BranchId = table.Column<int>(nullable: false),
+                    Contents = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Licence", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Licence_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Licence_Designer_DesignerId",
+                        column: x => x.DesignerId,
+                        principalTable: "Designer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -215,6 +293,46 @@ namespace SODP.DataAccess.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ProjectBranches",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ProjectId = table.Column<int>(nullable: false),
+                    BranchId = table.Column<int>(nullable: false),
+                    DesignerId = table.Column<int>(nullable: false),
+                    CheckingId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectBranches", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProjectBranches_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProjectBranches_Designer_CheckingId",
+                        column: x => x.CheckingId,
+                        principalTable: "Designer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProjectBranches_Designer_DesignerId",
+                        column: x => x.DesignerId,
+                        principalTable: "Designer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProjectBranches_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -234,6 +352,41 @@ namespace SODP.DataAccess.Migrations
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Certificate_DesignerId",
+                table: "Certificate",
+                column: "DesignerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Licence_BranchId",
+                table: "Licence",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Licence_DesignerId",
+                table: "Licence",
+                column: "DesignerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectBranches_BranchId",
+                table: "ProjectBranches",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectBranches_CheckingId",
+                table: "ProjectBranches",
+                column: "CheckingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectBranches_DesignerId",
+                table: "ProjectBranches",
+                column: "DesignerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectBranches_ProjectId",
+                table: "ProjectBranches",
+                column: "ProjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Stage",
@@ -293,7 +446,13 @@ namespace SODP.DataAccess.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Projects");
+                name: "Certificate");
+
+            migrationBuilder.DropTable(
+                name: "Licence");
+
+            migrationBuilder.DropTable(
+                name: "ProjectBranches");
 
             migrationBuilder.DropTable(
                 name: "Tokens");
@@ -302,10 +461,19 @@ namespace SODP.DataAccess.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Stages");
+                name: "Branches");
+
+            migrationBuilder.DropTable(
+                name: "Designer");
+
+            migrationBuilder.DropTable(
+                name: "Projects");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Stages");
         }
     }
 }

@@ -7,7 +7,7 @@
 <br />
 <div class="container row p-0 m-0">
     <div class="col-8">
-        <h2 class="text-info">@(Model.Input.Id.Equals(null) ? "Nowy projekt" : "Edycja projektu")</h2>
+        <h2 class="text-info">@(Model.Input.Id.Equals(0) ? "Nowy projekt" : "Edycja projektu")</h2>
     </div>
 </div>
 <div class="container border" style="padding:30px;">
@@ -17,12 +17,12 @@
 
         <div class="form-group row">
             <div class="col-12 col-md-7">
-                <input asp-for="Input.Number" class="form-control" readonly="@(Model.Input.Id.Equals(null) ? false : true)" placeholder="Numer" />
+                <input asp-for="Input.Number" class="form-control" readonly="@(Model.Input.Id.Equals(0) ? false : true)" placeholder="Numer" />
             </div>
             <span asp-validation-for="Input.Number" style="font-size:14px" class="text-danger"></span>
         </div>
 
-        @if (Model.Input.Id.Equals(null))
+        @if (Model.Input.Id.Equals(0))
         {
             <div class="form-group row">
                 <div class="col-12 col-md-7">

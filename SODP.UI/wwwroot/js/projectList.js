@@ -49,6 +49,16 @@ function RenderButton(data) {
     renderTags += `<a href='/Projects/CreateUpdate?id=${data}' class='btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1' style="cursor:pointer; width=70px;"><i class="far fa-edit"></i></a>`;
     renderTags += `<a onclick = 'Delete("/api/Projects/${data}")' class='btn btn-sm btn-danger text-white mb-0 mt-0 ml-1 mr-1 p-1' style = "cursor:pointer; width=70px;" > <i class="far fa-trash-alt"></i></a >`;
     renderTags += `</div >`;
+    renderTags += `<div id="deleteProjectModal" class="modal fade">`;
+    renderTags += `<div class="modal-dialog">`;
+    renderTags += `<form>`;
+    renderTags += `<div class="modal-footer">`;
+    renderTags += `<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">`;
+    renderTags += `<input type="submit" class="btn btn-danger" value="Delete">`;
+    renderTags += `</div>`;
+    renderTags += `</form>`;
+    renderTags += `</div>`;
+    renderTags += `</div>`;
 
     return renderTags
 }

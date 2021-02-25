@@ -26,7 +26,14 @@ namespace SODP.UI.Pages.Stages
         [BindProperty]
         public StagesViewModel StagesViewModel { get; set; }
 
-        public async Task<IActionResult> OnGet(int currentPage = 1, int pageSize = 10)
+        [BindProperty]
+        public StageDTO Input { get; set; } = new StageDTO();
+
+        [BindProperty]
+        public bool IsModalShown { get; set; }
+
+
+        public async Task<IActionResult> OnGetAsync(int currentPage = 1, int pageSize = 10)
         {
             var url = new StringBuilder();
             url.Append("/Stages?currentPage=:");
@@ -44,16 +51,50 @@ namespace SODP.UI.Pages.Stages
 
             return Page();
         }
-
-        public async Task<IActionResult> OnPostDelete(string sign)
+        public async Task<IActionResult> OnPostAsync(bool IsModalShown)
         {
-            var response = await _stagesService.DeleteAsync(sign);
-            if (!response.Success)
+            ServiceResponse response;
+            if (ModelState.IsValid)
             {
+
+                if (Input.Id.Equals(0))
+                {
+                    var stage = new StageCreateDTO
+                    {
+                        Sign = Input.Sign,
+                        Title = Input.Title
+                    };
+                    response = await _stagesService.CreateAsync(stage);
+                }
+                else
+                {
+                    var stage = new StageUpdateDTO
+                    {
+                        Id = Input.Id,
+                        Title = Input.Title
+                    };
+                    response = await _stagesService.UpdateAsync(stage);
+                }
+                if (response.ValidationErrors.Count > 0)
+                {
+                    foreach (var message in response.ValidationErrors)
+                    {
+                    }
+                    return Page();
+                }
+
+                if (!response.Success)
+                {
+                    await OnGetAsync();
+                    return Page();
+                }
+                return RedirectToPage("Index");
+            }
+            else
+            {
+                await OnGetAsync();
                 return Page();
             }
-
-            return RedirectToPage("Index");
         }
 
         private async Task<IList<StageDTO>> GetStages(PageInfo pageInfo)

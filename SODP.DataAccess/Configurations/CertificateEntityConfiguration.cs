@@ -11,6 +11,9 @@ namespace SODP.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<Certificate> builder)
         {
+            builder.HasIndex(x => x.DesignerId)
+                .HasName("IX_Designer");
+
             builder.ToTable("Certificates");
         }
     }

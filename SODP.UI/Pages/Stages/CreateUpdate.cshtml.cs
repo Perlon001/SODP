@@ -68,11 +68,22 @@ namespace SODP.UI.Pages.Stages
                     };
                     response = await _stagesService.UpdateAsync(stage);
                 }
+
+                if (response.ValidationErrors.Count > 0)
+                {
+                    foreach(var message in response.ValidationErrors)
+                    {
+                        ErrorMessage += message;
+                    }
+                    return Page();
+                }
+
                 if (!response.Success)
                 {
                     ErrorMessage = response.Message;
                     return Page();
                 }
+
                 return RedirectToPage("Index");
             }
             else

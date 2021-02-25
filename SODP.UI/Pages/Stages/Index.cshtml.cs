@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SODP.Domain.DTO;
 using SODP.Domain.Model;
 using SODP.Domain.Services;
@@ -51,6 +52,16 @@ namespace SODP.UI.Pages.Stages
 
             return Page();
         }
+
+        public PartialViewResult OnGetStageModalPartial()
+        {
+            return new PartialViewResult()
+            {
+                ViewName = "_StageCreatePartialView",
+                ViewData = new ViewDataDictionary<StageDTO>(ViewData, new StageDTO())
+            };
+        }
+
         public async Task<IActionResult> OnPostAsync(bool IsModalShown)
         {
             ServiceResponse response;

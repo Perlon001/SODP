@@ -34,10 +34,11 @@ namespace SODP.UI.Pages.Stages
         [BindProperty]
         public bool IsModalShown { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int currentPage = 1, int pageSize = 10)
+        public async Task<IActionResult> OnGetAsync(int currentPage = 1, int pageSize = 10, string gosign = "")
         {
             var url = new StringBuilder();
-            url.Append("/Stages?currentPage=:");
+            url.Append("/Stages?currentPage=:&pageSize=");
+            url.Append(pageSize.ToString());
 
             StagesViewModel = new StagesViewModel
             {
@@ -48,7 +49,7 @@ namespace SODP.UI.Pages.Stages
                     Url = url.ToString()
                 },
             };
-            StagesViewModel.Stages = await GetStages(StagesViewModel.PageInfo);
+            StagesViewModel.Stages = await GetStages(StagesViewModel.PageInfo, gosign);
 
             return Page();
         }
@@ -99,10 +100,11 @@ namespace SODP.UI.Pages.Stages
             }
         }
 
-        private async Task<IList<StageDTO>> GetStages(PageInfo pageInfo)
+        private async Task<IList<StageDTO>> GetStages(PageInfo pageInfo, string sign)
         {
-            var serviceResponse = await _stagesService.GetAllAsync(pageInfo.CurrentPage, pageInfo.ItemsPerPage);
+            var serviceResponse = await _stagesService.GetAllAsync(pageInfo.CurrentPage, pageInfo.ItemsPerPage, sign);
             pageInfo.TotalItems = serviceResponse.Data.TotalCount;
+            pageInfo.CurrentPage = serviceResponse.Data.PageNumber;
 
             return serviceResponse.Data.Collection.ToList();
         }

@@ -25,16 +25,42 @@ namespace WebSODP.Application.Services
             _validator = validator;
             _context = context;
         }
-        
+
         public async Task<ServicePageResponse<StageDTO>> GetAllAsync(int currentPage = 0, int pageSize = 0)
+        {
+            return await GetAllAsync(currentPage, pageSize, "");
+        }
+
+        private bool Compare(string s1, string s2)
+        {
+            if (String.Compare(s1, s2) >= 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<ServicePageResponse<StageDTO>> GetAllAsync(int currentPage = 0, int pageSize = 0, string sign = "")
         {
             var serviceResponse = new ServicePageResponse<StageDTO>();
             try
             {
+                serviceResponse.Data.TotalCount = await _context.Stages.CountAsync();
                 if (pageSize == 0)
                 {
                     pageSize = serviceResponse.Data.TotalCount;
                 }
+
+                if (!sign.Equals(""))
+                {
+                    var count = _context.Stages
+                        .AsEnumerable()
+                        .OrderBy(x => x.Sign)
+                        .Where(x => Compare(x.Sign, sign))
+                        .Count();
+                    currentPage = (int)Math.Round(decimal.Divide(count, pageSize));
+                }
+
 
                 var st = await _context.Stages
                     .OrderBy(x => x.Sign)
@@ -42,7 +68,6 @@ namespace WebSODP.Application.Services
                     .Take(pageSize)
                     .ToListAsync();
 
-                serviceResponse.Data.TotalCount = await _context.Stages.CountAsync();
                 serviceResponse.Data.PageNumber = Math.Min(currentPage, (int)Math.Ceiling(decimal.Divide(serviceResponse.Data.TotalCount, pageSize)));
                 serviceResponse.Data.PageSize = pageSize;
                 serviceResponse.SetData(_mapper.Map<IList<StageDTO>>(st));

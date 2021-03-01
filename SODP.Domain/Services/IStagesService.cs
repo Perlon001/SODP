@@ -7,6 +7,7 @@ namespace SODP.Domain.Services
     public interface IStagesService : IAppService
     {
         Task<ServicePageResponse<StageDTO>> GetAllAsync(int currentPage, int pageSize);
+        Task<ServicePageResponse<StageDTO>> GetAllAsync(int currentPage, int pageSize, string sign);
         Task<ServiceResponse<StageDTO>> GetAsync(int id);
         Task<ServiceResponse<StageDTO>> GetAsync(string sign);
         Task<ServiceResponse<StageDTO>> CreateAsync(StageDTO stage);

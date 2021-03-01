@@ -21,7 +21,9 @@
             console.log(newBody.find('[name="IsValidate"]'));
             var isValid = newBody.find('[name="IsValidate"]').val() == 'True';
             if (isValid) {
+                var stage = document.getElementById("sign").value;
                 placeholderElement.find('.modal').modal('hide');
+                window.location = 'Stages?tostage='+stage;
             }
         });
     });

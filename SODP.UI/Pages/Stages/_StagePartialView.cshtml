@@ -1,11 +1,11 @@
 ﻿@model StageDTO
 
 <!-- Modal -->
-<div class="modal fade" id="add-stage" tabindex="-1" role="dialog" aria-labelledby="addStageLabel" aria-hidden="true">
+<div class="modal fade" id="editstage" tabindex="-1" role="dialog" aria-labelledby="editStageLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addStageLabel">Nowe stadium</h5>
+                <h5 class="text-info" id="editStageLabel">Nowe stadium</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -16,11 +16,19 @@
                 <form asp-page-handler="StageModalPartial">
                     <input name="IsValidate" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
                     <div class="form-group">
-                        <input asp-for="Sign" class="form-control" placeholder="Znak stadium" />
-                        <span asp-validation-for="Sign" class="text-danger"></span>
+                        <div class="row">
+                            <div class="col-5">
+                                <input asp-for="Sign" id="sign" class="form-control" placeholder="Znak stadium" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <span asp-validation-for="Sign" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <input asp-for="Title" class="form-control" placeholder="Opis stadium" />
+                        <input asp-for="Title" id="title" class="form-control" placeholder="Opis stadium" />
                         <span asp-validation-for="Title" class="text-danger"></span>
                     </div>
                 </form>

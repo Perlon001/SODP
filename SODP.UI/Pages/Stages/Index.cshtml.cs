@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -33,7 +34,6 @@ namespace SODP.UI.Pages.Stages
         [BindProperty]
         public bool IsModalShown { get; set; }
 
-
         public async Task<IActionResult> OnGetAsync(int currentPage = 1, int pageSize = 10)
         {
             var url = new StringBuilder();
@@ -53,15 +53,6 @@ namespace SODP.UI.Pages.Stages
             return Page();
         }
 
-        public PartialViewResult OnGetStageModalPartial()
-        {
-            return new PartialViewResult()
-            {
-                ViewName = "_StageCreatePartialView",
-                ViewData = new ViewDataDictionary<StageDTO>(ViewData, new StageDTO())
-            };
-        }
-
         public async Task<IActionResult> OnPostAsync(bool IsModalShown)
         {
             ServiceResponse response;
@@ -70,7 +61,7 @@ namespace SODP.UI.Pages.Stages
 
                 if (Input.Id.Equals(0))
                 {
-                    var stage = new StageCreateDTO
+                    var stage = new StageDTO
                     {
                         Sign = Input.Sign,
                         Title = Input.Title
@@ -79,7 +70,7 @@ namespace SODP.UI.Pages.Stages
                 }
                 else
                 {
-                    var stage = new StageUpdateDTO
+                    var stage = new StageDTO
                     {
                         Id = Input.Id,
                         Title = Input.Title
@@ -115,6 +106,49 @@ namespace SODP.UI.Pages.Stages
 
             return serviceResponse.Data.Collection.ToList();
         }
+
+        public async Task<PartialViewResult> OnGetStageModalPartial()
+        {
+            var partialViewResult = new PartialViewResult()
+            {
+                ViewName = "_StagePartialView",
+                ViewData = new ViewDataDictionary<StageDTO>(ViewData, new StageDTO())
+            };
+
+            return await Task.FromResult(partialViewResult);
+        }
+
+        public async Task<PartialViewResult> OnPostStageModalPartial(StageDTO stage)
+        {
+            ServiceResponse response ;
+            if (ModelState.IsValid)
+            {
+                if (stage.Id == 0)
+                {
+                    response = await _stagesService.CreateAsync(stage);
+                }
+                else
+                {
+                    response = await _stagesService.UpdateAsync(stage);
+                }
+                if (!response.Success)
+                {
+                    foreach(var error in response.ValidationErrors)
+                    {
+                        ModelState.AddModelError(error.Key, error.Value);
+                    }
+                }
+            }
+
+            var partialViewResult = new PartialViewResult()
+            {
+                ViewName = "_StagePartialView",
+                ViewData = new ViewDataDictionary<StageDTO>(ViewData, stage)
+            };
+
+            return partialViewResult;
+        }
+
     }
 
 }

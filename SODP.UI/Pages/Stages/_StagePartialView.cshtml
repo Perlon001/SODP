@@ -1,0 +1,34 @@
+﻿@model StageDTO
+
+<!-- Modal -->
+<div class="modal fade" id="add-stage" tabindex="-1" role="dialog" aria-labelledby="addStageLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addStageLabel">Nowe stadium</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                <div id="error-placeholder"></div>
+                <form asp-page-handler="StageModalPartial">
+                    <input name="IsValidate" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+                    <div class="form-group">
+                        <input asp-for="Sign" class="form-control" placeholder="Znak stadium" />
+                        <span asp-validation-for="Sign" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="Title" class="form-control" placeholder="Opis stadium" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-save="modal">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

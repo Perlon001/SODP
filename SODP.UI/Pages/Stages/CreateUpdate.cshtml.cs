@@ -49,10 +49,9 @@ namespace SODP.UI.Pages.Stages
             ServiceResponse response;
             if (ModelState.IsValid)
             {
-
                 if (Input.Id.Equals(0))
                 {
-                    var stage = new StageCreateDTO
+                    var stage = new StageDTO
                     {
                         Sign = Input.Sign,
                         Title = Input.Title
@@ -61,7 +60,7 @@ namespace SODP.UI.Pages.Stages
                 }
                 else 
                 {
-                    var stage = new StageUpdateDTO
+                    var stage = new StageDTO
                     {
                         Id = Input.Id,
                         Title = Input.Title

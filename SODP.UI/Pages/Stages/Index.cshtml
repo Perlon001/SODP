@@ -10,14 +10,13 @@
 
 <br />
 <div class="container row p-0 m-0">
-    <div class="col-9">
+    <div class="col-8">
         <h2 class="text-info">Lista stadiów</h2>
     </div>
     @if (SignInManager.IsSignedIn(User))
     {
         <div id="modal-placeholder"></div>
-
-        <div class="col-3">
+        <div class="col-4">
             <button type="button" class="btn btn-info text-white" data-toggle="ajax-modal" data-url="@Url.Page("Index","StageModalPartial")"><i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium</button>
         </div>
     }

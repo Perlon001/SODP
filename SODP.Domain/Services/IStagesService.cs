@@ -9,8 +9,8 @@ namespace SODP.Domain.Services
         Task<ServicePageResponse<StageDTO>> GetAllAsync(int currentPage, int pageSize);
         Task<ServiceResponse<StageDTO>> GetAsync(int id);
         Task<ServiceResponse<StageDTO>> GetAsync(string sign);
-        Task<ServiceResponse<StageDTO>> CreateAsync(StageCreateDTO stage);
-        Task<ServiceResponse> UpdateAsync(StageUpdateDTO stage);
+        Task<ServiceResponse<StageDTO>> CreateAsync(StageDTO stage);
+        Task<ServiceResponse> UpdateAsync(StageDTO stage);
         Task<ServiceResponse> DeleteAsync(int id);
         Task<ServiceResponse> DeleteAsync(string sign);
         Task<bool> ExistAsync(int id);

@@ -1,6 +1,7 @@
 ﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using SODP.Domain.Services;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SODP.Domain.Helpers
@@ -9,7 +10,10 @@ namespace SODP.Domain.Helpers
     {
         public static void ValidationErrorProcess(this ServiceResponse response, ValidationResult validationResult)
         {
-            response.ValidationErrors = validationResult.Errors.Select(x => string.Format("{0}: {1}", x.PropertyName, x.ErrorMessage)).ToList();
+            foreach(var item in validationResult.Errors)
+            {
+                response.ValidationErrors.Add(new KeyValuePair<string, string>(item.PropertyName, item.ErrorMessage));
+            }
         }
 
         public static void IdentityResultErrorProcess(this ServiceResponse response, IdentityResult identityResult)

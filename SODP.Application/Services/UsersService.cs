@@ -103,8 +103,8 @@ namespace SODP.Application.Services
                     serviceResponse.SetError("Użytkownik nie odnaleziony.", 404);
                     return serviceResponse;
                 }
-                currentUser.Surname = user.Surname;
-                currentUser.Forename = user.Forename;
+                currentUser.Lastname = user.Surname;
+                currentUser.Firstname = user.Forename;
                 var result = await _userManager.UpdateAsync(currentUser);
                 if (!result.Succeeded)
                 {

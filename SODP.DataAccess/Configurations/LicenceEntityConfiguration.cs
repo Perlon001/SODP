@@ -11,16 +11,18 @@ namespace SODP.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<Licence> builder)
         {
+            builder.Property(x => x.Contents)
+                .IsRequired();
+
             builder.HasIndex(x => x.DesignerId)
                 .HasName("IX_Designer");
 
+            builder.HasIndex(x => x.BranchId)
+                .HasName("IX_Branch");
+
             builder.ToTable("Licences");
 
-            builder.HasOne(x => x.Branch)
-                .WithMany()
-                .HasForeignKey(x => x.BranchId)
-                .HasConstraintName("FK_Branch")
-                .OnDelete(DeleteBehavior.Restrict);
+
 
         }
     }

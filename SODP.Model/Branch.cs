@@ -9,5 +9,6 @@ namespace SODP.Model
         public int Id { get; set; }
         public string Sign { get; set; }
         public string Name { get; set; }
+        public ICollection<Licence> Licences { get; set; }
     }
 }

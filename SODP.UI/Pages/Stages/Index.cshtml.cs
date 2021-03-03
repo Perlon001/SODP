@@ -28,11 +28,11 @@ namespace SODP.UI.Pages.Stages
         [BindProperty]
         public StagesViewModel StagesViewModel { get; set; }
 
-        [BindProperty]
-        public StageDTO Input { get; set; } = new StageDTO();
+        //[BindProperty]
+        //public StageDTO Input { get; set; } = new StageDTO();
 
-        [BindProperty]
-        public bool IsModalShown { get; set; }
+        //[BindProperty]
+        //public bool IsModalShown { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int currentPage = 1, int pageSize = 10, string gosign = "")
         {
@@ -54,51 +54,51 @@ namespace SODP.UI.Pages.Stages
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(bool IsModalShown)
-        {
-            ServiceResponse response;
-            if (ModelState.IsValid)
-            {
+        //public async Task<IActionResult> OnPostAsync(bool IsModalShown)
+        //{
+        //    ServiceResponse response;
+        //    if (ModelState.IsValid)
+        //    {
 
-                if (Input.Id.Equals(0))
-                {
-                    var stage = new StageDTO
-                    {
-                        Sign = Input.Sign,
-                        Title = Input.Title
-                    };
-                    response = await _stagesService.CreateAsync(stage);
-                }
-                else
-                {
-                    var stage = new StageDTO
-                    {
-                        Id = Input.Id,
-                        Title = Input.Title
-                    };
-                    response = await _stagesService.UpdateAsync(stage);
-                }
-                if (response.ValidationErrors.Count > 0)
-                {
-                    foreach (var message in response.ValidationErrors)
-                    {
-                    }
-                    return Page();
-                }
+        //        if (Input.Id.Equals(0))
+        //        {
+        //            var stage = new StageDTO
+        //            {
+        //                Sign = Input.Sign,
+        //                Title = Input.Title
+        //            };
+        //            response = await _stagesService.CreateAsync(stage);
+        //        }
+        //        else
+        //        {
+        //            var stage = new StageDTO
+        //            {
+        //                Id = Input.Id,
+        //                Title = Input.Title
+        //            };
+        //            response = await _stagesService.UpdateAsync(stage);
+        //        }
+        //        if (response.ValidationErrors.Count > 0)
+        //        {
+        //            foreach (var message in response.ValidationErrors)
+        //            {
+        //            }
+        //            return Page();
+        //        }
 
-                if (!response.Success)
-                {
-                    await OnGetAsync();
-                    return Page();
-                }
-                return RedirectToPage("Index");
-            }
-            else
-            {
-                await OnGetAsync();
-                return Page();
-            }
-        }
+        //        if (!response.Success)
+        //        {
+        //            await OnGetAsync();
+        //            return Page();
+        //        }
+        //        return RedirectToPage("Index");
+        //    }
+        //    else
+        //    {
+        //        await OnGetAsync();
+        //        return Page();
+        //    }
+        //}
 
         private async Task<IList<StageDTO>> GetStages(PageInfo pageInfo, string sign)
         {
@@ -109,12 +109,22 @@ namespace SODP.UI.Pages.Stages
             return serviceResponse.Data.Collection.ToList();
         }
 
-        public async Task<PartialViewResult> OnGetStageModalPartial()
+        public async Task<PartialViewResult> OnGetStageModalPartial(int? id)
         {
+            StageDTO stage;
+            if (id != null)
+            {
+                var response = await _stagesService.GetAsync((int)id);
+                stage = response.Data;
+            }
+            else
+            {
+                stage = new StageDTO();
+            }
             var partialViewResult = new PartialViewResult()
             {
                 ViewName = "_StagePartialView",
-                ViewData = new ViewDataDictionary<StageDTO>(ViewData, new StageDTO())
+                ViewData = new ViewDataDictionary<StageDTO>(ViewData, stage)
             };
 
             return await Task.FromResult(partialViewResult);

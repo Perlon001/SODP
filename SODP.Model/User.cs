@@ -10,12 +10,12 @@ namespace SODP.Model
         public User() : base() { }
         public User(string userName) : base(userName) { }
 
-        public string Forename { get; set; }
-        public string Surname { get; set; }
+        public string Firstname { get; set; }
+        public string Lastname { get; set; }
 
         public override string ToString()
         {
-            return Forename.ToString().Trim() + " " + Surname.ToString().Trim();
+            return Firstname.ToString().Trim() + " " + Lastname.ToString().Trim();
         }
     }
 }

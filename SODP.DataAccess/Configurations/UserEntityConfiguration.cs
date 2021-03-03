@@ -31,10 +31,10 @@ namespace SODP.DataAccess.Configurations
             builder.Property(u => u.NormalizedEmail)
                 .HasMaxLength(256);
 
-            builder.Property(u => u.Forename)
+            builder.Property(u => u.Firstname)
                 .HasMaxLength(256);
 
-            builder.Property(u => u.Surname)
+            builder.Property(u => u.Lastname)
                 .HasMaxLength(256);
 
             builder.Property(u => u.ConcurrencyStamp)

@@ -20,7 +20,7 @@
     @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
     {
         <div class="col-3">
-            <a role="button" class="btn btn-info form-control text-white" asp-area="" asp-page="/Projects/CreateUpdate"><i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowy projekt</a>
+            <a role="button" class="btn btn-info form-control text-white float-right" asp-area="" asp-page="/Projects/CreateUpdate"><i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowy projekt</a>
         </div>
     }
 

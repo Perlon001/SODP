@@ -46,11 +46,11 @@
                                 <td>
                                     <div class="row group justify-content-end mr-0">
                                         <div>
-                                            <a role="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1"
-                                               asp-page="CreateUpdate"
-                                               asp-route-Id="@stage.Id">
-                                                <i class="far fa-edit"></i>
-                                            </a>
+                                            <button type="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1" 
+                                                    data-toggle="ajax-modal" 
+                                                    data-url="@Url.Page("Index","StageModalPartial")&Id=@stage.Id">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
                                         </div>
                                         <div>
                                             <a onclick='DeleteStage("/api/Stages/@stage.Id")'
@@ -92,11 +92,11 @@
             Delete(url);
         }
     </script>
-    <script>
+    @*<script>
         $('#myModal').on('show.bs.modal', function (e) {
             console.log(document.getElementById('IsModalShown').value);
             $('#IsModalShown').val(true);
             console.log(document.getElementById('IsModalShown').value);
         })
-    </script>
+    </script>*@
 }

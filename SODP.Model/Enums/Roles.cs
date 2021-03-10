@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SODP.Domain.Enums
+namespace SODP.Model.Enums
 {
     public enum Roles
     {

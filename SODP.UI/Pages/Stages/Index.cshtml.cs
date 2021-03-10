@@ -34,7 +34,7 @@ namespace SODP.UI.Pages.Stages
         //[BindProperty]
         //public bool IsModalShown { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int currentPage = 1, int pageSize = 10, string gosign = "")
+        public async Task<IActionResult> OnGetAsync(int currentPage = 1, int pageSize = 15, string gosign = "")
         {
             var url = new StringBuilder();
             url.Append("/Stages?currentPage=:&pageSize=");

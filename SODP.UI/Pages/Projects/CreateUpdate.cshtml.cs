@@ -34,7 +34,7 @@ namespace SODP.UI.Pages.Projects
         {
             if (id == null)
             {
-                var stagesResponse = await _stagesService.GetAllAsync(1,10);
+                var stagesResponse = await _stagesService.GetAllAsync(1,0);
                 Stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
                 {
                     Value = x.Id.ToString(),

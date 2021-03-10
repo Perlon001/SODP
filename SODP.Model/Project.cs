@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using SODP.Model.Enums;
 using SODP.Model.Extensions;
 
 namespace SODP.Model
@@ -13,6 +14,7 @@ namespace SODP.Model
         public string Title { get; set; } 
         public string Description { get; set; }
         public string Location { get; set; }
+        public ProjectStatus Status { get; set; }
         public ICollection<ProjectBranch> Branches { get; set; }
 
         public virtual string Symbol 

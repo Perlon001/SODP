@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using SODP.DataAccess;
 using SODP.Domain.DTO;
-using SODP.Domain.Enums;
 using SODP.Domain.Helpers;
 using SODP.Domain.Services;
-using SODP.Domain.Validators;
 using SODP.Model;
 using System;
 using System.Collections.Generic;

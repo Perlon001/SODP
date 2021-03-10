@@ -26,11 +26,6 @@ namespace WebSODP.Application.Services
             _context = context;
         }
 
-        public async Task<ServicePageResponse<StageDTO>> GetAllAsync(int currentPage = 0, int pageSize = 0)
-        {
-            return await GetAllAsync(currentPage, pageSize, "");
-        }
-
         private bool Compare(string s1, string s2)
         {
             if (String.Compare(s1, s2) >= 0)
@@ -39,6 +34,7 @@ namespace WebSODP.Application.Services
             }
             return true;
         }
+
 
         public async Task<ServicePageResponse<StageDTO>> GetAllAsync(int currentPage = 0, int pageSize = 0, string sign = "")
         {
@@ -50,20 +46,15 @@ namespace WebSODP.Application.Services
                 {
                     pageSize = serviceResponse.Data.TotalCount;
                 }
+                IQueryable<Stage> stages = _context.Stages.OrderBy(x => x.Sign);
 
                 if (!sign.Equals(""))
                 {
-                    var count = _context.Stages
-                        .AsEnumerable()
-                        .OrderBy(x => x.Sign)
-                        .Where(x => Compare(x.Sign, sign))
-                        .Count();
-                    currentPage = (int)Math.Round(decimal.Divide(count, pageSize));
+                    stages = stages.Where(x => Compare(x.Sign, sign));
                 }
+                currentPage = (int)Math.Round(decimal.Divide(stages.Count(), pageSize));
 
-
-                var st = await _context.Stages
-                    .OrderBy(x => x.Sign)
+                var st = await stages
                     .Skip((currentPage-1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();

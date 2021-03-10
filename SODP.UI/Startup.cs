@@ -163,58 +163,9 @@ namespace SODP.UI
                 endpoints.MapRazorPages();
             });
 
-            CreateRoleAndUserAdmin(serviceProvider);
-        }
-
-        private void CreateRoleAndUserAdmin(IServiceProvider serviceProvider)
-        {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
-
-            CreateRoleIfNotExist(roleManager, "Administrator").Wait();
-            CreateRoleIfNotExist(roleManager, "User").Wait();
-            CreateRoleIfNotExist(roleManager, "ProjectManager").Wait();
-
-            CreateUserIfNotExist(userManager, "Administrator", "Administrator").Wait();
-            AddToRoleIfNotExist(userManager, "Administrator", "Administrator").Wait();
-
-            static async Task<bool> CreateRoleIfNotExist(RoleManager<Role> roleManager, string role)
+            using (var initializer = new DataInitializer(serviceProvider))
             {
-                var result = await roleManager.RoleExistsAsync(role);
-
-                if (!result)
-                {
-                    var roleResult = await roleManager.CreateAsync(new Role(role));
-                    result = roleResult.Succeeded;
-                }
-
-                return result;
-            }
-
-            static async Task<bool> CreateUserIfNotExist(UserManager<User> userManager, string userName, string password)
-            {
-                var user = await userManager.FindByNameAsync(userName);
-
-                if (user == null)
-                {
-                    var result = await userManager.CreateAsync(new User(userName), password);
-                    return result.Succeeded;
-                }
-
-                return true;
-            }
-
-            static async Task<bool> AddToRoleIfNotExist(UserManager<User> userManager, string userName, string role)
-            {
-                var user = await userManager.FindByNameAsync(userName);
-
-                if (!(await userManager.IsInRoleAsync(user, "Administrator")))
-                {
-                    var result = await userManager.AddToRoleAsync(user, role);
-                    return result.Succeeded;
-                }
-
-                return true;
+                initializer.Init();
             }
         }
     }

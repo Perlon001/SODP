@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SODP.Domain.Enums;
-using SODP.Model;
+using SODP.Model.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;

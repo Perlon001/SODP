@@ -31,9 +31,23 @@ namespace SODP.DataAccess
         {
             if(_db.Stages.Count() == 0)
             {
-                string file = System.IO.File.ReadAllText("generatestages.json");
-                var stages = JsonSerializer.Deserialize<List<Stage>>(file);
-                _db.AddRange(stages);
+                //string file = System.IO.File.ReadAllText("generatestages.json");
+                //var stages = JsonSerializer.Deserialize<List<Stage>>(file);
+                //_db.AddRange(stages);
+                _db.Stages.Add(new Stage { Sign = "PB", Title = "PROJEKT BUDOWLANY" });
+                _db.Stages.Add(new Stage { Sign = "PBZ", Title = "PROJEKT BUDOWLANY ZAMIENNY" });
+                _db.Stages.Add(new Stage { Sign = "PBZII", Title = "PROJEKT BUDOWLANY ZAMIENNY" });
+                _db.Stages.Add(new Stage { Sign = "PAB", Title = "PROJEKT ARCHITEKTONICZNO-BUDOWLANY" });
+                _db.Stages.Add(new Stage { Sign = "PT", Title = "PROJEKT TECHNICZNY" });
+                _db.Stages.Add(new Stage { Sign = "PW", Title = "PROJEKT WYKONAWCZY" });
+                _db.Stages.Add(new Stage { Sign = "PWKS", Title = "PROJEKT WYKONAWCZY KONSTRUKCJI STALOWEJ" });
+                _db.Stages.Add(new Stage { Sign = "PK", Title = "PROJEKT KONCEPCYJNY" });
+                _db.Stages.Add(new Stage { Sign = "PR", Title = "PROJEKT ROZBIÓRKI" });
+                _db.Stages.Add(new Stage { Sign = "NI", Title = "NADZÓR INWESTORSKI" });
+                _db.Stages.Add(new Stage { Sign = "NA", Title = "NADZÓR AUTORSKI" });
+                _db.Stages.Add(new Stage { Sign = "OT", Title = "OPINIA TECHNICZNA" });
+                _db.Stages.Add(new Stage { Sign = "RE", Title = "PROJEKT REMONTU" });
+                _db.Stages.Add(new Stage { Sign = "WZ", Title = "WARUNKI ZABUDOWY" });
                 _db.SaveChanges();
             }
         }

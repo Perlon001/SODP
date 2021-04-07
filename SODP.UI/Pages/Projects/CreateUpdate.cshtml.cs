@@ -15,12 +15,10 @@ namespace SODP.UI.Pages.Projects
     public class CreateUpdateModel : SODPPageModel
     {
         private readonly IStagesService _stagesService;
-        private readonly IMapper _mapper;
         private readonly IProjectsService _projectsService;
 
-        public CreateUpdateModel(IMapper mapper, IProjectsService projectsService, IStagesService stagesService)
+        public CreateUpdateModel(IProjectsService projectsService, IStagesService stagesService)
         {
-            _mapper = mapper;
             _projectsService = projectsService;
             _stagesService = stagesService;
         }
@@ -30,7 +28,7 @@ namespace SODP.UI.Pages.Projects
 
         public IEnumerable<SelectListItem> Stages { get; set; }
 
-        public async Task<IActionResult> OnGet(int? id)
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
             {
@@ -56,7 +54,7 @@ namespace SODP.UI.Pages.Projects
             return Page();
         }
 
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)
             {
@@ -67,7 +65,7 @@ namespace SODP.UI.Pages.Projects
                     var project = new ProjectCreateDTO
                     {
                         Number = Input.Number,
-                        StageId = Input.Stage.Id,
+                        StageId = Input.StageId,
                         Title = Input.Title,
                         Description = Input.Description
                     };
@@ -79,10 +77,10 @@ namespace SODP.UI.Pages.Projects
                     {
                         Id = Input.Id,
                         Number = Input.Number,
-                        StageId = Input.Stage.Id,
+                        StageId = Input.StageId,
                         Title = Input.Title,
                         Description = Input.Description
-                    }; 
+                    };
                     response = await _projectsService.UpdateAsync(project);
                 }
 
@@ -93,10 +91,14 @@ namespace SODP.UI.Pages.Projects
 
                 return RedirectToPage("Index");
             }
-            else
+            var stagesResponse = await _stagesService.GetAllAsync(1, 0);
+            Stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
             {
-                return Page();
-            }
+                Value = x.Id.ToString(),
+                Text = x.Title
+            }).ToList();
+            
+            return Page();
         }
     }
 }

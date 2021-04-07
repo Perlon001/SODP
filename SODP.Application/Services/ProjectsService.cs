@@ -7,6 +7,7 @@ using SODP.Domain.Helpers;
 using SODP.Domain.Managers;
 using SODP.Domain.Services;
 using SODP.Model;
+using SODP.Model.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,11 +28,6 @@ namespace WebSODP.Application.Services
             _folderManager = folderManager;
             _validator = validator;
             _context = context;
-        }
-
-        public async Task<ServicePageResponse<ProjectDTO>> GetAllAsync()
-        {
-            return await GetAllAsync( 0, 0);
         }
 
         public async Task<ServicePageResponse<ProjectDTO>> GetAllAsync(int currentPage = 0, int pageSize = 0)
@@ -105,7 +101,7 @@ namespace WebSODP.Application.Services
 
                 project.Normalize();
                 project.Stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == project.StageId);
-                var (Command, Success) = await _folderManager.CreateOrUpdateFolderAsync(project);
+                var (Command, Success) = await _folderManager.CreateFolderAsync(project);
                 if (!Success)
                 {
                     serviceResponse.SetError(string.Format("Błąd tworzenia folderu roboczego: {0}, komenda: {1}", createProject.ToString(), Command), 500);
@@ -152,10 +148,10 @@ namespace WebSODP.Application.Services
                 }
 
                 project.Normalize();
-                var (Command, Success) = await _folderManager.CreateOrUpdateFolderAsync(project);
+                var (Command, Success) = await _folderManager.RenameFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd tworzenia/modyfikacji folderu: {0}, komwnda: {1}", project.ToString(), Command));
+                    serviceResponse.SetError(string.Format("Błąd modyfikacji folderu: {0}, komwnda: {1}", project.ToString(), Command));
                     return serviceResponse;
                 }
 
@@ -165,6 +161,46 @@ namespace WebSODP.Application.Services
                 _context.Projects.Update(oldProject);
                 await _context.SaveChangesAsync();
                 serviceResponse.SetData( oldProject );
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse> ArchiveAsync(int id)
+        {
+            var serviceResponse = new ServiceResponse();
+            try
+            {
+                var project = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Id == id);
+                if (project == null)
+                {
+                    serviceResponse.SetError(string.Format("Project Id:{0} nie odnaleziony.", id.ToString()), 401);
+                    return serviceResponse;
+                }
+
+                // tu pierwsze pytanie czy może być SaveChangesAsync()? Tak myślę, że chyba nie.
+                project.Status = ProjectStatus.DuringArchive;
+                _context.SaveChanges();
+
+                // tu drugie pytanie jak prawidłowo wywołać taska który korzysta z zewnętrznych serwisów lub systemu operacyjnego
+                // task może się wykonaywać bardzo długo np. 1godz. 
+                // czy tu nie należałoby jednak również zastosować metody synchronicznej
+                var (Command, Success) = await _folderManager.ArchiveFolderAsync(project);
+                if (!Success)
+                {
+                    serviceResponse.SetError(string.Format("Błąd archiwizacji folderu: {0}, komenda: {1}", project.Symbol, Command));
+                    project.Status = ProjectStatus.Active;
+                    _context.SaveChanges();
+                    return serviceResponse;
+                }
+                
+                // bo z drugiego wynika trzecie pytanie kiedy poniższy zapis się wykona. Chciałbym po zakończeniu archiwizacji
+                project.Status = ProjectStatus.Archived;
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -231,6 +267,21 @@ namespace WebSODP.Application.Services
             }
 
             return serviceResponse;
+        }
+
+        public Task<ServicePageResponse<BranchDTO>> GetBranchesAsync(int projectId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ServiceResponse> AddBranchAsync(int projectId, int branchId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ServiceResponse> DeleteBranchAsync(int projectId, int branchId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

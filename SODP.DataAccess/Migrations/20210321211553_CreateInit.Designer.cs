@@ -9,8 +9,8 @@ using SODP.DataAccess;
 namespace SODP.DataAccess.Migrations
 {
     [DbContext(typeof(SODPDBContext))]
-    [Migration("20210302221732_CreateInitialize")]
-    partial class CreateInitialize
+    [Migration("20210321211553_CreateInit")]
+    partial class CreateInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -126,11 +126,11 @@ namespace SODP.DataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Sign")
                         .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(10)");
 
                     b.HasKey("Id");
 
@@ -151,9 +151,9 @@ namespace SODP.DataAccess.Migrations
 
                     b.Property<string>("Number")
                         .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(20)");
 
-                    b.Property<DateTime>("StartignDate")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
@@ -172,15 +172,15 @@ namespace SODP.DataAccess.Migrations
 
                     b.Property<string>("Firstname")
                         .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Lastname")
                         .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -198,7 +198,7 @@ namespace SODP.DataAccess.Migrations
 
                     b.Property<string>("Contents")
                         .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<int>("DesignerId")
                         .HasColumnType("int");
@@ -221,23 +221,24 @@ namespace SODP.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Location")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("Number")
                         .IsRequired()
-                        .HasColumnName("Number")
-                        .HasColumnType("Char(4)");
+                        .HasColumnType("varchar(4)");
 
                     b.Property<int>("StageId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnName("Title")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("nvarchar(250)");
 
                     b.HasKey("Id");
 
@@ -260,10 +261,10 @@ namespace SODP.DataAccess.Migrations
                     b.Property<int>("BranchId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CheckingId")
+                    b.Property<int?>("CheckingLicenceId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DesignerId")
+                    b.Property<int?>("DesignerLicenceId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProjectId")
@@ -274,10 +275,10 @@ namespace SODP.DataAccess.Migrations
                     b.HasIndex("BranchId")
                         .HasName("IX_Branch");
 
-                    b.HasIndex("CheckingId")
+                    b.HasIndex("CheckingLicenceId")
                         .HasName("IX_Checking");
 
-                    b.HasIndex("DesignerId")
+                    b.HasIndex("DesignerLicenceId")
                         .HasName("IX_Designer");
 
                     b.HasIndex("ProjectId")
@@ -297,18 +298,24 @@ namespace SODP.DataAccess.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
                     b.Property<string>("NormalizedName")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasName("IX_Name");
+
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasName("RoleNameIndex");
+                        .HasName("IX_NormalizedName");
 
                     b.ToTable("Roles");
                 });
@@ -321,11 +328,11 @@ namespace SODP.DataAccess.Migrations
 
                     b.Property<string>("Sign")
                         .IsRequired()
-                        .HasColumnType("varchar(10) CHARACTER SET utf8mb4")
-                        .HasMaxLength(10);
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -339,10 +346,10 @@ namespace SODP.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Refresh")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("RefreshTokenKey")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -367,22 +374,20 @@ namespace SODP.DataAccess.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Firstname")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
-                        .HasMaxLength(256);
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Lastname")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
-                        .HasMaxLength(256);
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -391,41 +396,45 @@ namespace SODP.DataAccess.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
                     b.Property<string>("NormalizedUserName")
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4")
+                        .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .HasName("IX_Email");
+
                     b.HasIndex("NormalizedEmail")
-                        .HasName("EmailIndex");
+                        .HasName("IX_NormalizedEmail");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex");
+                        .HasName("IX_MormalizedUserName");
 
                     b.HasIndex("UserName")
                         .IsUnique()
@@ -488,27 +497,24 @@ namespace SODP.DataAccess.Migrations
             modelBuilder.Entity("SODP.Model.Certificate", b =>
                 {
                     b.HasOne("SODP.Model.Designer", "Designer")
-                        .WithMany("Certificates")
+                        .WithMany()
                         .HasForeignKey("DesignerId")
-                        .HasConstraintName("FK_Designer_Certificate")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("SODP.Model.Licence", b =>
                 {
                     b.HasOne("SODP.Model.Branch", "Branch")
-                        .WithMany("Licences")
+                        .WithMany()
                         .HasForeignKey("BranchId")
-                        .HasConstraintName("FK_Branch_Licence")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SODP.Model.Designer", "Designer")
-                        .WithMany("Licences")
+                        .WithMany()
                         .HasForeignKey("DesignerId")
-                        .HasConstraintName("FK_Designer_Licence")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -517,8 +523,7 @@ namespace SODP.DataAccess.Migrations
                     b.HasOne("SODP.Model.Stage", "Stage")
                         .WithMany()
                         .HasForeignKey("StageId")
-                        .HasConstraintName("FK_Project_Stage")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -527,29 +532,21 @@ namespace SODP.DataAccess.Migrations
                     b.HasOne("SODP.Model.Branch", "Branch")
                         .WithMany()
                         .HasForeignKey("BranchId")
-                        .HasConstraintName("FK_ProjectBranch_Branch")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SODP.Model.Designer", "Checking")
+                    b.HasOne("SODP.Model.Licence", "CheckingLicence")
                         .WithMany()
-                        .HasForeignKey("CheckingId")
-                        .HasConstraintName("FK_ProjectBranch_Checking")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("CheckingLicenceId");
 
-                    b.HasOne("SODP.Model.Designer", "Designer")
+                    b.HasOne("SODP.Model.Licence", "DesignerLicence")
                         .WithMany()
-                        .HasForeignKey("DesignerId")
-                        .HasConstraintName("FK_ProjectBranch_Designer")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("DesignerLicenceId");
 
                     b.HasOne("SODP.Model.Project", "Project")
                         .WithMany("Branches")
                         .HasForeignKey("ProjectId")
-                        .HasConstraintName("FK_Project")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -558,8 +555,7 @@ namespace SODP.DataAccess.Migrations
                     b.HasOne("SODP.Model.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .HasConstraintName("FK_User")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

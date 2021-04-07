@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SODP.Model
+namespace SODP.Domain.DTO
 {
-    public class Designer
+    public class DesignerDTO
     {
         public int Id { get; set; }
         public string Title { get; set; }

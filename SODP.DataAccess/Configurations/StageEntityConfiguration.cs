@@ -8,21 +8,12 @@ namespace SODP.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<Stage> builder)
         {
-            //builder.Property(p => p.Sign)
-            //    .HasColumnName("ST_SIGN")
-            //    .HasColumnType("Char(10)");
-
-            //builder.Property(p => p.Description)
-            //    .IsRequired()
-            //    .HasColumnName("ST_DESCRIPTION")
-            //    .HasColumnType("Text")
-            //    .HasDefaultValue("");
-
-            //builder.HasKey(s => s.Id)
-            //    .HasName("PK_Stages");
-
             builder.Property(p => p.Sign)
-                .HasMaxLength(10)
+                .HasColumnType("varchar(10)")
+                .IsRequired();
+
+            builder.Property(p => p.Title)
+                .HasColumnType("nvarchar(50)")
                 .IsRequired();
 
             builder.ToTable("Stages");

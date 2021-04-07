@@ -12,6 +12,7 @@ namespace SODP.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Certificate> builder)
         {
             builder.Property(x => x.Number)
+                .HasColumnType("varchar(20)")
                 .IsRequired();
 
             builder.HasIndex(x => x.DesignerId)

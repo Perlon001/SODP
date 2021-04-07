@@ -92,6 +92,8 @@ namespace SODP.UI
                     .WithTransientLifetime();
             });
 
+            services.AddSingleton<FolderCommandCreatorFactory>();
+
             services.AddScoped<IFolderManager, FolderManager>();
 
             services.AddTransient<IdentityErrorDescriber, CustomIdentityErrorDescriber>();

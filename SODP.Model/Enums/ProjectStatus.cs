@@ -6,8 +6,8 @@ namespace SODP.Model.Enums
 {
     public enum ProjectStatus
     {
-        Current = 0,
-        OnBackup = 1,
-        Archival = 2
+        Active = 0,
+        DuringArchive = 1,
+        Archived = 2
     }
 }

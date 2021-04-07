@@ -49,7 +49,7 @@ namespace SODP.UI.Pages.Stages
                     Url = url.ToString()
                 },
             };
-            StagesViewModel.Stages = await GetStages(StagesViewModel.PageInfo, gosign);
+            StagesViewModel.Stages = await GetStages(StagesViewModel.PageInfo);
 
             return Page();
         }
@@ -100,9 +100,9 @@ namespace SODP.UI.Pages.Stages
         //    }
         //}
 
-        private async Task<IList<StageDTO>> GetStages(PageInfo pageInfo, string sign)
+        private async Task<IList<StageDTO>> GetStages(PageInfo pageInfo)
         {
-            var serviceResponse = await _stagesService.GetAllAsync(pageInfo.CurrentPage, pageInfo.ItemsPerPage, sign);
+            var serviceResponse = await _stagesService.GetAllAsync(pageInfo.CurrentPage, pageInfo.ItemsPerPage);
             pageInfo.TotalItems = serviceResponse.Data.TotalCount;
             pageInfo.CurrentPage = serviceResponse.Data.PageNumber;
 

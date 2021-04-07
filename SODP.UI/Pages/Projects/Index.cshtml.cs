@@ -23,7 +23,7 @@ namespace SODP.UI.Pages.Projects
 
         public async Task OnGet()
         {
-            Projects = await _projectsService.GetAllAsync(0,0);
+            Projects = await _projectsService.GetAllAsync(0,0); 
         }
 
         public async Task<IActionResult> OnPostDelete(int id)

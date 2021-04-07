@@ -26,40 +26,30 @@ namespace WebSODP.Application.Services
             _context = context;
         }
 
-        private bool Compare(string s1, string s2)
-        {
-            if (String.Compare(s1, s2) >= 0)
-            {
-                return false;
-            }
-            return true;
-        }
-
-
-        public async Task<ServicePageResponse<StageDTO>> GetAllAsync(int currentPage = 0, int pageSize = 0, string sign = "")
+        public async Task<ServicePageResponse<StageDTO>> GetAllAsync(int currentPage = 1, int pageSize = 0)
         {
             var serviceResponse = new ServicePageResponse<StageDTO>();
             try
             {
-                serviceResponse.Data.TotalCount = await _context.Stages.CountAsync();
+                IQueryable<Stage> stages = _context.Stages.OrderBy(x => x.Sign);
+                serviceResponse.Data.TotalCount = stages.Count();
                 if (pageSize == 0)
                 {
+                    currentPage = 1;
                     pageSize = serviceResponse.Data.TotalCount;
                 }
-                IQueryable<Stage> stages = _context.Stages.OrderBy(x => x.Sign);
-
-                if (!sign.Equals(""))
+                else
                 {
-                    stages = stages.Where(x => Compare(x.Sign, sign));
+                    currentPage = Math.Min(currentPage, (int)Math.Ceiling(decimal.Divide(serviceResponse.Data.TotalCount, pageSize)));
                 }
-                currentPage = (int)Math.Round(decimal.Divide(stages.Count(), pageSize));
 
                 var st = await stages
                     .Skip((currentPage-1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
 
-                serviceResponse.Data.PageNumber = Math.Min(currentPage, (int)Math.Ceiling(decimal.Divide(serviceResponse.Data.TotalCount, pageSize)));
+                serviceResponse.Data.TotalCount = stages.Count();
+                serviceResponse.Data.PageNumber = currentPage;
                 serviceResponse.Data.PageSize = pageSize;
                 serviceResponse.SetData(_mapper.Map<IList<StageDTO>>(st));
             }

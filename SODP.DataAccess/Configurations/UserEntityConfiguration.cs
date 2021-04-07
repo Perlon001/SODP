@@ -19,33 +19,54 @@ namespace SODP.DataAccess.Configurations
                 .IsConcurrencyToken();
 
             builder.Property(u => u.UserName)
-                .HasMaxLength(256)
+                .HasColumnType("nvarchar(256)")
                 .IsRequired();
 
             builder.Property(u => u.NormalizedUserName)
-                .HasMaxLength(256);
+                .HasColumnType("nvarchar(256)")
+                .IsRequired();
 
             builder.Property(u => u.Email)
-                .HasMaxLength(256);
+                .HasColumnType("nvarchar(256)");
 
             builder.Property(u => u.NormalizedEmail)
-                .HasMaxLength(256);
+                .HasColumnType("nvarchar(256)");
 
             builder.Property(u => u.Firstname)
-                .HasMaxLength(256);
+                .HasColumnType("nvarchar(256)");
 
             builder.Property(u => u.Lastname)
-                .HasMaxLength(256);
+                .HasColumnType("nvarchar(256)");
+
+            builder.Property(u => u.PhoneNumber)
+                .HasColumnType("varchar(256)");
 
             builder.Property(u => u.ConcurrencyStamp)
+                .HasColumnType("varchar(256)")
                 .ValueGeneratedOnAddOrUpdate()
                 .IsConcurrencyToken();
+
+            builder.Property(u => u.PasswordHash)
+                .HasColumnType("varchar(256)");
+
+            builder.Property(u => u.SecurityStamp)
+                .HasColumnType("varchar(256)");
 
             builder.HasKey(u => u.Id);
 
             builder.HasIndex(u => u.UserName)
                 .HasName("IX_UserName")
                 .IsUnique();
+
+            builder.HasIndex(u => u.NormalizedUserName)
+                .HasName("IX_MormalizedUserName")
+                .IsUnique();
+
+            builder.HasIndex(u => u.Email)
+                .HasName("IX_Email");
+
+            builder.HasIndex(u => u.NormalizedEmail)
+                .HasName("IX_NormalizedEmail");
 
             builder.ToTable("Users");
 

@@ -20,7 +20,7 @@ namespace SODP.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            return Ok(await _stagesService.GetAllAsync(1,10));
+            return Ok(await _stagesService.GetAllAsync(1,15));
         }
 
         //[AllowAnonymous]

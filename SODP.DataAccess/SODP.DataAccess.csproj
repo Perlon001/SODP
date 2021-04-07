@@ -18,10 +18,4 @@
     <ProjectReference Include="..\SODP.Model\SODP.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="generatestages.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

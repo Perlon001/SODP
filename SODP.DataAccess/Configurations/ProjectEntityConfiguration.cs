@@ -9,16 +9,21 @@ namespace SODP.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Project> builder)
         {
             builder.Ignore(p => p.Symbol);
-            
+
             builder.Property(p => p.Number)
-                .HasColumnName("Number")
-                .HasColumnType("Char(4)")
+                .HasColumnType("varchar(4)")
                 .IsRequired();
 
             builder.Property(p => p.Title)
-                .HasColumnName("Title")
+                .HasColumnType("nvarchar(250)")
                 .IsRequired();
-            
+
+            builder.Property(p => p.Description)
+                .HasColumnType("longtext");
+
+            builder.Property(p => p.Location)
+                .HasColumnType("nvarchar(250)");
+
             builder.HasIndex(p => new { p.Number, p.StageId })
                 .IsUnique()
                 .HasName("IX_NumberStage");
@@ -28,17 +33,17 @@ namespace SODP.DataAccess.Configurations
 
             builder.ToTable("Projects");
 
-            builder.HasOne(x => x.Stage)
-                .WithMany()
-                .HasForeignKey(x => x.StageId)
-                .HasConstraintName("FK_Project_Stage")
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.HasOne(x => x.stage)
+            //    .withmany()
+            //    .hasforeignkey(x => x.stageid)
+            //    .hasconstraintname("fk_project_stage")
+            //    .ondelete(deletebehavior.restrict);
 
-            builder.HasMany(x => x.Branches)
-                .WithOne(x => x.Project)
-                .HasForeignKey(x => x.ProjectId)
-                .HasConstraintName("FK_Project")
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.HasMany(x => x.Branches)
+            //    .WithOne(x => x.Project)
+            //    .HasForeignKey(x => x.ProjectId)
+            //    .HasConstraintName("FK_Project")
+            //    .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

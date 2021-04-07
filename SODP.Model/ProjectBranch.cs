@@ -11,9 +11,9 @@ namespace SODP.Model
         public virtual Project Project { get; set; }
         public int BranchId { get; set; }
         public Branch Branch { get; set; }
-        public int DesignerId { get; set; }
-        public virtual Designer Designer { get; set; }
-        public int CheckingId { get; set; }
-        public virtual Designer Checking { get; set; }
+        public int? DesignerLicenceId { get; set; }
+        public virtual Licence DesignerLicence { get; set; }
+        public int? CheckingLicenceId { get; set; }
+        public virtual Licence CheckingLicence { get; set; }
     }
 }

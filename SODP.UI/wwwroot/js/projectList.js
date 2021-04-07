@@ -9,7 +9,7 @@ $(document).ready(function () {
         data: ProjectsArray,
         columns: [
             { data: "number" },
-            { data: "stage.sign" },
+            { data: "stageSign" },
             {
                 data: "title",
                 render: function (data, type, row) {
@@ -23,22 +23,6 @@ $(document).ready(function () {
                 },
                 width: "15%",
                 visible: RoleCheck
-            }
-        ],
-        dom: 'Bfrtip',
-        buttons: [
-            {
-                extend: 'copy',
-                text: 'Schowek'
-            },
-            {
-                extend: 'excel',
-                text: 'Excel',
-                className: 'excelButton'
-            },
-            {
-                extend: 'pdf',
-                text: 'Pdf'
             }
         ]
     });

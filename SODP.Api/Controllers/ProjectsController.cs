@@ -29,6 +29,12 @@ namespace SODP.Api.Controllers
             return Ok(await _projectsService.GetAllAsync(currentPage: page_number, pageSize: page_size));
         }
 
+        [HttpPost("{id}")]
+        public async Task<IActionResult> Archive(int id)
+        {
+            return Ok(await _projectsService.ArchiveAsync(id));
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

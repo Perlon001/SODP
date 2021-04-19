@@ -1,14 +1,15 @@
-﻿function Delete(url) {
+﻿function Archive(url) {
     swal({
         title: "Czy jesteś pewien?",
         text: "Operacja nie może być cofnięta.",
         icon: "warning",
         buttons: true,
         danegerMode: true
-    }).then((willDelete) => {
-        if (willDelete) {
+    }).then((willArchive) => {
+        console.log(willArchive);
+        if (willArchive) {
             $.ajax({
-                type: "DELETE",
+                type: "POST",
                 url: url,
                 success: function (data) {
                     if (data.success) {

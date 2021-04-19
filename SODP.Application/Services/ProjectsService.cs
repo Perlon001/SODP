@@ -41,11 +41,12 @@ namespace WebSODP.Application.Services
                     pageSize = serviceResponse.Data.TotalCount;
                 }
                 var projects = await _context.Projects.Include(s => s.Stage)
-                   .OrderBy(x => x.Number)
-                   .ThenBy(y => y.Stage.Sign)
-                   .Skip(currentPage * pageSize)
-                   .Take(pageSize)
-                   .ToListAsync();
+                    .Where(x => x.Status == 0)
+                    .OrderBy(x => x.Number)
+                    .ThenBy(y => y.Stage.Sign)
+                    .Skip(currentPage * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
                 serviceResponse.Data.PageNumber = currentPage;
                 serviceResponse.Data.PageSize = pageSize;
                 serviceResponse.SetData(_mapper.Map<IList<ProjectDTO>>(projects));

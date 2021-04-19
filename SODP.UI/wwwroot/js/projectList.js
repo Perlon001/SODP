@@ -32,6 +32,7 @@ function RenderButton(data) {
     var renderTags = `<div class="row group justify-content-center">`;
     renderTags += `<a href='/Projects/CreateUpdate?id=${data}' class='btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1' style="cursor:pointer; width=70px;"><i class="far fa-edit"></i></a>`;
     renderTags += `<a onclick = 'Delete("/api/Projects/${data}")' class='btn btn-sm btn-danger text-white mb-0 mt-0 ml-1 mr-1 p-1' style = "cursor:pointer; width=70px;" > <i class="far fa-trash-alt"></i></a >`;
+    renderTags += `<a onclick = 'Archive("/api/Projects/${data}")' class='btn btn-sm btn-success text-white mb-0 mt-0 ml-1 mr-1 p-1' style = "cursor:pointer; width=70px;" > <i class="fas fa-archive"></i></a >`;
     renderTags += `</div >`;
     renderTags += `<div id="deleteProjectModal" class="modal fade">`;
     renderTags += `<div class="modal-dialog">`;

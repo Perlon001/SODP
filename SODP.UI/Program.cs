@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SODP.DataAccess;
+using SODP.Model.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,9 @@ namespace SODP.UI
                 var db = scope.ServiceProvider.GetRequiredService<SODPDBContext>();
                 db.Database.Migrate();
                 scope.ServiceProvider.GetRequiredService<UserInitializer>().UserInit();
-                scope.ServiceProvider.GetRequiredService<DataInitializer>().DataInit();
+                scope.ServiceProvider.GetRequiredService<DataInitializer>().LoadStagesFromJSON(configuration.GetSection("AppSettings:InitStagesJSON").Value);
+                scope.ServiceProvider.GetRequiredService<DataInitializer>().ImportProjectsFromStore(ProjectStatus.Archived);
+                scope.ServiceProvider.GetRequiredService<DataInitializer>().ImportProjectsFromStore(ProjectStatus.Active);
             }
 
             host.Run();

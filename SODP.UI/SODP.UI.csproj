@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="generatestages.json" />
+    <Content Remove="stages.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="generatestages.json">
+    <None Include="stages.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

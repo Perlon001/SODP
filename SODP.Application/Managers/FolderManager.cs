@@ -21,7 +21,7 @@ namespace SODP.Application.Managers
         {
             _configuration = configuration;
             _folderCommandCreator = factory.GetFolderCommandCreator();
-            _projectFolder = _configuration.GetSection("AppSettings:ProjectFolder").Value;
+            _projectFolder = _configuration.GetSection("AppSettings:ActiveFolder").Value;
             _archiveFolder = _configuration.GetSection("AppSettings:ArchiveFolder").Value;
         }
 

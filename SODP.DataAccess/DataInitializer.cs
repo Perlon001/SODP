@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SODP.Model;
+using SODP.Model.Enums;
 using SODP.Model.Extensions;
 using System;
 using System.Collections.Generic;
@@ -20,42 +21,36 @@ namespace SODP.DataAccess
             _context = context;
         }
 
-        public void DataInit()
+        public void LoadStagesFromJSON(string jsonStages = "")
         {
-            LoadStages();
-            ImportProjectFromStore();
-        }
-
-        private void LoadStages()
-        {
-            if(_context.Stages.Count() == 0)
+            if((_context.Stages.Count() == 0) && (File.Exists(jsonStages)))
             {
-                string file = File.ReadAllText("generatestages.json");
+                var file = File.ReadAllText(jsonStages);
                 var stages = JsonSerializer.Deserialize<List<Stage>>(file);
                 _context.AddRange(stages);
-                //_context.Stages.Add(new Stage { Sign = "PB", Title = "PROJEKT BUDOWLANY" });
-                //_context.Stages.Add(new Stage { Sign = "PBZ", Title = "PROJEKT BUDOWLANY ZAMIENNY" });
-                //_context.Stages.Add(new Stage { Sign = "PBZII", Title = "PROJEKT BUDOWLANY ZAMIENNY" });
-                //_context.Stages.Add(new Stage { Sign = "PAB", Title = "PROJEKT ARCHITEKTONICZNO-BUDOWLANY" });
-                //_context.Stages.Add(new Stage { Sign = "PT", Title = "PROJEKT TECHNICZNY" });
-                //_context.Stages.Add(new Stage { Sign = "PW", Title = "PROJEKT WYKONAWCZY" });
-                //_context.Stages.Add(new Stage { Sign = "PWKS", Title = "PROJEKT WYKONAWCZY KONSTRUKCJI STALOWEJ" });
-                //_context.Stages.Add(new Stage { Sign = "PK", Title = "PROJEKT KONCEPCYJNY" });
-                //_context.Stages.Add(new Stage { Sign = "PR", Title = "PROJEKT ROZBIÓRKI" });
-                //_context.Stages.Add(new Stage { Sign = "NI", Title = "NADZÓR INWESTORSKI" });
-                //_context.Stages.Add(new Stage { Sign = "NA", Title = "NADZÓR AUTORSKI" });
-                //_context.Stages.Add(new Stage { Sign = "OT", Title = "OPINIA TECHNICZNA" });
-                //_context.Stages.Add(new Stage { Sign = "RE", Title = "PROJEKT REMONTU" });
-                //_context.Stages.Add(new Stage { Sign = "WZ", Title = "WARUNKI ZABUDOWY" });
                 _context.SaveChanges();
-                //var json = JsonSerializer.Serialize(_context.Stages);
-                //File.WriteAllText(@"generatestages.json", json);
             }
         }
-
-        private void ImportProjectFromStore()
+        public void ImportProjectsFromStore(ProjectStatus status)
         {
-            var directory = Directory.EnumerateDirectories(_configuration.GetSection("AppSettings:ProjectFolder").Value);
+            IConfigurationSection section;
+            switch (status)
+            {
+                case ProjectStatus.Active:
+                    section = _configuration.GetSection("AppSettings:ActiveFolder");
+                    break;
+                case ProjectStatus.Archived:
+                    section = _configuration.GetSection("AppSettings:ArchiveFolder");
+                    break;
+                default:
+                    return;
+            }
+            ImportProjectsFromStore(section.Value, status);
+        }
+
+        private void ImportProjectsFromStore(string projectsFolder, ProjectStatus status)
+        {
+            var directory = Directory.EnumerateDirectories(projectsFolder);
 
             foreach (var item in directory)
             {
@@ -65,7 +60,8 @@ namespace SODP.DataAccess
                 {
                     Number = sign.Substring(0, 4),
                     Stage = new Stage() { Sign = sign[4..] },
-                    Title = localization[(sign.Length + 1)..]
+                    Title = localization[(sign.Length + 1)..],
+                    Status = status
                 };
                 var stage = _context.Stages.FirstOrDefault(x => x.Sign == currentProject.Stage.Sign);
                 if (stage == null)

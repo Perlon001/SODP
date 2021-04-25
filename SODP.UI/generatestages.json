@@ -1,3 +1,58 @@
-{
-
-}
+[
+  {
+    "Sign": "PB",
+    "Title": "PROJEKT BUDOWLANY"
+  },
+  {
+    "Sign": "PBZ",
+    "Title": "PROJEKT BUDOWLANY ZAMIENNY"
+  },
+  {
+    "Sign": "PBZII",
+    "Title": "PROJEKT BUDOWLANY ZAMIENNY"
+  },
+  {
+    "Sign": "PAB",
+    "Title": "PROJEKT ARCHITEKTONICZNO-BUDOWLANY"
+  },
+  {
+    "Sign": "PT",
+    "Title": "PROJEKT TECHNICZNY"
+  },
+  {
+    "Sign": "PW",
+    "Title": "PROJEKT WYKONAWCZY"
+  },
+  {
+    "Sign": "PWKS",
+    "Title": "PROJEKT WYKONAWCZY KONSTRUKCJI STALOWEJ"
+  },
+  {
+    "Sign": "PK",
+    "Title": "PROJEKT KONCEPCYJNY"
+  },
+  {
+    "Sign": "PR",
+    "Title": "PROJEKT ROZBI\u00D3RKI"
+  },
+  {
+    "Sign": "NI",
+    "Title": "NADZ\u00D3R INWESTORSKI"
+  },
+  {
+    "Sign": "NA",
+    "Title": "NADZ\u00D3R AUTORSKI"
+  },
+  {
+    "Sign": "OT",
+    "Title": "OPINIA TECHNICZNA"
+  },
+  {
+    "Sign": "RE",
+    "Title": "PROJEKT REMONTU"
+  },
+  {
+    "Sign": "WZ",
+    "Title": "WARUNKI ZABUDOWY"
+  }
+]

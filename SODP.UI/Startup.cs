@@ -40,6 +40,8 @@ namespace SODP.UI
                     AppDomain.CurrentDomain.Load(Path.GetFileNameWithoutExtension(filePath));
                 }
             }
+
+
         }
 
         public IConfiguration Configuration { get; }
@@ -92,6 +94,10 @@ namespace SODP.UI
                     .WithTransientLifetime();
             });
 
+            services.AddScoped<UserInitializer>();
+
+            services.AddScoped<DataInitializer>();
+
             services.AddSingleton<FolderCommandCreatorFactory>();
 
             services.AddScoped<IFolderManager, FolderManager>();
@@ -105,15 +111,15 @@ namespace SODP.UI
                     b => b.CharSetBehavior(CharSetBehavior.NeverAppend));
             });
 
-            services.AddIdentity<User, Role>(options => 
-                {
-                    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
-                    options.Password.RequiredLength = int.Parse(Configuration.GetSection("PasswordPolicy:RequiredLength").Value);
-                    options.Password.RequireLowercase = bool.Parse(Configuration.GetSection("PasswordPolicy:RequireLowercase").Value);
-                    options.Password.RequireUppercase = bool.Parse(Configuration.GetSection("PasswordPolicy:RequireUppercase").Value);
-                    options.Password.RequireNonAlphanumeric = bool.Parse(Configuration.GetSection("PasswordPolicy:RequireNonAlphanumeric").Value);
-                    options.Password.RequireDigit = bool.Parse(Configuration.GetSection("PasswordPolicy:RequireDigit").Value);
-                })
+            services.AddIdentity<User, Role>(options =>   
+            {
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
+                options.Password.RequiredLength = int.Parse(Configuration.GetSection("PasswordPolicy:RequiredLength").Value);
+                options.Password.RequireLowercase = bool.Parse(Configuration.GetSection("PasswordPolicy:RequireLowercase").Value);
+                options.Password.RequireUppercase = bool.Parse(Configuration.GetSection("PasswordPolicy:RequireUppercase").Value);
+                options.Password.RequireNonAlphanumeric = bool.Parse(Configuration.GetSection("PasswordPolicy:RequireNonAlphanumeric").Value);
+                options.Password.RequireDigit = bool.Parse(Configuration.GetSection("PasswordPolicy:RequireDigit").Value);
+            })  
                 .AddEntityFrameworkStores<SODPDBContext>()
                 .AddDefaultTokenProviders()
                 .AddDefaultUI();
@@ -135,7 +141,7 @@ namespace SODP.UI
                 .AddRazorRuntimeCompilation();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -165,10 +171,6 @@ namespace SODP.UI
                 endpoints.MapRazorPages();
             });
 
-            using (var initializer = new DataInitializer(serviceProvider))
-            {
-                initializer.Init();
-            }
         }
     }
 }

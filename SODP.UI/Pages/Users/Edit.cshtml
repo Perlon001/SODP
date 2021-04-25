@@ -22,23 +22,30 @@
 
         <div class="form-group row">
             <div class="col-12 col-md-7">
-                <input asp-for="CurrentUser.Forename" class="form-control" placeholder="Imię" />
+                <input asp-for="CurrentUser.Firstname" class="form-control" placeholder="Imię" />
             </div>
-            <span asp-validation-for="CurrentUser.Forename" style="font-size:14px" class="text-danger"></span>
+            <span asp-validation-for="CurrentUser.Firstname" style="font-size:14px" class="text-danger"></span>
         </div>
 
         <div class="form-group row">
             <div class="col-12 col-md-7">
-                <input asp-for="CurrentUser.Surname" class="form-control" placeholder="Nazwisko" />
+                <input asp-for="CurrentUser.Lastname" class="form-control" placeholder="Nazwisko" />
             </div>
-            <span asp-validation-for="CurrentUser.Surname" style="font-size:14px" class="text-danger"></span>
+            <span asp-validation-for="CurrentUser.Lastname" style="font-size:14px" class="text-danger"></span>
         </div>
 
         @foreach (var role in Model.AllRoles)
         {
             <div class="form-group row">
                 <div class="col-12">
-                    <input asp-for="AllRoles[role.Key]" type="checkbox" checked="@Model.CurrentUser.Roles.Contains(role.Key)" />
+                    @if (Model.CurrentUser.UserName == "Administrator" && role.Key == "Administrator")
+                    {
+                        <input asp-for="AllRoles[role.Key]" type="checkbox" checked="@Model.CurrentUser.Roles.Contains(role.Key)" disabled="disabled" />
+                    }
+                    else
+                    {
+                        <input asp-for="AllRoles[role.Key]" type="checkbox" checked="@Model.CurrentUser.Roles.Contains(role.Key)" />
+                    }
                     <label>@role.Key</label>
                 </div>
             </div>

@@ -1,106 +1,85 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
 using SODP.Model;
+using SODP.Model.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 
 namespace SODP.DataAccess
 {
     public class DataInitializer : IDisposable
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly SODPDBContext _db;
+        private readonly IConfiguration _configuration;
+        private readonly SODPDBContext _context;
 
-        public DataInitializer(IServiceProvider serviceProvider)
+        public DataInitializer(IConfiguration configuration, SODPDBContext context)
         {
-            _serviceProvider = serviceProvider;
-            _db = _serviceProvider.GetRequiredService<SODPDBContext>();
+            _configuration = configuration;
+            _context = context;
         }
 
-        public void Init()
+        public void DataInit()
         {
-            IdentityUserInit();
             LoadStages();
+            ImportProjectFromStore();
         }
 
         private void LoadStages()
         {
-            if(_db.Stages.Count() == 0)
+            if(_context.Stages.Count() == 0)
             {
-                //string file = System.IO.File.ReadAllText("generatestages.json");
-                //var stages = JsonSerializer.Deserialize<List<Stage>>(file);
-                //_db.AddRange(stages);
-                _db.Stages.Add(new Stage { Sign = "PB", Title = "PROJEKT BUDOWLANY" });
-                _db.Stages.Add(new Stage { Sign = "PBZ", Title = "PROJEKT BUDOWLANY ZAMIENNY" });
-                _db.Stages.Add(new Stage { Sign = "PBZII", Title = "PROJEKT BUDOWLANY ZAMIENNY" });
-                _db.Stages.Add(new Stage { Sign = "PAB", Title = "PROJEKT ARCHITEKTONICZNO-BUDOWLANY" });
-                _db.Stages.Add(new Stage { Sign = "PT", Title = "PROJEKT TECHNICZNY" });
-                _db.Stages.Add(new Stage { Sign = "PW", Title = "PROJEKT WYKONAWCZY" });
-                _db.Stages.Add(new Stage { Sign = "PWKS", Title = "PROJEKT WYKONAWCZY KONSTRUKCJI STALOWEJ" });
-                _db.Stages.Add(new Stage { Sign = "PK", Title = "PROJEKT KONCEPCYJNY" });
-                _db.Stages.Add(new Stage { Sign = "PR", Title = "PROJEKT ROZBIÓRKI" });
-                _db.Stages.Add(new Stage { Sign = "NI", Title = "NADZÓR INWESTORSKI" });
-                _db.Stages.Add(new Stage { Sign = "NA", Title = "NADZÓR AUTORSKI" });
-                _db.Stages.Add(new Stage { Sign = "OT", Title = "OPINIA TECHNICZNA" });
-                _db.Stages.Add(new Stage { Sign = "RE", Title = "PROJEKT REMONTU" });
-                _db.Stages.Add(new Stage { Sign = "WZ", Title = "WARUNKI ZABUDOWY" });
-                _db.SaveChanges();
+                string file = File.ReadAllText("generatestages.json");
+                var stages = JsonSerializer.Deserialize<List<Stage>>(file);
+                _context.AddRange(stages);
+                //_context.Stages.Add(new Stage { Sign = "PB", Title = "PROJEKT BUDOWLANY" });
+                //_context.Stages.Add(new Stage { Sign = "PBZ", Title = "PROJEKT BUDOWLANY ZAMIENNY" });
+                //_context.Stages.Add(new Stage { Sign = "PBZII", Title = "PROJEKT BUDOWLANY ZAMIENNY" });
+                //_context.Stages.Add(new Stage { Sign = "PAB", Title = "PROJEKT ARCHITEKTONICZNO-BUDOWLANY" });
+                //_context.Stages.Add(new Stage { Sign = "PT", Title = "PROJEKT TECHNICZNY" });
+                //_context.Stages.Add(new Stage { Sign = "PW", Title = "PROJEKT WYKONAWCZY" });
+                //_context.Stages.Add(new Stage { Sign = "PWKS", Title = "PROJEKT WYKONAWCZY KONSTRUKCJI STALOWEJ" });
+                //_context.Stages.Add(new Stage { Sign = "PK", Title = "PROJEKT KONCEPCYJNY" });
+                //_context.Stages.Add(new Stage { Sign = "PR", Title = "PROJEKT ROZBIÓRKI" });
+                //_context.Stages.Add(new Stage { Sign = "NI", Title = "NADZÓR INWESTORSKI" });
+                //_context.Stages.Add(new Stage { Sign = "NA", Title = "NADZÓR AUTORSKI" });
+                //_context.Stages.Add(new Stage { Sign = "OT", Title = "OPINIA TECHNICZNA" });
+                //_context.Stages.Add(new Stage { Sign = "RE", Title = "PROJEKT REMONTU" });
+                //_context.Stages.Add(new Stage { Sign = "WZ", Title = "WARUNKI ZABUDOWY" });
+                _context.SaveChanges();
+                //var json = JsonSerializer.Serialize(_context.Stages);
+                //File.WriteAllText(@"generatestages.json", json);
             }
         }
 
-        private void IdentityUserInit()
+        private void ImportProjectFromStore()
         {
-            var roleManager = _serviceProvider.GetRequiredService<RoleManager<Role>>();
-            var userManager = _serviceProvider.GetRequiredService<UserManager<User>>();
+            var directory = Directory.EnumerateDirectories(_configuration.GetSection("AppSettings:ProjectFolder").Value);
 
-            CreateRoleIfNotExist(roleManager, "Administrator").Wait();
-            CreateRoleIfNotExist(roleManager, "User").Wait();
-            CreateRoleIfNotExist(roleManager, "ProjectManager").Wait();
-
-            CreateUserIfNotExist(userManager, "Administrator", "Administrator").Wait();
-            AddToRoleIfNotExist(userManager, "Administrator", "Administrator").Wait();
-
-            static async Task<bool> CreateRoleIfNotExist(RoleManager<Role> roleManager, string role)
+            foreach (var item in directory)
             {
-                var result = await roleManager.RoleExistsAsync(role);
-
-                if (!result)
+                var localization = Path.GetFileName(item);
+                var sign = localization.GetUntilOrEmpty("_");
+                var currentProject = new Project()
                 {
-                    var roleResult = await roleManager.CreateAsync(new Role(role));
-                    result = roleResult.Succeeded;
-                }
-
-                return result;
-            }
-
-            static async Task<bool> CreateUserIfNotExist(UserManager<User> userManager, string userName, string password)
-            {
-                var user = await userManager.FindByNameAsync(userName);
-
-                if (user == null)
+                    Number = sign.Substring(0, 4),
+                    Stage = new Stage() { Sign = sign[4..] },
+                    Title = localization[(sign.Length + 1)..]
+                };
+                var stage = _context.Stages.FirstOrDefault(x => x.Sign == currentProject.Stage.Sign);
+                if (stage == null)
                 {
-                    var result = await userManager.CreateAsync(new User(userName), password);
-                    return result.Succeeded;
+                    stage = new Stage() { Sign = currentProject.Stage.Sign, Title = "" };
                 }
+                currentProject.Stage = stage;
 
-                return true;
-            }
-
-            static async Task<bool> AddToRoleIfNotExist(UserManager<User> userManager, string userName, string role)
-            {
-                var user = await userManager.FindByNameAsync(userName);
-
-                if (!(await userManager.IsInRoleAsync(user, "Administrator")))
+                var project = _context.Projects.FirstOrDefault(x => x.Number == currentProject.Number && x.Stage.Sign == currentProject.Stage.Sign);
+                if (project == null)
                 {
-                    var result = await userManager.AddToRoleAsync(user, role);
-                    return result.Succeeded;
+                    _context.Projects.Add(currentProject);
+                    _context.SaveChanges();
                 }
-
-                return true;
             }
         }
 

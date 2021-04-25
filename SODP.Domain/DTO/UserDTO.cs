@@ -8,8 +8,8 @@ namespace SODP.Domain.DTO
     {
         public int Id { get; set; }
         public string UserName { get; set; }
-        public string Forename { get; set; }
-        public string Surname { get; set; }
+        public string Firstname { get; set; }
+        public string Lastname { get; set; }
         public IList<string> Roles { get; set; }
     }
 }

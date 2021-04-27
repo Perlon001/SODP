@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SODP.Domain\SODP.Domain.csproj" />
     <ProjectReference Include="..\SODP.Model\SODP.Model.csproj" />
   </ItemGroup>
 

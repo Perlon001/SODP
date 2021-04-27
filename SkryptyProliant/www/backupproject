@@ -1,0 +1,23 @@
+#!/bin/bash
+if [ $# -lt 1 ]
+then
+    echo "brak parametru [katalog do spakowania]"
+else
+    if [ -d "./$1" ]
+    then
+	find /working/aktualne/$1 -type f -name *.bak -exec rm {} +
+	find /working/aktualne/$1 -type f -name *.tmp -exec rm {} +
+	mv -v /working/aktualne/$1 /store0/zakonczone
+	find /store0/zakonczone/$1 -exec chown pmanager:biuro {} +
+	find /store0/zakonczone/$1 -type f -exec chmod 0664 {} +
+	find /store0/zakonczone/$1 -type d -exec chmod 0775 {} +
+	DATA=`date +%Y%m%d`
+	echo Trwa generowanie archiwum...
+	7z a -t7z /home/kasia/kopia_zakonczone/$1_$DATA.7z /store0/zakonczone/$1 -mx9 >> /home/kasia/$1_backup.log
+	find /home/kasia/kopia_zakonczone/$1_$DATA.7z -exec chown kasia:archiwum {} +
+	echo Generowanie archiwum zakonczone.
+	echo backup-$DATA >> /home/kasia/$1_backup.log
+    else
+	echo "Katalog $1 nie istnieje"
+    fi
+fi

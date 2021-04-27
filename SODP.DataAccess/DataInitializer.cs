@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using SODP.Domain.Validators;
 using SODP.Model;
 using SODP.Model.Enums;
 using SODP.Model.Extensions;
@@ -31,6 +32,7 @@ namespace SODP.DataAccess
                 _context.SaveChanges();
             }
         }
+
         public void ImportProjectsFromStore(ProjectStatus status)
         {
             IConfigurationSection section;
@@ -46,14 +48,21 @@ namespace SODP.DataAccess
                     return;
             }
             ImportProjectsFromStore(section.Value, status);
+            //if (_context.Projects.Count() == 0)
+            //{
+            //}
         }
 
         private void ImportProjectsFromStore(string projectsFolder, ProjectStatus status)
         {
             var directory = Directory.EnumerateDirectories(projectsFolder);
-
+            var validator = new ProjectNameValidator();
             foreach (var item in directory)
             {
+                if (!validator.Validate(item))
+                {
+                    continue;
+                }
                 var localization = Path.GetFileName(item);
                 var sign = localization.GetUntilOrEmpty("_");
                 var currentProject = new Project()

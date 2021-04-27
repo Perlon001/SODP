@@ -1,0 +1,6 @@
+#!/bin/bash
+chown -R pmanager:pmanagers *
+find . -type d -exec chmod 0775 {} +
+find . -type f -exec chmod 0664 {} +
+chmod 0774 uprawnienia
+chmod 0774 createproject renameproject removeproject

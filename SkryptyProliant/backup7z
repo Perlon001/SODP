@@ -1,0 +1,36 @@
+#!/bin/bash
+if [ $# -eq 0 ]
+then
+    echo Argument required.
+else
+    SOURCE=$1
+    DATE=$(date +%Y%m%d)
+    FILES=$(ls -F /working/${SOURCE} | grep / | xargs -n 1 basename)
+    LOG=/working/backup_${SOURCE}_${DATE}.log
+    mkdir /store1/${SOURCE}/${DATE}
+    echo "mkdir: utworzony katalog '/store/${SOURCE}/${DATE}'" >> $LOG
+    echo "[$(date)] : start copying" >> $LOG
+    echo >> ${LOG}
+    for PLIK in $FILES
+    do
+	echo "[$(date)] : start copying ${PLIK}" >> $LOG
+	cp -r /working/${SOURCE}/${PLIK} /store1/${SOURCE}/${DATE}
+	echo "[$(date)] : end copying ${PLIK}" >> $LOG
+	echo >> $LOG
+    done
+    FILES=$(ls -F /store1/${SOURCE}/${DATE} | grep / | xargs -n 1 basename)
+    sshpass -p 5HSL4B ssh proliant@192.168.1.4 -p 2222 "mkdir -p /volume1/backup/kopia_${SOURCE}_${DATE}"
+    for PLIK in $FILES
+    do
+	echo "[$(date)] : start compressing ${PLIK}"
+	7z a -t7z /store1/${SOURCE}/${PLIK}_${DATE}.7z /store1/${SOURCE}/${DATE}/${PLIK} -mx9
+	rm -rf /store1/${SOURCE}/${DATE}/${PLIK}
+	echo "[$(date)] : end compressing ${PLIK}"
+	echo "[$(date)] : start copying to synology ${PLIK}"
+	sshpass -p 5HSL4B scp -P 2222 /store1/${SOURCE}/${PLIK}_$DATE.7z proliant@192.168.1.4:/volume1/backup/kopia_${SOURCE}_${DATE}/${PLIK}_${DATE}.7z
+	rm -f /store1/${SOURCE}/${PLIK}_$DATE.7z
+	echo "[$(date)] : end copying to synology ${PLIK}"
+	echo
+    done
+    rm -f /store1/${SOURCE}
+fi

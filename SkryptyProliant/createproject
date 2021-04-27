@@ -1,0 +1,43 @@
+#!/bin/bash
+DIR=$1
+if [ $# -lt 1 ]
+then
+	echo "wymagany parametr [numer projektu]"
+	echo "przykład wywołania: ./createprojet 2001"
+	echo "stworzy projekt /working/aktualne/2001"
+else
+    if [ -d "$DIR" ]
+    then
+		echo "Katalog $DIR już istnieje"
+    else
+		mkdir $DIR
+		mkdir $DIR/01_architektura
+		mkdir $DIR/02_konstrukcja
+		mkdir $DIR/03_instalacje_sanitarne
+		mkdir $DIR/04_instalacje_elektryczne
+		mkdir $DIR/05_drogi
+		mkdir $DIR/06_pzt
+		mkdir $DIR/07_technologia
+		mkdir $DIR/08_korespondencja
+		mkdir $DIR/09_dfp
+		mkdir $DIR/10_przedmiary
+		mkdir $DIR/99_hydepark
+
+		chown -R pmanager:pmanagers     $DIR
+		chown -R pmanager:architekci    $DIR/01_architektura
+		chown -R pmanager:konstruktorzy $DIR/02_konstrukcja
+		chown -R pmanager:instalatorzy  $DIR/03_instalacje_sanitarne
+		chown -R pmanager:elektrycy     $DIR/04_instalacje_elektryczne
+		chown -R pmanager:drogowcy      $DIR/05_drogi
+		chown -R pmanager:pzt           $DIR/06_pzt
+		chown -R pmanager:technolodzy   $DIR/07_technologia
+		chown -R pmanager:biuro         $DIR/08_korespondencja
+		chown -R pmanager:biuro         $DIR/09_dfp
+		chown -R pmanager:przedmiary    $DIR/10_przedmiary
+		chown -R nobody:nogroup         $DIR/99_hydepark
+		
+		find $DIR -type f -exec chmod 0664 {} +
+		find $DIR -type d -exec chmod 0775 {} +
+		chmod 0777 -R $DIR/99_hydepark
+    fi
+fi

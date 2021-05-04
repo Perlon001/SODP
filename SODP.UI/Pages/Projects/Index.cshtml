@@ -10,7 +10,6 @@
 <script>
     var RoleCheck = @(User.IsInRole("ProjectManager") ? "true" : "false");
     var ProjectsArray = @Json.Serialize(Model.Projects.Data.Collection);
-    console.log(ProjectsArray);
 </script>
 
 <br />

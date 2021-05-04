@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using SODP.Domain.Validators;
 using SODP.Model;
 using SODP.Model.Enums;
 using SODP.Model.Extensions;
@@ -22,9 +21,16 @@ namespace SODP.DataAccess
             _context = context;
         }
 
-        public void LoadStagesFromJSON(string jsonStages = "")
+        public void LoadData()
         {
-            if((_context.Stages.Count() == 0) && (File.Exists(jsonStages)))
+            LoadStagesFromJSON();
+            ImportProjectsFromStore();
+        }
+
+        private void LoadStagesFromJSON()
+        {
+            var jsonStages = _configuration.GetSection("AppSettings:InitStagesJSON").Value;
+            if ((_context.Stages.Count() == 0) && (File.Exists(jsonStages)))
             {
                 var file = File.ReadAllText(jsonStages);
                 var stages = JsonSerializer.Deserialize<List<Stage>>(file);
@@ -33,24 +39,10 @@ namespace SODP.DataAccess
             }
         }
 
-        public void ImportProjectsFromStore(ProjectStatus status)
+        private void ImportProjectsFromStore()
         {
-            IConfigurationSection section;
-            switch (status)
-            {
-                case ProjectStatus.Active:
-                    section = _configuration.GetSection("AppSettings:ActiveFolder");
-                    break;
-                case ProjectStatus.Archived:
-                    section = _configuration.GetSection("AppSettings:ArchiveFolder");
-                    break;
-                default:
-                    return;
-            }
-            ImportProjectsFromStore(section.Value, status);
-            //if (_context.Projects.Count() == 0)
-            //{
-            //}
+            ImportProjectsFromStore(_configuration.GetSection("AppSettings:ActiveFolder").Value, ProjectStatus.Active);
+            ImportProjectsFromStore(_configuration.GetSection("AppSettings:ArchiveFolder").Value, ProjectStatus.Archived);
         }
 
         private void ImportProjectsFromStore(string projectsFolder, ProjectStatus status)

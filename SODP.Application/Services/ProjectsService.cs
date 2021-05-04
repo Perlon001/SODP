@@ -102,10 +102,10 @@ namespace WebSODP.Application.Services
 
                 project.Normalize();
                 project.Stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == project.StageId);
-                var (Command, Success) = await _folderManager.CreateFolderAsync(project);
+                var (Success, Message) = await _folderManager.CreateFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd tworzenia folderu roboczego: {0}, komenda: {1}", createProject.ToString(), Command), 500);
+                    serviceResponse.SetError(String.Format("Błąd tworzenia folderu roboczego: {0}", Message), 500);
                     
                     return serviceResponse;
                 }
@@ -149,10 +149,10 @@ namespace WebSODP.Application.Services
                 }
 
                 project.Normalize();
-                var (Command, Success) = await _folderManager.RenameFolderAsync(project);
+                var (Success, Message) = await _folderManager.RenameFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd modyfikacji folderu: {0}, komwnda: {1}", project.ToString(), Command));
+                    serviceResponse.SetError(String.Format("Błąd modyfikacji folderu: {0}", Message));
                     return serviceResponse;
                 }
 
@@ -190,10 +190,10 @@ namespace WebSODP.Application.Services
                 // tu drugie pytanie jak prawidłowo wywołać taska który korzysta z zewnętrznych serwisów lub systemu operacyjnego
                 // task może się wykonaywać bardzo długo np. 1godz. 
                 // czy tu nie należałoby jednak również zastosować metody synchronicznej
-                var (Command, Success) = await _folderManager.ArchiveFolderAsync(project);
+                var (Success, Message) = await _folderManager.ArchiveFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd archiwizacji folderu: {0}, komenda: {1}", project.Symbol, Command));
+                    serviceResponse.SetError(string.Format("Błąd archiwizacji folderu: {0}", Message));
                     project.Status = ProjectStatus.Active;
                     _context.SaveChanges();
                     return serviceResponse;
@@ -222,10 +222,10 @@ namespace WebSODP.Application.Services
                     serviceResponse.SetError(string.Format("Project Id:{0} nie odnaleziony.", id.ToString()), 401);
                     return serviceResponse;
                 }
-                var (Command, Success) = await _folderManager.DeleteFolderAsync(project);
+                var (Success, Message) = await _folderManager.DeleteFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd usuwania folderu: {0}, komenda: {1}", project.Symbol, Command));
+                    serviceResponse.SetError(string.Format("Błąd usuwania folderu: {0}", Message));
                     return serviceResponse;
                 }
                 _context.Entry(project).State = EntityState.Deleted;

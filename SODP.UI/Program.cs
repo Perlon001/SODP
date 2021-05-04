@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+//#error version
+
 namespace SODP.UI
 {
     public class Program
@@ -36,9 +38,7 @@ namespace SODP.UI
                 var db = scope.ServiceProvider.GetRequiredService<SODPDBContext>();
                 db.Database.Migrate();
                 scope.ServiceProvider.GetRequiredService<UserInitializer>().UserInit();
-                scope.ServiceProvider.GetRequiredService<DataInitializer>().LoadStagesFromJSON(configuration.GetSection("AppSettings:InitStagesJSON").Value);
-                scope.ServiceProvider.GetRequiredService<DataInitializer>().ImportProjectsFromStore(ProjectStatus.Archived);
-                scope.ServiceProvider.GetRequiredService<DataInitializer>().ImportProjectsFromStore(ProjectStatus.Active);
+                scope.ServiceProvider.GetRequiredService<DataInitializer>().LoadData();
             }
 
             host.Run();

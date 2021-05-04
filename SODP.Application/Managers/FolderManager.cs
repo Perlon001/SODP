@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SODP.Domain.Managers;
+using SODP.Model.Enums;
 using SODP.Model;
 using SODP.Model.Extensions;
 using System;
@@ -25,61 +26,110 @@ namespace SODP.Application.Managers
             _archiveFolder = _configuration.GetSection("AppSettings:ArchiveFolder").Value;
         }
 
-        public async Task<(string Command, bool Success)> CreateFolderAsync(Project project)
+        // public async Task<(bool Success, string Message)> FolderOperationAsync(FolderOperation operation, Project project)
+        // {
+        //     switch(operation)
+        //     {
+        //         case FolderOperation.Create:
+        //             return await CreateFolderAsync(project);
+        //         case FolderOperation.Rename:
+        //             return await RenameFolderAsync(project);
+        //         case FolderOperation.Archive:
+        //             return await ArchiveFolderAsync(project);
+        //         case FolderOperation.Delete:
+        //             return await DeleteFolderAsync(project);
+        //         default:
+        //             return (false, "Nieznana operacja na folderze projektu");
+        //     }
+        // }
+
+
+        public async Task<(bool Success, string Message)> CreateFolderAsync(Project project)
         {
-            var catalog = GetFolders(project);
-            var command = _folderCommandCreator.GetCreateFolderCommand(project);
+            (bool Success, string Message) result;
+            string command;
+            var catalog = GetMatchingFolders(project);
             switch(catalog.Count())
             {
                 case 0:
-                    return (command, await FolderOperationTask(command, project.ToString()));
+                    command = _folderCommandCreator.GetCreateFolderCommand(project);
+                    result = await FolderOperationTask(command, project.ToString(), true);
+                    return (result.Success, String.Format("{0} {1}", command, result.Message));
                 case 1:
                     command = _folderCommandCreator.GetRenameFolderCommand(catalog[0], project);
-                    return (command, await FolderOperationTask(command, project.ToString()));
+                    result = await FolderOperationTask(command, project.ToString(), true);
+                    return (result.Success, String.Format("{0} {1}", command, result.Message));
                 default:
-                    return (command, false);
+                    command = _folderCommandCreator.GetCreateFolderCommand(project);
+                    return (false, String.Format("{0} {1} {2}", command, "Istnieje więcej niż 1 folder projektu.", project.Symbol));
             }
         }
 
-        public async Task<(string Command, bool Success)> RenameFolderAsync(Project project)
+        public async Task<(bool Success, string Message)> RenameFolderAsync(Project project)
         {
-            var catalog = GetFolders(project);
-            if (catalog.Count() == 1)
+            var catalog = GetMatchingFolders(project);
+            var command = _folderCommandCreator.GetRenameFolderCommand(catalog[0], project);
+            switch(catalog.Count())
             {
-                var command = _folderCommandCreator.GetRenameFolderCommand(catalog[0], project);
-                return (command, await FolderOperationTask(command, project.ToString()));
+                case 0:                    
+                    return (false, String.Format("{0} {1}", command, "Folder projektu nie sitnieje."));
+                case 1:
+                    var result = await FolderOperationTask(command, project.ToString(), true);
+                    return (result.Success, String.Format("{0} {1}", command, result.Message));
+                default:
+                    return (false, String.Format("{0} {1} {2}", command, "Istnieje więcej niż 1 folder projektu.", project.Symbol));
             }
-            return (String.Format("Project {0} not exist", project.Symbol), false);
         }
 
-        public async Task<(string Command, bool Success)> DeleteFolderAsync(Project project)
+        public async Task<(bool Success, string Message)> DeleteFolderAsync(Project project)
         {
+            var catalog = GetMatchingFolders(project);
             var command = _folderCommandCreator.GetDeleteFolderCommand(project);
-            var catalog = GetFolders(project);
-            if (catalog.Count() == 1)
-            {
-                return (command, await FolderOperationTask(command, project.ToString(), false));
-            }
-            return (command, false);
+            return await DeleteOrArchiveActionAsync(command, project);
         }
 
-        public async Task<(string Command, bool Success)> ArchiveFolderAsync(Project project)
+        public async Task<(bool Success, string Message)> ArchiveFolderAsync(Project project)
         {
             var command = _folderCommandCreator.GetArchiveFolderCommand(project);
-            var catalog = GetFolders(project);
-            if (catalog.Count() == 1)
-            {
-                return (command, await FolderOperationTask(command, project.ToString(), false));
-            }
-            return (command, false);
+            return await DeleteOrArchiveActionAsync(command, project);
         }
 
-        private Task<bool> FolderOperationTask(string command, string folder, bool exist = true)
+        private async Task<(bool Success, string Message)> CreateOrRenameActionAsync(string command, Project project)
+        {
+            var catalog = GetMatchingFolders(project);
+            switch(catalog.Count())
+            {
+                case 0:
+                    return(false, String.Format("{0} {1}", command, "Folder nie istnieje."));
+                case 1:
+                    var result = await FolderOperationTask(command, project.ToString(), true);
+                    return (result.Success, String.Format("{0} {1}",command,result.Message));
+                default:
+                    return(false, String.Format("{0} {1}", command,"Więcej niż 1 folder projektu.", project.Symbol));
+            }
+        }
+
+        private async Task<(bool Success, string Message)> DeleteOrArchiveActionAsync(string command, Project project)
+        {
+            var catalog = GetMatchingFolders(project);
+            switch(catalog.Count())
+            {
+                case 0:
+                    return(false, String.Format("{0} {1}", command,"Folder nie istnieje."));
+                case 1:
+                    var result = await FolderOperationTask(command, project.ToString(), false);
+                    return (result.Success, String.Format("{0} {1}",command,result.Message));
+                default:
+                    return(false, String.Format("{0} {1}", command,"Istnieje więcej niż 1 folder projektu."));
+            }
+        }
+
+        private Task<(bool Success, string Message)> FolderOperationTask(string command, string folder, bool exist = true)
         {
             return Task.Run(() =>
             {
-                command.RunShell();
-                return Directory.Exists(_projectFolder + folder) == exist;
+                var message = command.RunShell();
+                return (Directory.Exists(_projectFolder + folder) == exist, message);
             });
         }
 
@@ -88,12 +138,12 @@ namespace SODP.Application.Managers
             return Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories).Length == 0;
         }
 
-        private IList<string> GetFolders(Project project)
+        private IList<string> GetMatchingFolders(Project project)
         {
             var catalog = Directory.EnumerateDirectories(_projectFolder);
             return catalog.Where(x => {
                 var symbol = Path.GetFileName(x).GetUntilOrEmpty("_");
-                return ((symbol.Substring(0, 4) == project.Number) && (symbol[4..] == project.Stage.Sign));
+                return (!String.IsNullOrEmpty(symbol) && symbol.Equals(project.Symbol));
             }).ToList();
         }
 

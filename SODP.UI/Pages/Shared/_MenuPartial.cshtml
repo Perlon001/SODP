@@ -6,7 +6,13 @@
     @if (User.IsInRole("User") || User.IsInRole("ProjectManager"))
     {
         <li class="nav-item">
-            <a class="nav-link text-white-50" asp-area="" asp-page="/Projects/Index">Projekty</a>
+            <a class="nav-link text-white-50" asp-area="" asp-page="/ActiveProjects/Index">Aktywne</a>
+        </li>
+    }
+    @if (User.IsInRole("User") || User.IsInRole("ProjectManager"))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white-50" asp-area="" asp-page="/ArchiveProjects/Index">Archiwalne</a>
         </li>
     }
     @if (User.IsInRole("ProjectManager"))
@@ -14,7 +20,7 @@
         <li class="nav-item">
             <a class="nav-link text-white-50" asp-area="" asp-page="/Stages/Index">Stadia</a>
         </li>
-    }    
+    }     
     @if (User.IsInRole("Administrator"))
     {
         <li class="nav-item">

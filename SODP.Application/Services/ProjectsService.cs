@@ -21,6 +21,7 @@ namespace WebSODP.Application.Services
         private readonly IFolderManager _folderManager;
         private readonly IValidator<Project> _validator;
         private readonly SODPDBContext _context;
+        private ProjectServiceMode _mode = ProjectServiceMode.Active;
 
         public ProjectsService(IMapper mapper, IFolderManager folderManager, IValidator<Project> validator, SODPDBContext context)
         {
@@ -30,23 +31,64 @@ namespace WebSODP.Application.Services
             _context = context;
         }
 
+        public IProjectsService SetArchiveMode()
+        {
+            _mode = ProjectServiceMode.Archive;
+            return this;
+        }
+
         public async Task<ServicePageResponse<ProjectDTO>> GetAllAsync(int currentPage = 0, int pageSize = 0)
         {
             var serviceResponse = new ServicePageResponse<ProjectDTO>();
             try
             {
-                serviceResponse.Data.TotalCount = await _context.Projects.CountAsync();
                 if (pageSize == 0)
                 {
                     pageSize = serviceResponse.Data.TotalCount;
                 }
-                var projects = await _context.Projects.Include(s => s.Stage)
-                    .Where(x => x.Status == 0)
-                    .OrderBy(x => x.Number)
-                    .ThenBy(y => y.Stage.Sign)
-                    .Skip(currentPage * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
+                IList<Project> projects = new List<Project>();
+                var query = _context.Projects.Include(s => s.Stage);
+                switch(_mode)
+                {
+                    case ProjectServiceMode.Active:                
+                        serviceResponse.Data.TotalCount = await _context.Projects.Where(x => x.Status == ProjectStatus.Active).CountAsync();
+                        if (pageSize == 0)
+                        {
+                            pageSize = serviceResponse.Data.TotalCount;
+                        }
+                        projects = await _context.Projects.Include(s => s.Stage)
+                            .OrderBy(x => x.Number)
+                            .ThenBy(y => y.Stage.Sign)
+                            .Where(x => x.Status == ProjectStatus.Active)
+                            .Skip(currentPage * pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+                        break;
+                    case ProjectServiceMode.Archive:
+                        serviceResponse.Data.TotalCount = await _context.Projects.Where(x => x.Status == ProjectStatus.Archived).CountAsync();
+                        if (pageSize == 0)
+                        {
+                            pageSize = serviceResponse.Data.TotalCount;
+                        }
+                        projects = await _context.Projects.Include(s => s.Stage)
+                            .OrderBy(x => x.Number)
+                            .ThenBy(y => y.Stage.Sign)
+                            .Where(x => x.Status == ProjectStatus.Archived)
+                            .Skip(currentPage * pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+                        break;
+                }
+
+                // var projects = await _context.Projects.Include(s => s.Stage)
+                //     .Where(x => x.Status == 0)
+
+                // projects = await query.OrderBy(x => x.Number)
+                //     .ThenBy(y => y.Stage.Sign)
+                //     .Skip(currentPage * pageSize)
+                //     .Take(pageSize)
+                //     .ToListAsync();
+                
                 serviceResponse.Data.PageNumber = currentPage;
                 serviceResponse.Data.PageSize = pageSize;
                 serviceResponse.SetData(_mapper.Map<IList<ProjectDTO>>(projects));
@@ -284,5 +326,7 @@ namespace WebSODP.Application.Services
         {
             throw new NotImplementedException();
         }
+
+
     }
 }

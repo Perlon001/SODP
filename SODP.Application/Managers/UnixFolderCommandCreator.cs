@@ -16,7 +16,7 @@ namespace SODP.Application.Managers
 
         public string GetRenameFolderCommand(string oldFolder, Project project)
         {
-            return " " + _configuration.GetSection("AppSettings:RenameCommand").Value + " " + _projectFolder + " " + project.Symbol + "_" + project.Title.Trim(); ;
+            return " " + _configuration.GetSection("AppSettings:RenameCommand").Value + " " + _projectFolder + " " + oldFolder + " " + project.ToString(); ;
         }
 
         public string GetArchiveFolderCommand(Project project)

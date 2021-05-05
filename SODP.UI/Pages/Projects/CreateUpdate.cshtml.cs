@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -56,6 +55,13 @@ namespace SODP.UI.Pages.Projects
 
         public async Task<IActionResult> OnPostAsync()
         {
+            var stagesResponse = await _stagesService.GetAllAsync(1, 0);
+            Stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
+            {
+                Value = x.Id.ToString(),
+                Text = x.Title
+            }).ToList();
+
             if (ModelState.IsValid)
             {
                 ServiceResponse response;
@@ -91,13 +97,7 @@ namespace SODP.UI.Pages.Projects
 
                 return RedirectToPage("Index");
             }
-            var stagesResponse = await _stagesService.GetAllAsync(1, 0);
-            Stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
-            {
-                Value = x.Id.ToString(),
-                Text = x.Title
-            }).ToList();
-            
+          
             return Page();
         }
     }

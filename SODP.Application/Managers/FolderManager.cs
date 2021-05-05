@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using SODP.Application.Validators;
 using SODP.Domain.Managers;
 using SODP.Model;
 using SODP.Model.Extensions;
@@ -92,8 +93,9 @@ namespace SODP.Application.Managers
         {
             var catalog = Directory.EnumerateDirectories(_projectFolder);
             return catalog.Where(x => {
-                var symbol = Path.GetFileName(x).GetUntilOrEmpty("_");
-                return ((symbol.Substring(0, 4) == project.Number) && (symbol[4..] == project.Stage.Sign));
+                var folderName = Path.GetFileName(x);
+                var symbolLength = project.Symbol.Length;
+                return (folderName.Length >= symbolLength && folderName.Substring(0,symbolLength).Equals(project.Symbol));
             }).ToList();
         }
 
@@ -103,6 +105,5 @@ namespace SODP.Application.Managers
 
             return (symbol.Substring(0, 4), symbol[4..]);
         }
-
     }
 }

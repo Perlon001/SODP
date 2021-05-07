@@ -29,7 +29,8 @@ namespace SODP.DataAccess
 
         private void LoadStagesFromJSON()
         {
-            var jsonStages = _configuration.GetSection("AppSettings:InitStagesJSON").Value;
+            var _settingsPrefix = String.Format("{0}Settings:",Environment.OSVersion.Platform.ToString());
+            var jsonStages = _configuration.GetSection(String.Format("{0}InitStagesJSON",_settingsPrefix)).Value;
             if ((_context.Stages.Count() == 0) && (File.Exists(jsonStages)))
             {
                 var file = File.ReadAllText(jsonStages);
@@ -41,8 +42,9 @@ namespace SODP.DataAccess
 
         private void ImportProjectsFromStore()
         {
-            ImportProjectsFromStore(_configuration.GetSection("AppSettings:ActiveFolder").Value, ProjectStatus.Active);
-            ImportProjectsFromStore(_configuration.GetSection("AppSettings:ArchiveFolder").Value, ProjectStatus.Archived);
+            var _settingsPrefix = String.Format("{0}Settings:",Environment.OSVersion.Platform.ToString());
+            ImportProjectsFromStore(_configuration.GetSection(String.Format("{0}ActiveFolder",_settingsPrefix)).Value, ProjectStatus.Active);
+            ImportProjectsFromStore(_configuration.GetSection(String.Format("{0}ArchiveFolder",_settingsPrefix)).Value, ProjectStatus.Archived);
         }
 
         private void ImportProjectsFromStore(string projectsFolder, ProjectStatus status)

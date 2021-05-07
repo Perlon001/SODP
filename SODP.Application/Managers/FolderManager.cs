@@ -18,10 +18,10 @@ namespace SODP.Application.Managers
         private readonly string _projectFolder;
         private readonly string _archiveFolder;
 
-        public FolderManager(IConfiguration configuration, FolderCommandCreatorFactory factory)
+        public FolderManager(IConfiguration configuration, IFolderCommandCreator folderCommandCreator)
         {
             _configuration = configuration;
-            _folderCommandCreator = factory.GetFolderCommandCreator();
+            _folderCommandCreator = folderCommandCreator;
             _projectFolder = _configuration.GetSection("AppSettings:ActiveFolder").Value;
             _archiveFolder = _configuration.GetSection("AppSettings:ArchiveFolder").Value;
         }

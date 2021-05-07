@@ -9,6 +9,7 @@ namespace SODP.Domain.Managers
     {
         string GetCreateFolderCommand(Project project);
         string GetRenameFolderCommand(string oldFolder, Project project);
+        string GetRestoreFolderCommand(Project project);
         string GetDeleteFolderCommand(Project project);
         string GetArchiveFolderCommand(Project project);
     }

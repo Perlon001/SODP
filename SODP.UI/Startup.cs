@@ -98,7 +98,7 @@ namespace SODP.UI
 
             services.AddScoped<DataInitializer>();
 
-            services.AddSingleton<FolderCommandCreatorFactory>();
+            services.AddScoped<IFolderCommandCreator, FolderCommandCreator>();
 
             services.AddScoped<IFolderManager, FolderManager>();
 

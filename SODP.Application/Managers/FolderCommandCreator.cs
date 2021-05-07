@@ -1,34 +1,54 @@
 ﻿using Microsoft.Extensions.Configuration;
+using SODP.Domain.Managers;
 using SODP.Model;
-using SODP.Model.Extensions;
+using SODP.Model.Enums;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace SODP.Application.Managers
 {
-    public abstract class FolderCommandCreator
+    public class FolderCommandCreator : IFolderCommandCreator
     {
         protected readonly IConfiguration _configuration;
         protected readonly string _projectFolder;
         protected readonly string _archiveFolder;
+        protected readonly string _settingsPrefix;
 
         public FolderCommandCreator(IConfiguration configuration)
         {
             _configuration = configuration;
-            _projectFolder = _configuration.GetSection("AppSettings:ActiveFolder").Value;
-            _archiveFolder = _configuration.GetSection("AppSettings:ArchiveFolder").Value;
+            _settingsPrefix = String.Format("{0}Settings:",Environment.OSVersion.Platform.ToString());
+            _projectFolder = _configuration.GetSection(String.Format("{0}ActiveFolder",_settingsPrefix)).Value;
+            _archiveFolder = _configuration.GetSection(String.Format("{0}ArchiveFolder",_settingsPrefix)).Value;
         }
 
-        protected IList<string> GetFolders(Project project)
+        public string GetCreateFolderCommand(Project project)
         {
-            var catalog = Directory.EnumerateDirectories(_projectFolder);
-            return catalog.Where(x => {
-                var symbol = Path.GetFileName(x).GetUntilOrEmpty("_");
-                return ((symbol.Substring(0, 4) == project.Number) && (symbol[4..] == project.Stage.Sign));
-            }).ToList();
+            return String.Format("{0} {1} {2}",GetCommand(FolderCommands.Create), _projectFolder, project.ToString());
+        }
+
+        public string GetRenameFolderCommand(string oldFolderName, Project project)
+        {
+            return String.Format("{0} {1} {2} {3}", GetCommand(FolderCommands.Rename), _projectFolder, oldFolderName, project.ToString());
+        }
+
+        public string GetArchiveFolderCommand(Project project)
+        {
+            return String.Format("{0} {1} {2} {3}", GetCommand(FolderCommands.Archive), _projectFolder, _archiveFolder, project.ToString()); 
+        }
+
+        public string GetRestoreFolderCommand(Project project)
+        {
+            return String.Format("{0} {1} {2} {3}", GetCommand(FolderCommands.Restore), _archiveFolder, _projectFolder, project.ToString());
+        }
+
+        public string GetDeleteFolderCommand(Project project)
+        {
+            return String.Format("{0} {1} {2}", GetCommand(FolderCommands.Delete), _projectFolder, project.ToString());
+        }
+
+        private string GetCommand(FolderCommands command)
+        {
+            return _configuration.GetSection(_settingsPrefix + command.ToString() + "Command" ).Value;
         }
     }
 }

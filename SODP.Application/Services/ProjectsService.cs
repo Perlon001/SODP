@@ -21,6 +21,7 @@ namespace WebSODP.Application.Services
         private readonly IFolderManager _folderManager;
         private readonly IValidator<Project> _validator;
         private readonly SODPDBContext _context;
+        private ProjectServiceMode _mode = ProjectServiceMode.Active;
 
         public ProjectsService(IMapper mapper, IFolderManager folderManager, IValidator<Project> validator, SODPDBContext context)
         {
@@ -30,23 +31,64 @@ namespace WebSODP.Application.Services
             _context = context;
         }
 
+        public IProjectsService SetArchiveMode()
+        {
+            _mode = ProjectServiceMode.Archive;
+            return this;
+        }
+
         public async Task<ServicePageResponse<ProjectDTO>> GetAllAsync(int currentPage = 0, int pageSize = 0)
         {
             var serviceResponse = new ServicePageResponse<ProjectDTO>();
             try
             {
-                serviceResponse.Data.TotalCount = await _context.Projects.CountAsync();
                 if (pageSize == 0)
                 {
                     pageSize = serviceResponse.Data.TotalCount;
                 }
-                var projects = await _context.Projects.Include(s => s.Stage)
-                    .Where(x => x.Status == 0)
-                    .OrderBy(x => x.Number)
-                    .ThenBy(y => y.Stage.Sign)
-                    .Skip(currentPage * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
+                IList<Project> projects = new List<Project>();
+                var query = _context.Projects.Include(s => s.Stage);
+                switch(_mode)
+                {
+                    case ProjectServiceMode.Active:                
+                        serviceResponse.Data.TotalCount = await _context.Projects.Where(x => x.Status == ProjectStatus.Active).CountAsync();
+                        if (pageSize == 0)
+                        {
+                            pageSize = serviceResponse.Data.TotalCount;
+                        }
+                        projects = await _context.Projects.Include(s => s.Stage)
+                            .OrderBy(x => x.Number)
+                            .ThenBy(y => y.Stage.Sign)
+                            .Where(x => x.Status == ProjectStatus.Active)
+                            .Skip(currentPage * pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+                        break;
+                    case ProjectServiceMode.Archive:
+                        serviceResponse.Data.TotalCount = await _context.Projects.Where(x => x.Status == ProjectStatus.Archived).CountAsync();
+                        if (pageSize == 0)
+                        {
+                            pageSize = serviceResponse.Data.TotalCount;
+                        }
+                        projects = await _context.Projects.Include(s => s.Stage)
+                            .OrderBy(x => x.Number)
+                            .ThenBy(y => y.Stage.Sign)
+                            .Where(x => x.Status == ProjectStatus.Archived)
+                            .Skip(currentPage * pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+                        break;
+                }
+
+                // var projects = await _context.Projects.Include(s => s.Stage)
+                //     .Where(x => x.Status == 0)
+
+                // projects = await query.OrderBy(x => x.Number)
+                //     .ThenBy(y => y.Stage.Sign)
+                //     .Skip(currentPage * pageSize)
+                //     .Take(pageSize)
+                //     .ToListAsync();
+                
                 serviceResponse.Data.PageNumber = currentPage;
                 serviceResponse.Data.PageSize = pageSize;
                 serviceResponse.SetData(_mapper.Map<IList<ProjectDTO>>(projects));
@@ -102,10 +144,10 @@ namespace WebSODP.Application.Services
 
                 project.Normalize();
                 project.Stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == project.StageId);
-                var (Command, Success) = await _folderManager.CreateFolderAsync(project);
+                var (Success, Message) = await _folderManager.CreateFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd tworzenia folderu roboczego: {0}, komenda: {1}", createProject.ToString(), Command), 500);
+                    serviceResponse.SetError(String.Format("Błąd tworzenia folderu roboczego: {0}", Message), 500);
                     
                     return serviceResponse;
                 }
@@ -149,10 +191,10 @@ namespace WebSODP.Application.Services
                 }
 
                 project.Normalize();
-                var (Command, Success) = await _folderManager.RenameFolderAsync(project);
+                var (Success, Message) = await _folderManager.RenameFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd modyfikacji folderu: {0}, komwnda: {1}", project.ToString(), Command));
+                    serviceResponse.SetError(String.Format("Błąd modyfikacji folderu: {0}", Message));
                     return serviceResponse;
                 }
 
@@ -190,10 +232,10 @@ namespace WebSODP.Application.Services
                 // tu drugie pytanie jak prawidłowo wywołać taska który korzysta z zewnętrznych serwisów lub systemu operacyjnego
                 // task może się wykonaywać bardzo długo np. 1godz. 
                 // czy tu nie należałoby jednak również zastosować metody synchronicznej
-                var (Command, Success) = await _folderManager.ArchiveFolderAsync(project);
+                var (Success, Message) = await _folderManager.ArchiveFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd archiwizacji folderu: {0}, komenda: {1}", project.Symbol, Command));
+                    serviceResponse.SetError(string.Format("Błąd archiwizacji folderu: {0}", Message));
                     project.Status = ProjectStatus.Active;
                     _context.SaveChanges();
                     return serviceResponse;
@@ -222,10 +264,10 @@ namespace WebSODP.Application.Services
                     serviceResponse.SetError(string.Format("Project Id:{0} nie odnaleziony.", id.ToString()), 401);
                     return serviceResponse;
                 }
-                var (Command, Success) = await _folderManager.DeleteFolderAsync(project);
+                var (Success, Message) = await _folderManager.DeleteFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd usuwania folderu: {0}, komenda: {1}", project.Symbol, Command));
+                    serviceResponse.SetError(string.Format("Błąd usuwania folderu: {0}", Message));
                     return serviceResponse;
                 }
                 _context.Entry(project).State = EntityState.Deleted;
@@ -284,5 +326,7 @@ namespace WebSODP.Application.Services
         {
             throw new NotImplementedException();
         }
+
+
     }
 }

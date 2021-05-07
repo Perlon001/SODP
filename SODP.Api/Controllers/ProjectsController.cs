@@ -19,7 +19,6 @@ namespace SODP.Api.Controllers
             _projectsService = projectsService;
         }
 
-
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {

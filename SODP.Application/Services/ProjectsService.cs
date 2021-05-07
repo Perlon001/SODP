@@ -281,6 +281,38 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse> RestoreAsync(int id)
+        {
+            var serviceResponse = new ServiceResponse();
+            try
+            {
+                var project = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Id == id); 
+                if(project == null)
+                {
+                    serviceResponse.SetError(string.Format("Project Id:{0} nie odnaleziony.", id.ToString()), 401);
+                    return serviceResponse;
+                }
+                project.Status = ProjectStatus.DuringRestore;
+                _context.SaveChanges();
+                
+                var (Success, Message) = await _folderManager.RestoreFolderAsync(project);
+                if (!Success)
+                {
+                    serviceResponse.SetError(string.Format("Błąd przywracania folderu: {0}", Message));
+                    return serviceResponse;
+                }
+                project.Status = ProjectStatus.Active;
+                _context.Entry(project).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse> AddBrach(int projectId, int branchId)
         {
             var serviceResponse = new ServiceResponse();
@@ -326,7 +358,6 @@ namespace WebSODP.Application.Services
         {
             throw new NotImplementedException();
         }
-
 
     }
 }

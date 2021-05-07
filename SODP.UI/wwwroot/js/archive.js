@@ -1,7 +1,7 @@
 ﻿function Archive(url) {
     swal({
         title: "Czy jesteś pewien?",
-        text: "Operacja nie może być cofnięta.",
+        text: "Przesunięcie projektu do archiwum.",
         icon: "warning",
         buttons: true,
         danegerMode: true
@@ -14,7 +14,7 @@
                 success: function (data) {
                     if (data.success) {
                         toastr.success(data.message);
-                        window.location.reload(true);
+                        window.location.reload();
                     }
                     else {
                         toastr.error(data.message);

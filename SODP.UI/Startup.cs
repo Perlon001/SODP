@@ -11,7 +11,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using SODP.Application.Managers;
-using SODP.Application.Validators;
 using SODP.DataAccess;
 using SODP.Domain.Managers;
 using SODP.Domain.Services;

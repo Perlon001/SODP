@@ -1,15 +1,15 @@
-﻿function Delete(url) {
+﻿function Restore(url) {
     swal({
         title: "Czy jesteś pewien?",
-        text: "Usunięcie projektu. Operacja nie może być cofnięta.",
+        text: "Przywrócenie projektu do aktywnych.",
         icon: "warning",
         buttons: true,
         danegerMode: true
-    }).then((willDelete) => {
-        console.log(willDelete);
-        if (willDelete) {
+    }).then((willRestore) => {
+        console.log(willRestore);
+        if (willRestore) {
             $.ajax({
-                type: "DELETE",
+                type: "POST",
                 url: url,
                 success: function (data) {
                     if (data.success) {

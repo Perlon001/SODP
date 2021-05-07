@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using SODP.Application.Validators;
 using SODP.Domain.Managers;
 using SODP.Model.Enums;
 using SODP.Model;
@@ -110,6 +109,38 @@ namespace SODP.Application.Managers
                     command = _folderCommandCreator.GetCreateFolderCommand(project);
                     return (false, String.Format("Istnieje więcej niż 1 folder projektu {0}", project.Symbol));
             }
+        }
+
+        public Task<(bool Success, string Message)> RestoreFolderAsync(Project project)
+        {
+            throw new NotImplementedException("Not implemented RestoreFolderAsync");
+
+            // (bool Success, string Message) result;
+            // var catalog = GetMatchingFolders(project);
+            // var command = _folderCommandCreator.GetArchiveFolderCommand(project);
+            // switch(catalog.Count())
+            // {
+            //     case 0:
+            //         return(false, String.Format("Folder projektu {0} nie istnieje.", project.Symbol));
+            //     case 1:
+            //         if(FolderIsEmpty(_projectFolder + catalog[0]))
+            //         {
+            //             return (false, String.Format("Folder projektu {0} jest pusty.", project.Symbol));
+            //         }
+            //         if(!catalog[0].Equals(project.ToString()))
+            //         {
+            //             result = await RenameFolderAsync(project);
+            //             if(!result.Success)
+            //             {
+            //                 return result;
+            //             }
+            //         }
+            //         result = await FolderOperationTask(command, project.ToString(), false);
+            //         return (result.Success, String.Format("{0} {1}", command, result.Message));
+            //     default:
+            //         command = _folderCommandCreator.GetCreateFolderCommand(project);
+            //         return (false, String.Format("Istnieje więcej niż 1 folder projektu {0}", project.Symbol));
+            // }
         }
 
         private Task<(bool Success, string Message)> FolderOperationTask(string command, string folder, bool exist = true)

@@ -13,6 +13,7 @@ namespace SODP.Domain.Services
         Task<ServiceResponse<ProjectDTO>> CreateAsync(ProjectCreateDTO newProject);
         Task<ServiceResponse> UpdateAsync(ProjectUpdateDTO updateProject);
         Task<ServiceResponse> DeleteAsync(int projectId);
+        Task<ServiceResponse> RestoreAsync(int projectId);
         Task<ServiceResponse> ArchiveAsync(int projectId);
         Task<ServicePageResponse<BranchDTO>> GetBranchesAsync(int projectId);
         Task<ServiceResponse> AddBranchAsync(int projectId, int branchId);

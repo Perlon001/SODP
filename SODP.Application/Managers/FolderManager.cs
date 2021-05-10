@@ -13,17 +13,15 @@ namespace SODP.Application.Managers
 {
     public class FolderManager : IFolderManager
     {
-        private readonly IConfiguration _configuration;
         private readonly IFolderCommandCreator _folderCommandCreator;
         private readonly string _projectFolder;
         private readonly string _archiveFolder;
 
-        public FolderManager(IConfiguration configuration, IFolderCommandCreator folderCommandCreator)
+        public FolderManager(FolderConfigurator folderConfigurator, IFolderCommandCreator folderCommandCreator)
         {
-            _configuration = configuration;
+            _projectFolder = folderConfigurator.ProjectFolder;
+            _archiveFolder = folderConfigurator.ArchiveFolder;
             _folderCommandCreator = folderCommandCreator;
-            _projectFolder = _configuration.GetSection("AppSettings:ActiveFolder").Value;
-            _archiveFolder = _configuration.GetSection("AppSettings:ArchiveFolder").Value;
         }
 
         public async Task<(bool Success, string Message)> CreateFolderAsync(Project project)

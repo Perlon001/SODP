@@ -9,16 +9,16 @@ namespace SODP.Application.Managers
     public class FolderCommandCreator : IFolderCommandCreator
     {
         protected readonly IConfiguration _configuration;
+        private readonly FolderConfigurator _folderConfigurator;
         protected readonly string _projectFolder;
         protected readonly string _archiveFolder;
-        protected readonly string _settingsPrefix;
 
-        public FolderCommandCreator(IConfiguration configuration)
+        public FolderCommandCreator(IConfiguration configuration, FolderConfigurator folderConfigurator)
         {
             _configuration = configuration;
-            _settingsPrefix = String.Format("{0}Settings:",Environment.OSVersion.Platform.ToString());
-            _projectFolder = _configuration.GetSection(String.Format("{0}ActiveFolder",_settingsPrefix)).Value;
-            _archiveFolder = _configuration.GetSection(String.Format("{0}ArchiveFolder",_settingsPrefix)).Value;
+            _folderConfigurator = folderConfigurator;
+            _projectFolder = folderConfigurator.ProjectFolder;
+            _archiveFolder = folderConfigurator.ArchiveFolder;
         }
 
         public string GetCreateFolderCommand(Project project)
@@ -48,7 +48,7 @@ namespace SODP.Application.Managers
 
         private string GetCommand(FolderCommands command)
         {
-            return _configuration.GetSection(_settingsPrefix + command.ToString() + "Command" ).Value;
+            return _configuration.GetSection(String.Format("{0}{1}Command",_folderConfigurator.OSPrefix, command.ToString()) ).Value;
         }
     }
 }

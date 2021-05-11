@@ -36,11 +36,10 @@ namespace SODP.Application.Managers
                     result = await FolderOperationTask(command, project.ToString(), true);
                     return (result.Success, String.Format("{0} {1}", command, result.Message));
                 case 1:
-                    command = _folderCommandCreator.GetRenameFolderCommand(catalog[0], project);
+                    command = _folderCommandCreator.GetRenameFolderCommand(Path.GetFileName(catalog[0]), project);
                     result = await FolderOperationTask(command, project.ToString(), true);
                     return (result.Success, String.Format("{0} {1}", command, result.Message));
                 default:
-                    command = _folderCommandCreator.GetCreateFolderCommand(project);
                     return (false, String.Format("Istnieje więcej niż 1 folder projektu {0}", project.Symbol));
             }
         }
@@ -65,16 +64,15 @@ namespace SODP.Application.Managers
         {
             (bool Success, string Message) result;
             var catalog = GetMatchingFolders(project);
-            var command = _folderCommandCreator.GetDeleteFolderCommand(project);
             switch(catalog.Count())
             {
                 case 0:
-                    return(false, String.Format("Folder projektu {0} nie istnieje.", project.Symbol));
+                    return(true, String.Format("Folder projektu {0} nie istnieje.", project.Symbol));
                 case 1:
+                    var command = _folderCommandCreator.GetDeleteFolderCommand(project);
                     result = await FolderOperationTask(command, Path.GetFileName(catalog[0]), false);
                     return (result.Success, String.Format("{0} {1}", command, result.Message));
                 default:
-                    command = _folderCommandCreator.GetCreateFolderCommand(project);
                     return (false, String.Format("Istnieje więcej niż 1 folder projektu {0}", project.Symbol));
             }
         }
@@ -83,7 +81,6 @@ namespace SODP.Application.Managers
         {
             (bool Success, string Message) result;
             var catalog = GetMatchingFolders(project);
-            var command = _folderCommandCreator.GetArchiveFolderCommand(project);
             switch(catalog.Count())
             {
                 case 0:
@@ -101,10 +98,10 @@ namespace SODP.Application.Managers
                             return result;
                         }
                     }
+                    var command = _folderCommandCreator.GetArchiveFolderCommand(project);
                     result = await FolderOperationTask(command, project.ToString(), false);
                     return (result.Success, String.Format("{0} {1}", command, result.Message));
                 default:
-                    command = _folderCommandCreator.GetCreateFolderCommand(project);
                     return (false, String.Format("Istnieje więcej niż 1 folder projektu {0}", project.Symbol));
             }
         }

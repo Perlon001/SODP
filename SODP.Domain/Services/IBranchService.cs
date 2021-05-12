@@ -1,4 +1,5 @@
-﻿using SODP.Model;
+﻿using SODP.Domain.DTO;
+using SODP.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,10 +9,11 @@ namespace SODP.Domain.Services
 {
     public interface IBranchService : IAppService
     {
-        Task<ServicePageResponse<Branch>> GetAllAsync();
-        Task<ServiceResponse<Branch>> GetAsync(int branchId);
-        Task<ServiceResponse<Branch>> GetAsync(string sign);
-        Task<ServiceResponse<Branch>> UpdateAsync(Branch branch);
-        Task<ServiceResponse<Branch>> DeleteAsync(Branch branch);
+        Task<ServicePageResponse<BranchDTO>> GetAllAsync();
+        Task<ServiceResponse<BranchDTO>> GetAsync(int branchId);
+        Task<ServiceResponse<BranchDTO>> GetAsync(string sign);
+        Task<ServiceResponse<BranchDTO>> CreateAsync(BranchCreateDTO newBranch);
+        Task<ServiceResponse<Branch>> UpdateAsync(BranchUpdateDTO updateBranch);
+        Task<ServiceResponse> DeleteAsync(int branchId);
     }
 }

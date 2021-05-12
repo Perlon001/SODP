@@ -1,15 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 namespace SODP.Domain.DTO
 {
-    public class BranchDTO
+    public class BranchCreateDTO
     {
         public int Id { get; set; }
         public string Sign { get; set; }
         public string Name { get; set; }
-        public DesignerDTO DesignLicenceId { get; set; }
-        public DesignerDTO CheckingLicenceId { get; set; }
     }
 }

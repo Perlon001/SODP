@@ -9,14 +9,12 @@ namespace SODP.Api.Controllers
     [Route("api/[controller]")]
     public class ArchiveProjectsController : ProjectsController
     {
-        private readonly IProjectsService _projectsService;
-
         public ArchiveProjectsController(IProjectsService projectsService) : base(projectsService)
         {
             _projectsService.SetArchiveMode();
         }
 
-        [HttpPut("{id}")]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Restore(int id)
         {
             return Ok(await _projectsService.RestoreAsync(id));

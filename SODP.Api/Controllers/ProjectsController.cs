@@ -12,7 +12,7 @@ namespace SODP.Api.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly IProjectsService _projectsService;
+        public readonly IProjectsService _projectsService;
 
         public ProjectsController(IProjectsService projectsService)
         {
@@ -28,16 +28,5 @@ namespace SODP.Api.Controllers
             return Ok(await _projectsService.GetAllAsync(currentPage: page_number, pageSize: page_size));
         }
 
-        [HttpPost("{id}")]
-        public async Task<IActionResult> Archive(int id)
-        {
-            return Ok(await _projectsService.ArchiveAsync(id));
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            return Ok(await _projectsService.DeleteAsync(id));
-        }
     }
 }

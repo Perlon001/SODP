@@ -1,1 +1,1 @@
-dotnet ef migrations add %1 --startup-project SODP.UI --project SODP.DataAccess --context SODPDBContext -v
+dotnet-ef migrations add %1 --startup-project SODP.UI --project SODP.DataAccess --context SODPDBContext -v

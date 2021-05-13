@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SODP.Domain.DTO;
 using SODP.Domain.Services;
 using SODP.UI.Pages.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace SODP.UI.Pages.ActiveProjects
         }
 
         [BindProperty]
-        public ProjectDTO Input { get; set; }
+        public ProjectDTO Project { get; set; }
 
         public IEnumerable<SelectListItem> Stages { get; set; }
 
@@ -35,10 +36,10 @@ namespace SODP.UI.Pages.ActiveProjects
                 Stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
                 {
                     Value = x.Id.ToString(),
-                    Text = x.Title
+                    Text = String.Format("({0}) {1}", x.Sign.Trim(), x.Title.Trim())
                 }).ToList();
 
-                Input = new ProjectDTO();
+                Project = new ProjectDTO();
 
                 return Page();
             }
@@ -48,7 +49,7 @@ namespace SODP.UI.Pages.ActiveProjects
             {
                 return NotFound();
             }
-            Input = response.Data;
+            Project = response.Data;
 
             return Page();
         }
@@ -59,33 +60,33 @@ namespace SODP.UI.Pages.ActiveProjects
             Stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
             {
                 Value = x.Id.ToString(),
-                Text = x.Title
+                Text = String.Format("({0}) {1}", x.Sign.Trim(), x.Title.Trim())
             }).ToList();
 
             if (ModelState.IsValid)
             {
                 ServiceResponse response;
 
-                if (Input.Id.Equals(0))
+                if (Project.Id.Equals(0))
                 {
-                    var project = new ProjectCreateDTO
+                    var project = new ProjectDTO
                     {
-                        Number = Input.Number,
-                        StageId = Input.StageId,
-                        Title = Input.Title,
-                        Description = Input.Description
+                        Number = Project.Number,
+                        StageId = Project.StageId,
+                        Title = Project.Title,
+                        Description = Project.Description
                     };
                     response = await _projectsService.CreateAsync(project);
                 }
                 else
                 {
-                    var project = new ProjectUpdateDTO
+                    var project = new ProjectDTO
                     {
-                        Id = Input.Id,
-                        Number = Input.Number,
-                        StageId = Input.StageId,
-                        Title = Input.Title,
-                        Description = Input.Description
+                        Id = Project.Id,
+                        Number = Project.Number,
+                        StageId = Project.StageId,
+                        Title = Project.Title,
+                        Description = Project.Description
                     };
                     response = await _projectsService.UpdateAsync(project);
                 }

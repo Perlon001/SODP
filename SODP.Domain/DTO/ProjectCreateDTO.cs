@@ -4,15 +4,15 @@ namespace SODP.Domain.DTO
 {
     public class ProjectCreateDTO
     {
-        [Required(ErrorMessage = "{Property} is required.")]
-        [RegularExpression(@"^([1-9]{1})([0-9]{3})$", ErrorMessage = "{Property} should contain 4 digits.")]
+        [Required(ErrorMessage = "Numer projektu jest wymagany.")]
+        [RegularExpression(@"^([1-9]{1})([0-9]{3})$", ErrorMessage = "Numer projektu powinien zawierać 4 cyfry.")]
         public string Number { get; set; }
 
-        [Required(ErrorMessage = "{Property} is required.")]
+        [Required(ErrorMessage = "Stadium jest wymagane.")]
         public int StageId { get; set; }
 
-        [Required(ErrorMessage = "{Property} is required.")]
-        [RegularExpression(@"^([a-zA-Z]{1,1})([1-9a-zA-Z_ ]{0,})$", ErrorMessage = "{Property} must start with a letter, contain letters without Polish characters, numbers and an underscore")]
+        [Required(ErrorMessage = "Tytuł projektu jest wymagany.")]
+        [RegularExpression(@"^([a-zA-Z]{1,1})([1-9a-zA-Z_ ]{0,})$", ErrorMessage = "Tytuł musi zaczynać się literą, może zawierać podkreślenie, spacje, cyfry oraz litery bez polskich znaków diakrytycznych")]
         public string Title { get; set; }
 
         public string Description { get; set; }

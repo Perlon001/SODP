@@ -113,7 +113,7 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<ProjectDTO>> CreateAsync(ProjectCreateDTO createProject)
+        public async Task<ServiceResponse<ProjectDTO>> CreateAsync(ProjectDTO createProject)
         {
             var serviceResponse = new ServiceResponse<ProjectDTO>();
             try
@@ -156,7 +156,7 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse> UpdateAsync(ProjectUpdateDTO updateProject)
+        public async Task<ServiceResponse> UpdateAsync(ProjectDTO updateProject)
         {
             var serviceResponse = new ServiceResponse<Project>();
             try

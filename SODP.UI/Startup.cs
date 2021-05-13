@@ -19,7 +19,6 @@ using SODP.UI.Areas.Identity;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SODP.UI
 {
@@ -40,8 +39,6 @@ namespace SODP.UI
                     AppDomain.CurrentDomain.Load(Path.GetFileNameWithoutExtension(filePath));
                 }
             }
-
-
         }
 
         public IConfiguration Configuration { get; }

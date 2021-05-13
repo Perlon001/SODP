@@ -17,7 +17,11 @@
     {
         <div id="modal-placeholder"></div>
         <div class="col-4 justify-content-end">
-            <button type="button" class="btn btn-info form-control text-white float-right" data-toggle="ajax-modal" data-url="@Url.Page("Index","StageModalPartial")"><i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium</button>
+            <button type="button" class="btn btn-info form-control text-white float-right"
+                    data-toggle="ajax-modal"
+                    data-url="@Url.Page("Index","StageModalPartial")">
+                <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium
+            </button>
         </div>
     }
 
@@ -46,8 +50,8 @@
                                 <td>
                                     <div class="row group justify-content-end mr-0">
                                         <div>
-                                            <button type="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1" 
-                                                    data-toggle="ajax-modal" 
+                                            <button type="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1"
+                                                    data-toggle="ajax-modal"
                                                     data-url="@Url.Page("Index","StageModalPartial")&Id=@stage.Id">
                                                 <i class="fas fa-edit"></i>
                                             </button>

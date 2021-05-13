@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\ArchiveProjects\_ProjectPartialView.cshtml" />
     <Content Remove="stages.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Pages\ActiveProjects\_ProjectPartialView.cshtml" />
     <None Include="stages.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

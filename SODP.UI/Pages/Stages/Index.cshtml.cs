@@ -28,12 +28,6 @@ namespace SODP.UI.Pages.Stages
         [BindProperty]
         public StagesViewModel StagesViewModel { get; set; }
 
-        //[BindProperty]
-        //public StageDTO Input { get; set; } = new StageDTO();
-
-        //[BindProperty]
-        //public bool IsModalShown { get; set; }
-
         public async Task<IActionResult> OnGetAsync(int currentPage = 1, int pageSize = 15, string gosign = "")
         {
             var url = new StringBuilder();
@@ -53,52 +47,6 @@ namespace SODP.UI.Pages.Stages
 
             return Page();
         }
-
-        //public async Task<IActionResult> OnPostAsync(bool IsModalShown)
-        //{
-        //    ServiceResponse response;
-        //    if (ModelState.IsValid)
-        //    {
-
-        //        if (Input.Id.Equals(0))
-        //        {
-        //            var stage = new StageDTO
-        //            {
-        //                Sign = Input.Sign,
-        //                Title = Input.Title
-        //            };
-        //            response = await _stagesService.CreateAsync(stage);
-        //        }
-        //        else
-        //        {
-        //            var stage = new StageDTO
-        //            {
-        //                Id = Input.Id,
-        //                Title = Input.Title
-        //            };
-        //            response = await _stagesService.UpdateAsync(stage);
-        //        }
-        //        if (response.ValidationErrors.Count > 0)
-        //        {
-        //            foreach (var message in response.ValidationErrors)
-        //            {
-        //            }
-        //            return Page();
-        //        }
-
-        //        if (!response.Success)
-        //        {
-        //            await OnGetAsync();
-        //            return Page();
-        //        }
-        //        return RedirectToPage("Index");
-        //    }
-        //    else
-        //    {
-        //        await OnGetAsync();
-        //        return Page();
-        //    }
-        //}
 
         private async Task<IList<StageDTO>> GetStages(PageInfo pageInfo)
         {

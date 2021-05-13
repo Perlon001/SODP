@@ -10,8 +10,8 @@ namespace SODP.Domain.Services
         IProjectsService SetArchiveMode();
         Task<ServicePageResponse<ProjectDTO>> GetAllAsync(int currentPage = 1, int pageSize = 0);
         Task<ServiceResponse<ProjectDTO>> GetAsync(int projectId);
-        Task<ServiceResponse<ProjectDTO>> CreateAsync(ProjectCreateDTO newProject);
-        Task<ServiceResponse> UpdateAsync(ProjectUpdateDTO updateProject);
+        Task<ServiceResponse<ProjectDTO>> CreateAsync(ProjectDTO newProject);
+        Task<ServiceResponse> UpdateAsync(ProjectDTO updateProject);
         Task<ServiceResponse> DeleteAsync(int projectId);
         Task<ServiceResponse> RestoreAsync(int projectId);
         Task<ServiceResponse> ArchiveAsync(int projectId);

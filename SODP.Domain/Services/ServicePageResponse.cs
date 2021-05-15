@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using SODP.Domain.DTO;
+using System.Collections.Generic;
 
 namespace SODP.Domain.Services
 {
-    public class ServicePageResponse<T> : ServiceResponse<PageResponse<T>>
+    public class ServicePageResponse<T> : ServiceResponse<PageResponse<T>> where T : BaseDTO
     {
         public ServicePageResponse()
         {

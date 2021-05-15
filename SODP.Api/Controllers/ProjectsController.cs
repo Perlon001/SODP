@@ -28,5 +28,10 @@ namespace SODP.Api.Controllers
             return Ok(await _projectsService.GetAllAsync(currentPage: page_number, pageSize: page_size));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAsync(int Id)
+        {
+            return Ok(await _projectsService.GetAsync(Id));
+        }
     }
 }

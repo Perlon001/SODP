@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SODP.Domain.DTO
 {
-    public class StageDTO
+    public class StageDTO  : BaseDTO
     {
-        public int Id { get; set; }
-
         [Required]
         [MinLength(2)]
         public string Sign { get; set; }

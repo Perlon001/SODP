@@ -4,9 +4,8 @@ using System.Text;
 
 namespace SODP.Domain.DTO
 {
-    public class BranchDTO
+    public class BranchDTO  : BaseDTO
     {
-        public int Id { get; set; }
         public string Sign { get; set; }
         public string Name { get; set; }
         public DesignerDTO DesignLicenceId { get; set; }

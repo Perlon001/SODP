@@ -12,8 +12,8 @@ namespace SODP.Domain.Services
         Task<ServicePageResponse<BranchDTO>> GetAllAsync();
         Task<ServiceResponse<BranchDTO>> GetAsync(int branchId);
         Task<ServiceResponse<BranchDTO>> GetAsync(string sign);
-        Task<ServiceResponse<BranchDTO>> CreateAsync(BranchCreateDTO newBranch);
-        Task<ServiceResponse<Branch>> UpdateAsync(BranchUpdateDTO updateBranch);
+        Task<ServiceResponse<BranchDTO>> CreateAsync(BranchDTO newBranch);
+        Task<ServiceResponse<Branch>> UpdateAsync(BranchDTO updateBranch);
         Task<ServiceResponse> DeleteAsync(int branchId);
     }
 }

@@ -4,8 +4,8 @@ using System.Text;
 
 namespace SODP.Domain.DTO
 {
-    public abstract class BaseDTO
+    public class RoleDTO : BaseDTO
     {
-        public int Id { get; set; }
+        public string Role { get; set; }
     }
 }

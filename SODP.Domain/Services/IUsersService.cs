@@ -7,8 +7,8 @@ namespace SODP.Domain.Services
     {
         Task<ServicePageResponse<UserDTO>> GetAllAsync();
         Task<ServiceResponse<UserDTO>> GetAsync(int userId);
-        Task<ServiceResponse> UpdateAsync(UserUpdateDTO user);
+        Task<ServiceResponse> UpdateAsync(UserDTO user);
         Task<ServiceResponse> DeleteAsync(int userId);
-        Task<ServicePageResponse<string>> GetRolesAsync(int userId);
+        Task<ServicePageResponse<RoleDTO>> GetRolesAsync(int userId);
     }
 }

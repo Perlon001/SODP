@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SODP.Domain.DTO;
 using SODP.Model;
+using System.Collections.Generic;
 
 namespace SODP.Domain
 {
@@ -14,6 +15,7 @@ namespace SODP.Domain
             CreateMap<Stage, StageDTO>().ReverseMap();
 
             CreateMap<Project, ProjectDTO>().ReverseMap();
+
         }
     }
 }

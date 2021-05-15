@@ -52,7 +52,7 @@ namespace SODP.UI.Pages.Users
             if (ModelState.IsValid)
             {
                 CurrentUser.Roles = AllRoles.Where(x => x.Value).Select(x => x.Key).ToList();
-                var response = await _usersService.UpdateAsync(_mapper.Map<UserUpdateDTO>(CurrentUser));
+                var response = await _usersService.UpdateAsync(_mapper.Map<UserDTO>(CurrentUser));
 
                 if (!response.Success)
                 {

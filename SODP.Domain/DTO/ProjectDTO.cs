@@ -5,10 +5,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SODP.Domain.DTO
 {
-    public class ProjectDTO
+    public class ProjectDTO : BaseDTO
     {
-        public int Id { get; set; }
-
         [Required(ErrorMessage = "Numer projektu jest wymagany.")]
         [RegularExpression(@"^([1-9]{1})([0-9]{3})$", ErrorMessage = "Numer projektu powinien zawierać 4 cyfry.")]
         public string Number { get; set; }

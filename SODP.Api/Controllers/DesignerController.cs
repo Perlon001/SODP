@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SODP.Domain.DTO;
 using SODP.Domain.Services;
 using System;
 using System.Collections.Generic;
@@ -10,19 +11,25 @@ namespace SODP.Api.Controllers
     // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class DesignerController : ControllerBase
+    public class DesignerController : ApiControllerBase
     {
-        private readonly IDesignersService _designersService;
+        private readonly IDesignersService _service;
 
-        public DesignerController(IDesignersService designersService)
+        public DesignerController(IDesignersService service)
         {
-            _designersService = designersService;
+            _service = service;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllDesigners()
+        public async Task<IActionResult> GetAllAsync()
         {
-            return Ok(await _designersService.GetAllAsync());
+            return Ok(await _service.GetAllAsync());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAsync(int id)
+        {
+            return Ok(await _service.GetAsync(id));
         }
     }
 }

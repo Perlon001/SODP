@@ -83,7 +83,7 @@ namespace SODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse> UpdateAsync(UserUpdateDTO user)
+        public async Task<ServiceResponse> UpdateAsync(UserDTO user)
         {
             // required correct validation of user
             var serviceResponse = new ServiceResponse();
@@ -100,8 +100,8 @@ namespace SODP.Application.Services
                     serviceResponse.SetError("Użytkownik nie odnaleziony.", 404);
                     return serviceResponse;
                 }
-                currentUser.Lastname = user.Surname;
-                currentUser.Firstname = user.Forename;
+                currentUser.Lastname = user.Lastname;
+                currentUser.Firstname = user.Firstname;
                 var result = await _userManager.UpdateAsync(currentUser);
                 if (!result.Succeeded)
                 {
@@ -127,9 +127,9 @@ namespace SODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServicePageResponse<string>> GetRolesAsync(int userId)
+        public async Task<ServicePageResponse<RoleDTO>> GetRolesAsync(int userId)
         {
-            var serviceResponse = new ServicePageResponse<string>();
+            var serviceResponse = new ServicePageResponse<RoleDTO>();
             try
             {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
@@ -139,7 +139,7 @@ namespace SODP.Application.Services
                     return serviceResponse;
                 }
                 var roles = await _userManager.GetRolesAsync(user);
-                serviceResponse.SetData(roles);
+                serviceResponse.SetData(roles.Select(x => new RoleDTO {Role = x}).ToList());
             }
             catch (Exception ex)
             {

@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -57,7 +56,7 @@ namespace SODP.UI.Pages.Stages
             return serviceResponse.Data.Collection.ToList();
         }
 
-        public async Task<PartialViewResult> OnGetStageModalPartial(int? id)
+        public async Task<PartialViewResult> OnGetStagePartial(int? id)
         {
             StageDTO stage;
             if (id != null)
@@ -78,7 +77,7 @@ namespace SODP.UI.Pages.Stages
             return await Task.FromResult(partialViewResult);
         }
 
-        public async Task<PartialViewResult> OnPostStageModalPartial(StageDTO stage)
+        public async Task<PartialViewResult> OnPostStagePartial(StageDTO stage)
         {
             ServiceResponse response ;
             if (ModelState.IsValid)
@@ -108,7 +107,5 @@ namespace SODP.UI.Pages.Stages
 
             return partialViewResult;
         }
-
     }
-
 }

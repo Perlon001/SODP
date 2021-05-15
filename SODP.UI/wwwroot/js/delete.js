@@ -6,7 +6,6 @@
         buttons: true,
         danegerMode: true
     }).then((willDelete) => {
-        console.log(willDelete);
         if (willDelete) {
             $.ajax({
                 type: "DELETE",

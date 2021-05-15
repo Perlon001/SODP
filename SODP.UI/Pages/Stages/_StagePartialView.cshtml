@@ -13,7 +13,7 @@
             <div class="modal-body">
                 <div class="text-danger" asp-validation-summary="ModelOnly"></div>
                 <div id="error-placeholder"></div>
-                <form asp-page-handler="StageModalPartial">
+                <form asp-page-handler="StagePartial">
                     <input name="IsValidate" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
                     <input asp-for="Id" type="hidden" value="@Model.Id"/>
                     <div class="form-group">
@@ -27,8 +27,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-save="modal">Zapisz</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Wróć</button>
+                <partial name="_SubmitAndBackButtonModalPartial" />
             </div>
         </div>
     </div>

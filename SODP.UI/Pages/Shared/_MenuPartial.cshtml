@@ -15,12 +15,17 @@
             <a class="nav-link text-white-50" asp-area="" asp-page="/ArchiveProjects/Index">Archiwalne</a>
         </li>
     }
-    @if (User.IsInRole("ProjectManager"))
+    @if (User.IsInRole("User") || User.IsInRole("ProjectManager"))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white-50" asp-area="" asp-page="/Designers/Index">Projektanci</a>
+        </li>
+    }    @if (User.IsInRole("ProjectManager"))
     {
         <li class="nav-item">
             <a class="nav-link text-white-50" asp-area="" asp-page="/Stages/Index">Stadia</a>
         </li>
-    }     
+    }
     @if (User.IsInRole("Administrator"))
     {
         <li class="nav-item">

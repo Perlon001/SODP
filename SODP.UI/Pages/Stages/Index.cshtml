@@ -1,5 +1,6 @@
 ﻿@page
 @model SODP.UI.Pages.Stages.IndexModel
+
 @{
     ViewData["Title"] = "Stadia";
 }
@@ -19,7 +20,8 @@
         <div class="col-4 justify-content-end">
             <button type="button" class="btn btn-info form-control text-white float-right"
                     data-toggle="ajax-modal"
-                    data-url="@Url.Page("Index","StageModalPartial")">
+                    title="Nowe stadium"
+                    data-url="@Url.Page("Index","StagePartial")">
                 <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium
             </button>
         </div>
@@ -52,13 +54,15 @@
                                         <div>
                                             <button type="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1"
                                                     data-toggle="ajax-modal"
-                                                    data-url="@Url.Page("Index","StageModalPartial")&Id=@stage.Id">
+                                                    title="Edycja nazwy"
+                                                    data-url="@Url.Page("Index","StagePartial")&Id=@stage.Id">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                         </div>
                                         <div>
                                             <a onclick='DeleteStage("/api/Stages/@stage.Id")'
-                                               class="btn btn-sm btn-danger mb-0 mt-0 ml-1 mr-1 p-1 text-white">
+                                               class="btn btn-sm btn-danger mb-0 mt-0 ml-1 mr-1 p-1 text-white"
+                                               title="Usuń stadium">
                                                 <i class="far fa-trash-alt"></i>
                                             </a>
                                         </div>
@@ -84,23 +88,34 @@
     </div>
 </div>
 
-
-
 @section Scripts{
     <script src="~/js/delete.js"></script>
     <script src="~/js/stageList.js"></script>
-
 
     <script>
         function DeleteStage(url) {
             Delete(url);
         }
     </script>
-    @*<script>
-        $('#myModal').on('show.bs.modal', function (e) {
-            console.log(document.getElementById('IsModalShown').value);
-            $('#IsModalShown').val(true);
-            console.log(document.getElementById('IsModalShown').value);
-        })
-    </script>*@
+
+    <script type="text/javascript">
+        $(function () {
+        $('.popupLink').click(function () {
+        $('<div id="popupfooterdiv"/>').appendTo('body').dialog({
+        close: function (event, ui) {
+        dialog.remove();
+        },
+        modal: false,
+        draggable: false,
+        width: 500,
+        height: 400,
+        resizable: false,
+        //open: function (event, ui) {
+        //    $(‘.ui-dialog-title’).remove();
+        //}
+        }).load(this.href, {});
+        return false;
+        });
+        });
+    </script>
 }

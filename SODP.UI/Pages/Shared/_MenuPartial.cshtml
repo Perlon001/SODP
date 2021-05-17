@@ -9,23 +9,28 @@
             <a class="nav-link text-white-50" asp-area="" asp-page="/ActiveProjects/Index">Aktywne</a>
         </li>
     }
+    
     @if (User.IsInRole("User") || User.IsInRole("ProjectManager"))
     {
         <li class="nav-item">
             <a class="nav-link text-white-50" asp-area="" asp-page="/ArchiveProjects/Index">Archiwalne</a>
         </li>
     }
-    @if (User.IsInRole("User") || User.IsInRole("ProjectManager"))
+    
+    @if (User.IsInRole("ProjectManager"))
     {
-        <li class="nav-item">
-            <a class="nav-link text-white-50" asp-area="" asp-page="/Designers/Index">Projektanci</a>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Konfiguracja
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" asp-area="" asp-page="/Stages/Index">Stadia</a>
+                <a class="dropdown-item" asp-area="" asp-page="/Designers/Index">Projektanci</a>
+                <a class="dropdown-item" asp-area="" asp-page="/Branches/Index">Branże</a>
+            </div>
         </li>
-    }    @if (User.IsInRole("ProjectManager"))
-    {
-        <li class="nav-item">
-            <a class="nav-link text-white-50" asp-area="" asp-page="/Stages/Index">Stadia</a>
-        </li>
-    }
+    }    
+    
     @if (User.IsInRole("Administrator"))
     {
         <li class="nav-item">

@@ -39,6 +39,7 @@
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -58,7 +59,14 @@
     <script src="~/lib/sweetalert/sweetalert.min.js"></script>
     <script src="~/lib/fontawesome/095bee2ebe.js" crossorigin="anonymous"></script>
 
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
+
 
     @RenderSection("Scripts", required: false)
 

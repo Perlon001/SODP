@@ -30,8 +30,8 @@ $(document).ready(function () {
 
 function RenderButton(data) {
     var renderTags = `<div class="row group justify-content-center">`;
-    renderTags += `<a onclick = 'Delete("/api/ActiveProjects/${data}")' class='btn btn-sm btn-danger text-white mb-0 mt-0 ml-1 mr-1 p-1' style = "cursor:pointer; width=70px;" title="Usuń projekt"> <i class="far fa-trash-alt"></i></a >`;
-    renderTags += `<a onclick = 'Archive("/api/ActiveProjects/${data}")' class='btn btn-sm btn-success text-white mb-0 mt-0 ml-1 mr-1 p-1' style = "cursor:pointer; width=70px;" title="Przenieś projekt do archiwum"> <i class="fas fa-archive"></i></a >`;
+    renderTags += `<a onclick = 'Delete("/api/ActiveProjects/${data}")' class='btn btn-sm btn-danger text-white mb-0 mt-0 ml-1 mr-1 p-1' style = "cursor:pointer; width=70px;" data-toggle="tooltip" data-placement="top" title="Usuń projekt"> <i class="far fa-trash-alt"></i></a >`;
+    renderTags += `<a onclick = 'Archive("/api/ActiveProjects/${data}")' class='btn btn-sm btn-success text-white mb-0 mt-0 ml-1 mr-1 p-1' style = "cursor:pointer; width=70px;" data-toggle="tooltip" data-placement="top" title="Przenieś projekt do archiwum"> <i class="fas fa-archive"></i></a >`;
     renderTags += `</div >`;
 
     return renderTags
@@ -45,3 +45,7 @@ function Reload() {
     // this line is to watch the result in console , you can remove it later	
     // window.location.replace("/Projects");
 }
+
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})

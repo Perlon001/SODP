@@ -4,23 +4,26 @@
 @inject UserManager<User> UserManager
 
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a class="nav-link text-white-50" asp-area="Identity" asp-page="/Account/Manage/Index" title="Moje konto">Witaj <b id="currentUserName" class="text-white">@User.Identity.Name</b></a>
-    </li>
-    <li class="nav-item">
-        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })" method="post" >
-            <button  type="submit" class="nav-link btn btn-link text-white-50">Wyloguj</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-white-50" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Model.ReturnUrl">Zaloguj</a>
-    </li>
-}
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white-50" asp-area="Identity" asp-page="/Account/Manage/Index" 
+               data-toggle="tooltip" data-placement="top"
+               title="Moje konto">Witaj <b id="currentUserName" class="text-white">@User.Identity.Name</b></a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })" method="post">
+                <button type="submit" class="nav-link btn btn-link text-white-50">Wyloguj</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white-50" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Model.ReturnUrl">Zaloguj</a>
+        </li>
+    }
 </ul>
+
 
 

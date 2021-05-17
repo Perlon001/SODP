@@ -12,7 +12,7 @@
 <br />
 <div class="container row p-0 m-0">
     <div class="col-8">
-        <h2 class="text-info">Lista stadiów</h2>
+        <h2 class="text-info">Stadia projektowe</h2>
     </div>
     @if (SignInManager.IsSignedIn(User))
     {
@@ -48,12 +48,14 @@
                                 </td>
                                 <td>
                                     @Html.DisplayFor(m => stage.Title)
+                                    @*<a href="#" data-id="@stage.Id">@stage.Title</a>*@
                                 </td>
                                 <td>
                                     <div class="row group justify-content-end mr-0">
                                         <div>
                                             <button type="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1"
                                                     data-toggle="ajax-modal"
+                                                    data-placement="top"
                                                     title="Edycja nazwy"
                                                     data-url="@Url.Page("Index","StagePartial")&Id=@stage.Id">
                                                 <i class="fas fa-edit"></i>
@@ -62,6 +64,8 @@
                                         <div>
                                             <a onclick='DeleteStage("/api/Stages/@stage.Id")'
                                                class="btn btn-sm btn-danger mb-0 mt-0 ml-1 mr-1 p-1 text-white"
+                                               data-toggle="tooltip" 
+                                               data-placement="top"
                                                title="Usuń stadium">
                                                 <i class="far fa-trash-alt"></i>
                                             </a>
@@ -79,6 +83,7 @@
                         </tr>
                     </tbody>
                 </table>
+                <partial name="_StagePartialView.cshtml" model="@Model.StagesViewModel.Stages[1]" />
             }
             else
             {
@@ -98,7 +103,7 @@
         }
     </script>
 
-    <script type="text/javascript">
+    @*<script type="text/javascript">
         $(function () {
         $('.popupLink').click(function () {
         $('<div id="popupfooterdiv"/>').appendTo('body').dialog({
@@ -110,12 +115,9 @@
         width: 500,
         height: 400,
         resizable: false,
-        //open: function (event, ui) {
-        //    $(‘.ui-dialog-title’).remove();
-        //}
         }).load(this.href, {});
         return false;
         });
         });
-    </script>
+    </script>*@
 }

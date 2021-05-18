@@ -13,7 +13,8 @@ $(document).ready(function () {
             {
                 data: "title",
                 render: function (data, type, row) {
-                    return `<a href="/ActiveProjects/CreateUpdate?id=${row.id}" title="Edycja nazwy">${row.title}</a>`;
+                    //return `<a href="/ActiveProjects/CreateUpdate?id=${row.id}" title="Edycja nazwy">${row.title}</a>`;
+                    return `<a onclick="OpenProjectEdit(${row.id})" data-toggle="tooltip" title="Edycja nazwy">${row.title}</a>`;
                 }
             },
             {

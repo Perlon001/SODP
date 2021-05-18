@@ -17,6 +17,7 @@ namespace SODP.UI.Pages.Stages
     public class IndexModel : SODPPageModel
     {
         private readonly IStagesService _stagesService;
+        const string partialViewName = "_StagePartialView";
 
         public IndexModel(IStagesService stagesService)
         {
@@ -50,19 +51,10 @@ namespace SODP.UI.Pages.Stages
 
         public async Task<PartialViewResult> OnGetStageDetailsAsync(int? id)
         {
-            StageDTO stage;
-            if (id != null)
+            var stage = (id == null) ? new StageDTO() : (await _stagesService.GetAsync((int)id)).Data;
+            var partialViewResult = new PartialViewResult
             {
-                var response = await _stagesService.GetAsync((int)id);
-                stage = response.Data;
-            }
-            else
-            {
-                stage = new StageDTO();
-            }
-            var partialViewResult = new PartialViewResult()
-            {
-                ViewName = "_StagePartialView",
+                ViewName = partialViewName,
                 ViewData = new ViewDataDictionary<StageDTO>(ViewData, stage)
             };
 
@@ -71,17 +63,9 @@ namespace SODP.UI.Pages.Stages
 
         public async Task<PartialViewResult> OnPostStageDetailsAsync(StageDTO stage)
         {
-            ServiceResponse response ;
             if (ModelState.IsValid)
             {
-                if (stage.Id == 0)
-                {
-                    response = await _stagesService.CreateAsync(stage);
-                }
-                else
-                {
-                    response = await _stagesService.UpdateAsync(stage);
-                }
+                var response = (stage.Id == 0) ? await _stagesService.CreateAsync(stage) : await _stagesService.UpdateAsync(stage);
                 if (!response.Success)
                 {
                     foreach(var error in response.ValidationErrors)
@@ -91,9 +75,9 @@ namespace SODP.UI.Pages.Stages
                 }
             }
 
-            var partialViewResult = new PartialViewResult()
+            var partialViewResult = new PartialViewResult
             {
-                ViewName = "_StagePartialView",
+                ViewName = partialViewName,
                 ViewData = new ViewDataDictionary<StageDTO>(ViewData, stage)
             };
 

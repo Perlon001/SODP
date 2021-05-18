@@ -5,6 +5,8 @@
 }
 @using Microsoft.AspNetCore.Identity
 @using SODP.Model
+@using SODP.UI.ViewModels;
+
 @inject SignInManager<User> SignInManager
 
 <link rel="stylesheet" href="~/lib/DataTables/DataTables-1.10.24/css/jquery.dataTables.min.css" />
@@ -23,13 +25,23 @@
     </div>
     @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
     {
-        <div class="col-3">
-            <a role="button"
-               class="btn btn-info form-control text-white float-right"
-               asp-area="" asp-page="/ActiveProjects/CreateUpdate">
+        <div id="modal-placeholder"></div>
+        <div class="col-3 justify-content-end">
+            <button type="button" class="btn btn-info form-control text-white float-right"
+                    data-toggle="ajax-modal"
+                    title="Nowy :)"
+                    data-url="@Url.Page("Index","ProjectDetails")">
+                <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowy :)
+            </button>
+            <button type="button"
+                    class="btn btn-info form-control text-white float-right"
+                    onclick='OpenProjectEdit()'
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Nowy projekt">
                 <i class="fas fa-plus"></i>
                 &nbsp;&nbsp;&nbsp;Nowy projekt
-            </a>
+            </button>
         </div>
     }
 
@@ -75,10 +87,23 @@
 </div>
 
 @section Scripts{
+    <script>
+        function OpenProjectEdit(currentId) {
+            $.ajax({
+                type: "Get",
+                url: '@Url.Page("Index","ProjectDetails")&Id=' + currentId,
+                success: function (data) {
+                    $('#modal-placeholder').html(data);
+                    $('#editproject').modal('show');
+                }
+            })
+        }
+    </script>
     <script src="~/js/delete.js"></script>
     <script src="~/js/archive.js"></script>
     <script src="~/js/activeProjectList.js"></script>
 
     <script src="~/lib/DataTables/DataTables-1.10.24/js/jquery.dataTables.min.js"></script>
     <script src="~/lib/DataTables/Buttons-1.7.0/js/dataTables.buttons.min.js"></script>
+
 }

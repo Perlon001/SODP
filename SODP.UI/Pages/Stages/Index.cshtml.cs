@@ -27,7 +27,7 @@ namespace SODP.UI.Pages.Stages
         [BindProperty]
         public StagesViewModel StagesViewModel { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int currentPage = 1, int pageSize = 15, string gosign = "")
+        public async Task<IActionResult> OnGetAsync(int currentPage = 1, int pageSize = 15)
         {
             var url = new StringBuilder();
             url.Append("/Stages?currentPage=:&pageSize=");
@@ -42,21 +42,13 @@ namespace SODP.UI.Pages.Stages
                     Url = url.ToString()
                 },
             };
-            StagesViewModel.Stages = await GetStages(StagesViewModel.PageInfo);
+            StagesViewModel.Stages = await GetStagesAsync(StagesViewModel.PageInfo);
 
             return Page();
         }
 
-        private async Task<IList<StageDTO>> GetStages(PageInfo pageInfo)
-        {
-            var serviceResponse = await _stagesService.GetAllAsync(pageInfo.CurrentPage, pageInfo.ItemsPerPage);
-            pageInfo.TotalItems = serviceResponse.Data.TotalCount;
-            pageInfo.CurrentPage = serviceResponse.Data.PageNumber;
 
-            return serviceResponse.Data.Collection.ToList();
-        }
-
-        public async Task<PartialViewResult> OnGetStagePartial(int? id)
+        public async Task<PartialViewResult> OnGetStageDetailsAsync(int? id)
         {
             StageDTO stage;
             if (id != null)
@@ -77,7 +69,7 @@ namespace SODP.UI.Pages.Stages
             return await Task.FromResult(partialViewResult);
         }
 
-        public async Task<PartialViewResult> OnPostStagePartial(StageDTO stage)
+        public async Task<PartialViewResult> OnPostStageDetailsAsync(StageDTO stage)
         {
             ServiceResponse response ;
             if (ModelState.IsValid)
@@ -106,6 +98,15 @@ namespace SODP.UI.Pages.Stages
             };
 
             return partialViewResult;
+        }
+
+        private async Task<IList<StageDTO>> GetStagesAsync(PageInfo pageInfo)
+        {
+            var serviceResponse = await _stagesService.GetAllAsync(pageInfo.CurrentPage, pageInfo.ItemsPerPage);
+            pageInfo.TotalItems = serviceResponse.Data.TotalCount;
+            pageInfo.CurrentPage = serviceResponse.Data.PageNumber;
+
+            return serviceResponse.Data.Collection.ToList();
         }
     }
 }

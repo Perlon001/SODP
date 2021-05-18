@@ -20,9 +20,15 @@ namespace SODP.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            return Ok(await _stagesService.GetAllAsync(1,15));
+            return Ok(await _stagesService.GetAllAsync(1, 15));
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAsync(int id)
+        {
+            return Ok(await _stagesService.GetAsync(id));
+        }       
+        
         //[AllowAnonymous]
         //[HttpGet]
         //public async Task<ActionResult<PageResponse<Stage>>> GetStages()

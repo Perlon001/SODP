@@ -21,7 +21,7 @@
             <button type="button" class="btn btn-info form-control text-white float-right"
                     data-toggle="ajax-modal"
                     title="Nowe stadium"
-                    data-url="@Url.Page("Index","StagePartial")">
+                    data-url="@Url.Page("Index","StageDetails")">
                 <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium
             </button>
         </div>
@@ -44,27 +44,25 @@
                         {
                             <tr>
                                 <td>
-                                    @Html.DisplayFor(m => stage.Sign)
+                                    <a onclick='OpenStageEdit(@stage.Id)' 
+                                       data-toggle="tooltip"
+                                       data-placement="top"
+                                       title="Edycja stadium">
+                                    @stage.Sign</a>
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(m => stage.Title)
-                                    @*<a href="#" data-id="@stage.Id">@stage.Title</a>*@
+                                    <a onclick='OpenStageEdit(@stage.Id)'
+                                       data-toggle="tooltip"
+                                       data-placement="top"
+                                       title="Edycja stadium">
+                                    @stage.Title</a>
                                 </td>
                                 <td>
                                     <div class="row group justify-content-end mr-0">
                                         <div>
-                                            <button type="button" class="btn btn-sm btn-info text-white mb-0 mt-0 ml-1 mr-1 p-1"
-                                                    data-toggle="ajax-modal"
-                                                    data-placement="top"
-                                                    title="Edycja nazwy"
-                                                    data-url="@Url.Page("Index","StagePartial")&Id=@stage.Id">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                        <div>
                                             <a onclick='DeleteStage("/api/Stages/@stage.Id")'
                                                class="btn btn-sm btn-danger mb-0 mt-0 ml-1 mr-1 p-1 text-white"
-                                               data-toggle="tooltip" 
+                                               data-toggle="tooltip"
                                                data-placement="top"
                                                title="Usuń stadium">
                                                 <i class="far fa-trash-alt"></i>
@@ -83,7 +81,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <partial name="_StagePartialView.cshtml" model="@Model.StagesViewModel.Stages[1]" />
             }
             else
             {
@@ -103,21 +100,16 @@
         }
     </script>
 
-    @*<script type="text/javascript">
-        $(function () {
-        $('.popupLink').click(function () {
-        $('<div id="popupfooterdiv"/>').appendTo('body').dialog({
-        close: function (event, ui) {
-        dialog.remove();
-        },
-        modal: false,
-        draggable: false,
-        width: 500,
-        height: 400,
-        resizable: false,
-        }).load(this.href, {});
-        return false;
-        });
-        });
-    </script>*@
+    <script>
+        function OpenStageEdit(currentId) {
+            $.ajax({
+                type: "Get",
+                url: '@Url.Page("Index","StageDetails")&Id=' + currentId,
+                success: function (data) {
+                    $('#modal-placeholder').html(data);
+                    $('#editstage').modal('show');
+                }
+            })
+        }
+    </script>
 }

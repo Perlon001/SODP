@@ -18,7 +18,7 @@ namespace SODP.UI.Pages.ActiveProjects
     {
         private readonly IProjectsService _projectsService;
         private readonly IStagesService _stagesService;
-        const string partialViewName = "_ProjectPartialView";
+        const string _partialViewName = "_ProjectPartialView";
 
         public IndexModel(IProjectsService projectsService, IStagesService stagesService)
         {
@@ -36,7 +36,7 @@ namespace SODP.UI.Pages.ActiveProjects
             return Page();
         }
 
-        public async Task<IActionResult> OnPostDelete(int id)
+        public async Task<IActionResult> OnPostDeleteAsync(int id)
         {
             var response = await _projectsService.DeleteAsync(id);
             if (!response.Success)
@@ -47,25 +47,9 @@ namespace SODP.UI.Pages.ActiveProjects
             return RedirectToPage("Index");
         }
 
-        public async Task<PartialViewResult> OnGetProjectDetails(int? id)
+        public async Task<PartialViewResult> OnGetProjectDetailsAsync(int? id)
         {
-            ProjectDTO project;
-            if (id == null)
-            {
-                project = new ProjectDTO();
-            }
-            else
-            {
-                project = (await _projectsService.GetAsync((int)id)).Data;
-
-            };
-            var partialViewResult = new PartialViewResult
-            {
-                ViewName = partialViewName,
-                ViewData = new ViewDataDictionary<ProjectDTO>(ViewData, project)
-            };
-
-            return await Task.FromResult(partialViewResult);
+            return await GetPartialViewResult(id);
         }
 
         public async Task<PartialViewResult> OnPostProjectDetails(ProjectDTO project)
@@ -81,14 +65,32 @@ namespace SODP.UI.Pages.ActiveProjects
                     }
                 }
             }
-
-            var partialViewResult = new PartialViewResult
-            {
-                ViewName = partialViewName,
-                ViewData = new ViewDataDictionary<ProjectDTO>(ViewData, project)
-            };
+            var partialViewResult = await GetPartialViewResult(project.Id);
 
             return partialViewResult;
+        }
+
+        private async Task<PartialViewResult> GetPartialViewResult(int? id)
+        {
+            IEnumerable<SelectListItem> stages = null;
+            var project = (id == null) ? new ProjectDTO() : (await _projectsService.GetAsync((int)id)).Data;
+            if (id == null)
+            {
+                var stagesResponse = await _stagesService.GetAllAsync(1, 0);
+                stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
+                {
+                    Value = x.Id.ToString(),
+                    Text = String.Format("({0}) {1}", x.Sign.Trim(), x.Title.Trim())
+                }).ToList();
+            }
+            var viewModel = new NewProjectViewModel { Project = project, Stages = stages };
+            var partialViewResult = new PartialViewResult
+            {
+                ViewName = "_ProjectPartialView",
+                ViewData = new ViewDataDictionary<NewProjectViewModel>(ViewData, viewModel)
+            };
+
+            return await Task.FromResult(partialViewResult);
         }
     }
 }

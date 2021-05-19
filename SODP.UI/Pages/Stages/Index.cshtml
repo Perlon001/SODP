@@ -1,12 +1,11 @@
 ﻿@page
-@model SODP.UI.Pages.Stages.IndexModel
+@model IndexModel
 
 @{
     ViewData["Title"] = "Stadia";
 }
 @using Microsoft.AspNetCore.Identity
 @using SODP.Model
-@using SODP.UI.TagHelpers
 @inject SignInManager<User> SignInManager
 
 <br />
@@ -18,9 +17,10 @@
     {
         <div id="modal-placeholder"></div>
         <div class="col-4 justify-content-end">
-            <button type="button" class="btn btn-info form-control text-white float-right"
-                    data-toggle="ajax-modal"
+            <button type="button" 
+                    class="btn btn-info form-control text-white float-right"
                     title="Nowe stadium"
+                    data-toggle="ajax-modal"
                     data-url="@Url.Page("Index","StageDetails")">
                 <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium
             </button>

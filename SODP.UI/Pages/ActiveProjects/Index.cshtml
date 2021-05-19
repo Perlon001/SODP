@@ -1,5 +1,5 @@
 ﻿@page
-@model SODP.UI.Pages.ActiveProjects.IndexModel
+@model IndexModel
 @{
     ViewData["Title"] = "Projekty aktywne";
 }
@@ -13,10 +13,7 @@
 <link rel="stylesheet" href="~/lib/DataTables/DataTables-1.10.24/css/dataTables.bootstrap4.min.css" />
 <link rel="stylesheet" href="~/lib/DataTables/Buttons-1.7.0/css/buttons.bootstrap4.min.css" />
 
-<script>
-    var RoleCheck = @(User.IsInRole("ProjectManager") ? "true" : "false");
-    var ProjectsArray = @Json.Serialize(Model.Projects.Data.Collection);
-</script>
+
 
 <br />
 <div class="container row p-0 m-0">
@@ -27,20 +24,12 @@
     {
         <div id="modal-placeholder"></div>
         <div class="col-3 justify-content-end">
-            <button type="button" class="btn btn-info form-control text-white float-right"
-                    data-toggle="ajax-modal"
-                    title="Nowy :)"
-                    data-url="@Url.Page("Index","ProjectDetails")">
-                <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowy :)
-            </button>
             <button type="button"
                     class="btn btn-info form-control text-white float-right"
-                    onclick='OpenProjectEdit()'
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Nowy projekt">
-                <i class="fas fa-plus"></i>
-                &nbsp;&nbsp;&nbsp;Nowy projekt
+                    title="Nowe stadium"
+                    data-toggle="ajax-modal"
+                    data-url="@Url.Page("Index","ProjectDetails")">
+                <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium
             </button>
         </div>
     }
@@ -87,6 +76,11 @@
 </div>
 
 @section Scripts{
+    <script>
+        var RoleCheck = @(User.IsInRole("ProjectManager") ? "true" : "false");
+        var ProjectsArray = @Json.Serialize(Model.Projects.Data.Collection);
+    </script>
+
     <script>
         function OpenProjectEdit(currentId) {
             $.ajax({

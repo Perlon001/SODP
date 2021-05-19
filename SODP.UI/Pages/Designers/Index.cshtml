@@ -12,8 +12,18 @@
 @inject SignInManager<User> SignInManager
 
 <br />
+<div id="modal-placeholder"></div>
+
 <div class="container row p-0 m-0">
     <div class="col-8">
         <h2 class="text-info">Projektanci</h2>
     </div>
 </div>
+
+<button type="button" class="btn btn-info form-control text-white float-right"
+        data-toggle="ajax-modal"
+        title="Nowe stadium"
+        data-target="editdesigner"
+        data-url="@Url.Page("Index","DesignerDetails")">
+        Nowy projektant
+</button>

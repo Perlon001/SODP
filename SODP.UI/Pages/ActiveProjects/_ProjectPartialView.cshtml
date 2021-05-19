@@ -1,11 +1,11 @@
-﻿@model ProjectDTO
-
+﻿@using SODP.UI.ViewModels
+@model NewProjectViewModel
 <!-- Modal -->
 <div class="modal fade" id="editproject" tabindex="-1" role="dialog" aria-labelledby="editProjectLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="text-info" id="editProjectLabel">@(Model.Id==0 ? "Nowy projekt" : "Edycja projektu")</h5>
+                <h5 class="text-info" id="editProjectLabel">@(Model.Project.Id==0 ? "Nowy projekt" : "Edycja projektu")</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -15,36 +15,34 @@
                 <div id="error-placeholder"></div>
                 <form asp-page-handler="ProjectDetails">
                     <input name="IsValidate" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
-                    <input asp-for="Id" type="hidden" value="@Model.Id" />
-                    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
-
+                    <input asp-for="Project.Id" id="id" type="hidden" value="@Model.Project.Id" />
                     <div class="form-group">
-                        <input asp-for="Number" class="form-control" placeholder="Numer" readonly="@(Model.Id.Equals(0) ? false : true)" />
-                        <span asp-validation-for="Number" style="font-size:14px" class="text-danger"></span>
+                        <input asp-for="Project.Number" id="number" class="form-control" value="@Model.Project.Number" placeholder="Numer projektu" readonly="@(Model.Project.Id.Equals(0) ? false : true)" />
+                        <span asp-validation-for="Project.Number" class="text-danger"></span>
                     </div>
 
-                    @if (@Model.Id.Equals(0))
+                    @if (Model.Project.Id.Equals(0))
                     {
                         <div class="form-group">
-                            @*@Html.DropDownListFor(model => model.Project.StageId, @Model.Stages, "-- Stadium --", new { @class = "form-control" })*@
-                            <span asp-validation-for="@Model.StageId" style="font-size:14px" class="text-danger"></span>
+                            @Html.DropDownListFor(model => model.Project.StageId, @Model.Stages, "-- Stadium --", new { @class = "form-control" })
+                            <span asp-validation-for="@Model.Project.StageId" style="font-size:14px" class="text-danger"></span>
                         </div>
                     }
                     else
                     {
-                        <input type="hidden" asp-for="StageId" />
+                        <input type="hidden" asp-for="Project.StageId" />
                         <div class="form-group">
-                            <input asp-for="StageTitle" class="form-control" readonly="@(true)" />
+                            <input asp-for="Project.StageTitle" class="form-control" readonly="@(true)" />
                         </div>
                     }
 
                     <div class="form-group">
-                        <input asp-for="Title" class="form-control" placeholder="Tytuł" />
-                        <span asp-validation-for="Title" style="font-size:14px" class="text-danger"></span>
+                        <input asp-for="Project.Title" class="form-control" placeholder="Tytuł" />
+                        <span asp-validation-for="Project.Title" style="font-size:14px" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
-                        <textarea asp-for="Description" class="form-control" placeholder="Opis (opcjonalny)"></textarea>
+                        <textarea asp-for="Project.Description" class="form-control" placeholder="Opis (opcjonalny)"></textarea>
                     </div>
                 </form>
             </div>
@@ -54,9 +52,5 @@
         </div>
     </div>
 </div>
-
-@section Scripts{
-    <partial name="/Pages/Shared/_ValidationScriptsPartial.cshtml" />
-}
 
 

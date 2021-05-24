@@ -16,9 +16,9 @@ namespace SODP.Application.Managers
         public FolderConfigurator(IConfiguration configuration)
         {
             _configuration = configuration;
-            OSPrefix = String.Format("{0}Settings:",Environment.OSVersion.Platform.ToString());
-            ProjectFolder = _configuration.GetSection(String.Format("{0}ActiveFolder",OSPrefix)).Value;
-            ArchiveFolder = _configuration.GetSection(String.Format("{0}ArchiveFolder",OSPrefix)).Value;
+            OSPrefix = $"{Environment.OSVersion.Platform}Settings:";
+            ProjectFolder = _configuration.GetSection($"{OSPrefix}ActiveFolder").Value;
+            ArchiveFolder = _configuration.GetSection($"{OSPrefix}ArchiveFolder").Value;
         }
     }
 }

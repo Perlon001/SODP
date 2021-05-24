@@ -26,7 +26,7 @@ namespace SODP.Application.Validators
                 .NotEmpty()
                 .WithMessage("Stadium jest wymagane.")
                 .MustAsync((stageId, cancellation) => StageExist(stageId))
-                .WithMessage(u => string.Format("Stadium:{0} nie wystêpuje w bazie.", u.StageId))
+                .WithMessage(u => $"Stadium:{u.StageId} nie wystêpuje w bazie.")
                 .WithName("Stadium");
 
             RuleFor(u => u.Title)

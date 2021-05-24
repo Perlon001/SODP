@@ -1,29 +1,29 @@
 ﻿@page
 @model SODP.UI.Pages.Designers.IndexModel
-@{
-}
 
 @{
     ViewData["Title"] = "Projektanci";
 }
 @using Microsoft.AspNetCore.Identity
 @using SODP.Model
-@using SODP.UI.TagHelpers
 @inject SignInManager<User> SignInManager
 
 <br />
-<div id="modal-placeholder"></div>
-
 <div class="container row p-0 m-0">
     <div class="col-8">
         <h2 class="text-info">Projektanci</h2>
     </div>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <div id="modal-placeholder"></div>
+        <div class="col-4 justify-content-end">
+            <button type="button" class="btn btn-info form-control text-white float-right"
+                    data-toggle="ajax-modal"
+                    title="Nowe stadium"
+                    data-target="editdesigner"
+                    data-url="@Url.Page("Index", "DesignerDetails")">
+                <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowy projektant
+            </button>
+        </div>
+    }
 </div>
-
-<button type="button" class="btn btn-info form-control text-white float-right"
-        data-toggle="ajax-modal"
-        title="Nowe stadium"
-        data-target="editdesigner"
-        data-url="@Url.Page("Index","DesignerDetails")">
-        Nowy projektant
-</button>

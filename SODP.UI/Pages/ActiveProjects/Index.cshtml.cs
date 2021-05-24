@@ -80,7 +80,7 @@ namespace SODP.UI.Pages.ActiveProjects
                 stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
                 {
                     Value = x.Id.ToString(),
-                    Text = String.Format("({0}) {1}", x.Sign.Trim(), x.Title.Trim())
+                    Text = $"({x.Sign.Trim()}) {x.Title.Trim()}"
                 }).ToList();
             }
             var viewModel = new NewProjectViewModel { Project = project, Stages = stages };

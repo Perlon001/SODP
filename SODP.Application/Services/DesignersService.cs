@@ -73,7 +73,7 @@ namespace SODP.Application.Services
                 var designer = await _context.Designers.FirstOrDefaultAsync(x => x.Id == designerId);
                 if (designer == null)
                 {
-                    serviceResponse.SetError(string.Format("Błąd: Projektant Id:{0} nie odnaleziony.", designerId), 404);
+                    serviceResponse.SetError($"Błąd: Projektant Id:{designerId} nie odnaleziony.", 404);
                 }
                 serviceResponse.SetData(_mapper.Map<DesignerDTO>(designer));
             }
@@ -94,7 +94,7 @@ namespace SODP.Application.Services
                 if (exist != null)
                 {
 
-                    serviceResponse.SetError(string.Format("Projektant {0} już istnieje.", createDesigner.ToString()), 400);
+                    serviceResponse.SetError($"Projektant {createDesigner} już istnieje.", 400);
                     serviceResponse.ValidationErrors.Add("Designer", "Projektant już istnieje.");
                     return serviceResponse;
                 }

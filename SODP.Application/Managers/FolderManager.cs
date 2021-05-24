@@ -34,13 +34,13 @@ namespace SODP.Application.Managers
                 case 0:
                     command = _folderCommandCreator.GetCreateFolderCommand(project);
                     result = await FolderOperationTask(command, project.ToString(), true);
-                    return (result.Success, String.Format("{0} {1}", command, result.Message));
+                    return (result.Success, $"{command} {result.Message}");
                 case 1:
                     command = _folderCommandCreator.GetRenameFolderCommand(catalog[0], project);
                     result = await FolderOperationTask(command, project.ToString(), true);
-                    return (result.Success, String.Format("{0} {1}", command, result.Message));
+                    return (result.Success, $"{command} {result.Message}");
                 default:
-                    return (false, String.Format("Istnieje więcej niż 1 folder projektu {0}", project.Symbol));
+                    return (false, $"Istnieje więcej niż 1 folder projektu {project.Symbol}");
             }
         }
 
@@ -54,9 +54,9 @@ namespace SODP.Application.Managers
                 case 1:
                     var command = _folderCommandCreator.GetRenameFolderCommand(catalog[0], project);
                     var result = await FolderOperationTask(command, project.ToString(), true);
-                    return (result.Success, String.Format("{0} {1}", command, result.Message));
+                    return (result.Success, $"{command} {result.Message}");
                 default:
-                    return (false, String.Format("Istnieje więcej niż 1 folder projektu {0}", project.Symbol));
+                    return (false, $"Istnieje więcej niż 1 folder projektu {project.Symbol}");
             }
         }
 
@@ -67,17 +67,17 @@ namespace SODP.Application.Managers
             switch(catalog.Count())
             {
                 case 0:
-                    return(true, String.Format("Folder projektu {0} nie istnieje.", project.Symbol));
+                    return(true, $"Folder projektu {project.Symbol} nie istnieje.");
                 case 1:
-                    if(!FolderIsEmpty(String.Format("{0}{1}",_projectFolder, catalog[0])))
+                    if(!FolderIsEmpty($"{_projectFolder}{catalog[0]}"))
                     {
-                        return (false,String.Format("Folder projektu {0} nie jest pusty.", project.Symbol));
+                        return (false,$"Folder projektu {project.Symbol} nie jest pusty.");
                     }
                     var command = _folderCommandCreator.GetDeleteFolderCommand(project);
                     result = await FolderOperationTask(command, catalog[0], false);
-                    return (result.Success, String.Format("{0} {1}", command, result.Message));
+                    return (result.Success, $"{command} {result.Message}");
                 default:
-                    return (false, String.Format("Istnieje więcej niż 1 folder projektu {0}", project.Symbol));
+                    return (false, $"Istnieje więcej niż 1 folder projektu {project.Symbol}");
             }
         }
 
@@ -88,11 +88,11 @@ namespace SODP.Application.Managers
             switch(catalog.Count())
             {
                 case 0:
-                    return(false, String.Format("Folder projektu {0} nie istnieje.", project.Symbol));
+                    return(false, $"Folder projektu {project.Symbol} nie istnieje.");
                 case 1:
                     if(FolderIsEmpty(_projectFolder + catalog[0]))
                     {
-                        return (false, String.Format("Folder projektu {0} jest pusty.", project.Symbol));
+                        return (false, $"Folder projektu {project.Symbol} jest pusty.");
                     }
                     if(!catalog[0].Equals(project.ToString()))
                     {
@@ -104,9 +104,9 @@ namespace SODP.Application.Managers
                     }
                     var command = _folderCommandCreator.GetArchiveFolderCommand(project);
                     result = await FolderOperationTask(command, project.ToString(), false);
-                    return (result.Success, String.Format("{0} {1}", command, result.Message));
+                    return (result.Success, $"{command} {result.Message}");
                 default:
-                    return (false, String.Format("Istnieje więcej niż 1 folder projektu {0}", project.Symbol));
+                    return (false, $"Istnieje więcej niż 1 folder projektu {project.Symbol}");
             }
         }
 
@@ -117,13 +117,13 @@ namespace SODP.Application.Managers
             switch(catalog.Count())
             {
                 case 0:
-                    return(false, String.Format("Folder projektu {0} nie istnieje.", project.Symbol));
+                    return(false, $"Folder projektu {project.Symbol} nie istnieje.");
                 case 1:
                     var command = _folderCommandCreator.GetRestoreFolderCommand(project);
                     result = await FolderOperationTask(command, project.ToString(), true);
-                    return (result.Success, String.Format("{0} {1}", command, result.Message));
+                    return (result.Success, $"{command} {result.Message}");
                 default:
-                    return (false, String.Format("Istnieje więcej niż 1 folder projektu {0}", project.Symbol));
+                    return (false, $"Istnieje więcej niż 1 folder projektu {project.Symbol}");
             }
         }
 

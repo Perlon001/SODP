@@ -105,7 +105,7 @@ namespace WebSODP.Application.Services
                 if(exist != null)
                 {
 
-                    serviceResponse.SetError(string.Format("Stadium {0} już istnieje.", createStage.Sign.ToUpper()), 400);
+                    serviceResponse.SetError($"Stadium {createStage.Sign.ToUpper()} już istnieje.", 400);
                     serviceResponse.ValidationErrors.Add("Sign", "Stadium już istnieje.");
                     return serviceResponse;
                 }
@@ -139,7 +139,7 @@ namespace WebSODP.Application.Services
                 var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == updateStage.Id);
                 if(stage == null)
                 {
-                    serviceResponse.SetError(string.Format("Stadium {0} nie odnalezione.",updateStage.Id), 404);
+                    serviceResponse.SetError($"Stadium {updateStage.Id} nie odnalezione.", 404);
                     serviceResponse.ValidationErrors.Add("Sign", "Stadium nie odnalezione.");
                     return serviceResponse;
                 }
@@ -163,16 +163,16 @@ namespace WebSODP.Application.Services
                 var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == stageId);
                 if (stage == null)
                 {
-                    serviceResponse.SetError(string.Format("Stadium [{0}] nie odnalezione.", stageId), 404);
-                    serviceResponse.ValidationErrors.Add("Id", string.Format("Stadium [{0}] nie odnalezione.", stageId));
+                    serviceResponse.SetError($"Stadium [{stageId}] nie odnalezione.", 404);
+                    serviceResponse.ValidationErrors.Add("Id", $"Stadium [{stageId}] nie odnalezione.");
 
                     return serviceResponse;
                 }
                 var project = await _context.Projects.FirstOrDefaultAsync(x => x.Stage.Id == stageId);
                 if(project != null)
                 {
-                    serviceResponse.SetError(string.Format("Stadium {0} posiada powiązane projekty.", project.Stage.Sign), 400);
-                    serviceResponse.ValidationErrors.Add("Id", string.Format("Stadium [{0}] posiada powiązane projekty.", stageId));
+                    serviceResponse.SetError($"Stadium {project.Stage.Sign} posiada powiązane projekty.", 400);
+                    serviceResponse.ValidationErrors.Add("Id", $"Stadium [{stageId}] posiada powiązane projekty.");
                     return serviceResponse;
                 }
                 _context.Entry(stage).State = EntityState.Deleted;
@@ -194,15 +194,15 @@ namespace WebSODP.Application.Services
                 var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Sign == sign);
                 if (stage == null)
                 {
-                    serviceResponse.SetError(string.Format("Stadium Sign:{0} nie odnalezione.", sign), 404);
-                    serviceResponse.ValidationErrors.Add("Sign", string.Format("Stadium {0} nie odnalezione.", sign));
+                    serviceResponse.SetError($"Stadium Sign:{sign} nie odnalezione.", 404);
+                    serviceResponse.ValidationErrors.Add("Sign", $"Stadium {sign} nie odnalezione.");
                     return serviceResponse;
                 }
                 var project = await _context.Projects.FirstOrDefaultAsync(x => x.Stage.Sign == sign);
                 if(project != null)
                 {
-                    serviceResponse.SetError(string.Format("Stadium {0} posiada powiązane projekty.", sign), 409);
-                    serviceResponse.ValidationErrors.Add("Sign", string.Format("Stadium {0} posiada powiązane projekty.", sign));
+                    serviceResponse.SetError($"Stadium {sign} posiada powiązane projekty.", 409);
+                    serviceResponse.ValidationErrors.Add("Sign", $"Stadium {sign} posiada powiązane projekty.");
                     return serviceResponse;
                 }
                 _context.Entry(stage).State = EntityState.Deleted;

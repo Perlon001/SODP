@@ -20,7 +20,7 @@ namespace SODP.Domain.Helpers
         {
             foreach (var error in identityResult.Errors)
             {
-                response.SetError(string.Format("{0}: {1}", error.Code, error.Description));
+                response.SetError($"{error.Code}: {error.Description}");
             }
         }
     }

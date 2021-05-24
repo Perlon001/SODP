@@ -36,7 +36,7 @@ namespace SODP.UI.Pages.ActiveProjects
                 Stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
                 {
                     Value = x.Id.ToString(),
-                    Text = String.Format("({0}) {1}", x.Sign.Trim(), x.Title.Trim())
+                    Text = $"({x.Sign.Trim()}) {x.Title.Trim()}"
                 }).ToList();
 
                 Project = new ProjectDTO();
@@ -60,7 +60,7 @@ namespace SODP.UI.Pages.ActiveProjects
             Stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
             {
                 Value = x.Id.ToString(),
-                Text = String.Format("({0}) {1}", x.Sign.Trim(), x.Title.Trim())
+                Text = $"({x.Sign.Trim()}) {x.Title.Trim()}"
             }).ToList();
 
             if (ModelState.IsValid)

@@ -101,7 +101,7 @@ namespace WebSODP.Application.Services
                     .FirstOrDefaultAsync(x => x.Id == projectId);
                 if (project == null)
                 {
-                    serviceResponse.SetError(string.Format("Błąd: Projekt Id:{0} nie odnaleziony.", projectId), 404);
+                    serviceResponse.SetError($"Błąd: Projekt Id:{projectId} nie odnaleziony.", 404);
                 }
                 serviceResponse.SetData(_mapper.Map<ProjectDTO>(project));
             }
@@ -121,7 +121,7 @@ namespace WebSODP.Application.Services
                 var exist = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Number == createProject.Number && x.Stage.Id == createProject.StageId);
                 if(exist != null)
                 {
-                    serviceResponse.SetError(string.Format("Błąd: Projekt {0} już istnieje.", exist.Symbol), 400);
+                    serviceResponse.SetError($"Błąd: Projekt {exist.Symbol} już istnieje.", 400);
                     return serviceResponse;
                 }
 
@@ -138,7 +138,7 @@ namespace WebSODP.Application.Services
                 var (Success, Message) = await _folderManager.CreateFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(String.Format("Błąd: {0}", Message), 500);
+                    serviceResponse.SetError($"Błąd: {Message}", 500);
                     
                     return serviceResponse;
                 }
@@ -164,7 +164,7 @@ namespace WebSODP.Application.Services
                 var oldProject = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Id == updateProject.Id);
                 if(oldProject == null)
                 {
-                    serviceResponse.SetError(string.Format("Błąd: Project Id:{0} nie odnaleziony.", updateProject.Id), 401);
+                    serviceResponse.SetError($"Błąd: Project Id:{updateProject.Id} nie odnaleziony.", 401);
                     return serviceResponse;
                 }
                 var project = _mapper.Map<Project>(updateProject);
@@ -175,7 +175,7 @@ namespace WebSODP.Application.Services
                     var error = "";
                     foreach(var item in validationResult.Errors)
                     {
-                        error += string.Format("{0}: {1}",item.PropertyName, item.ErrorMessage);
+                        error += $"{item.PropertyName}: {item.ErrorMessage}";
                     }
                     serviceResponse.SetError(error, 400);
                     return serviceResponse;
@@ -185,7 +185,7 @@ namespace WebSODP.Application.Services
                 var (Success, Message) = await _folderManager.RenameFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(String.Format("Błąd: {0}", Message));
+                    serviceResponse.SetError($"Błąd: {Message}");
                     return serviceResponse;
                 }
 
@@ -212,7 +212,7 @@ namespace WebSODP.Application.Services
                 var project = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Id == id);
                 if (project == null)
                 {
-                    serviceResponse.SetError(string.Format("Błąd: Project Id:{0} nie odnaleziony.", id.ToString()), 401);
+                    serviceResponse.SetError($"Błąd: Project Id:{id} nie odnaleziony.", 401);
                     return serviceResponse;
                 }
 
@@ -226,7 +226,7 @@ namespace WebSODP.Application.Services
                 var (Success, Message) = await _folderManager.ArchiveFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd: {0}", Message));
+                    serviceResponse.SetError($"Błąd: {Message}");
                     project.Status = ProjectStatus.Active;
                     _context.SaveChanges();
                     return serviceResponse;
@@ -252,13 +252,13 @@ namespace WebSODP.Application.Services
                 var project = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Id == id); 
                 if(project == null)
                 {
-                    serviceResponse.SetError(string.Format("Błąd: Project Id:{0} nie odnaleziony.", id.ToString()), 401);
+                    serviceResponse.SetError($"Błąd: Project Id:{id} nie odnaleziony.", 401);
                     return serviceResponse;
                 }
                 var (Success, Message) = await _folderManager.DeleteFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd: {0}", Message));
+                    serviceResponse.SetError($"Błąd: {Message}");
                     return serviceResponse;
                 }
                 _context.Entry(project).State = EntityState.Deleted;
@@ -280,7 +280,7 @@ namespace WebSODP.Application.Services
                 var project = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Id == id); 
                 if(project == null)
                 {
-                    serviceResponse.SetError(string.Format("Błąd: Project Id:{0} nie odnaleziony.", id.ToString()), 401);
+                    serviceResponse.SetError($"Błąd: Project Id:{id} nie odnaleziony.", 401);
                     return serviceResponse;
                 }
                 project.Status = ProjectStatus.DuringRestore;
@@ -289,7 +289,7 @@ namespace WebSODP.Application.Services
                 var (Success, Message) = await _folderManager.RestoreFolderAsync(project);
                 if (!Success)
                 {
-                    serviceResponse.SetError(string.Format("Błąd: {0}", Message));
+                    serviceResponse.SetError($"Błąd: {Message}");
                     return serviceResponse;
                 }
                 project.Status = ProjectStatus.Active;
@@ -312,7 +312,7 @@ namespace WebSODP.Application.Services
                 var branch = await _context.Branches.FirstOrDefaultAsync(x => x.Id == branchId);
                 if (branch == null)
                 {
-                    serviceResponse.SetError(string.Format("Błąd: Branża Id:{0} nie odnaleziona.", branchId), 404);
+                    serviceResponse.SetError($"Błąd: Branża Id:{branchId} nie odnaleziona.", 404);
                     return serviceResponse;
                 }
                 var projectBranch = await _context.ProjectBranches.FirstOrDefaultAsync(x => x.ProjectId == projectId && x.BranchId == branchId);

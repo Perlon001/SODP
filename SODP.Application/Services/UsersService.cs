@@ -135,7 +135,7 @@ namespace SODP.Application.Services
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
                 if (user == null)
                 {
-                    serviceResponse.SetError(string.Format("Użytkownik Id:{0} nie odnaleziony.", userId), 404);
+                    serviceResponse.SetError($"Użytkownik Id:{userId} nie odnaleziony.", 404);
                     return serviceResponse;
                 }
                 var roles = await _userManager.GetRolesAsync(user);

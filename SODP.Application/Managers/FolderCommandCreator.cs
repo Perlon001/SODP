@@ -23,32 +23,32 @@ namespace SODP.Application.Managers
 
         public string GetCreateFolderCommand(Project project)
         {
-            return String.Format("{0} {1} {2}",GetCommand(FolderCommands.Create), _projectFolder, project.ToString());
+            return $"{GetCommand(FolderCommands.Create)} {_projectFolder} {project}";
         }
 
         public string GetRenameFolderCommand(string oldFolderName, Project project)
         {
-            return String.Format("{0} {1} {2} {3}", GetCommand(FolderCommands.Rename), _projectFolder, oldFolderName, project.ToString());
+            return $"{GetCommand(FolderCommands.Rename)} {_projectFolder} {oldFolderName} {project}";
         }
 
         public string GetArchiveFolderCommand(Project project)
         {
-            return String.Format("{0} {1} {2} {3}", GetCommand(FolderCommands.Archive), _projectFolder, _archiveFolder, project.ToString()); 
+            return $"{GetCommand(FolderCommands.Archive)} {_projectFolder} {_archiveFolder} {project}"; 
         }
 
         public string GetRestoreFolderCommand(Project project)
         {
-            return String.Format("{0} {1} {2} {3}", GetCommand(FolderCommands.Restore), _archiveFolder, _projectFolder, project.ToString());
+            return $"{GetCommand(FolderCommands.Restore)} {_archiveFolder} {_projectFolder} {project}";
         }
 
         public string GetDeleteFolderCommand(Project project)
         {
-            return String.Format("{0} {1} {2}", GetCommand(FolderCommands.Delete), _projectFolder, project.ToString());
+            return $"{GetCommand(FolderCommands.Delete)} {_projectFolder} {project}";
         }
 
         private string GetCommand(FolderCommands command)
         {
-            return _configuration.GetSection(String.Format("{0}{1}Command",_folderConfigurator.OSPrefix, command.ToString()) ).Value;
+            return _configuration.GetSection($"{_folderConfigurator.OSPrefix}{command}Command").Value;
         }
     }
 }

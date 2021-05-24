@@ -10,7 +10,6 @@
 
     InitProjectDataTable();
     InitModalPlaceHolder();
-
 });
 
 function InitProjectDataTable() {
@@ -57,6 +56,7 @@ function InitModalPlaceHolder() {
             var isValid = newBody.find('[name="IsValidate"]').val() == 'True';
             if (isValid) {
                 placeholderElement.find('.modal').modal('hide');
+                window.location.reload();
             }
         });
     });

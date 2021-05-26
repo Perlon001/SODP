@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SODP.Domain.DTO;
+using SODP.Domain.Models;
 using SODP.Domain.Services;
 using SODP.UI.Pages.Shared;
 using SODP.UI.ViewModels;
@@ -18,7 +19,6 @@ namespace SODP.UI.Pages.ActiveProjects
     {
         private readonly IProjectsService _projectsService;
         private readonly IStagesService _stagesService;
-        const string _partialViewName = "_ProjectPartialView";
 
         public IndexModel(IProjectsService projectsService, IStagesService stagesService)
         {
@@ -47,9 +47,27 @@ namespace SODP.UI.Pages.ActiveProjects
             return RedirectToPage("Index");
         }
 
-        public async Task<PartialViewResult> OnGetProjectDetailsAsync(int? id)
+        public async Task<IActionResult> OnGetProjectDetailsAsync(int? id)
         {
-            return await GetPartialViewResult(id);
+            IEnumerable<SelectListItem> stages = null;
+            var project = (id == null || id == 0) ? new ProjectDTO() : (await _projectsService.GetAsync((int)id)).Data;
+            if (id == null)
+            {
+                var stagesResponse = await _stagesService.GetAllAsync(1, 0);
+                stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
+                {
+                    Value = x.Id.ToString(),
+                    Text = $"({x.Sign.Trim()}) {x.Title.Trim()}"
+                }).ToList();
+            }
+            var viewModel = new NewProjectViewModel { Project = project, Stages = stages };
+            var partialViewResult = new PartialViewResult
+            {
+                ViewName = "_ProjectPartialView",
+                ViewData = new ViewDataDictionary<NewProjectViewModel>(ViewData, viewModel)
+            }; 
+            
+            return partialViewResult;
         }
 
         public async Task<PartialViewResult> OnPostProjectDetails(ProjectDTO project)
@@ -65,32 +83,38 @@ namespace SODP.UI.Pages.ActiveProjects
                     }
                 }
             }
-            var partialViewResult = await GetPartialViewResult(project.Id);
-
-            return partialViewResult;
-        }
-
-        private async Task<PartialViewResult> GetPartialViewResult(int? id)
-        {
-            IEnumerable<SelectListItem> stages = null;
-            var project = (id == null) ? new ProjectDTO() : (await _projectsService.GetAsync((int)id)).Data;
-            if (id == null)
-            {
-                var stagesResponse = await _stagesService.GetAllAsync(1, 0);
-                stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
-                {
-                    Value = x.Id.ToString(),
-                    Text = $"({x.Sign.Trim()}) {x.Title.Trim()}"
-                }).ToList();
-            }
-            var viewModel = new NewProjectViewModel { Project = project, Stages = stages };
+            //var partialViewResult = new PartialViewResult(); //await GetPartialViewResult(project.Id);
+            var viewModel = new NewProjectViewModel { Project = project, Stages = null };
             var partialViewResult = new PartialViewResult
             {
                 ViewName = "_ProjectPartialView",
                 ViewData = new ViewDataDictionary<NewProjectViewModel>(ViewData, viewModel)
             };
 
-            return await Task.FromResult(partialViewResult);
+            return partialViewResult;
         }
+
+        //private async Task<PartialViewResult> GetPartialViewResult(int? id)
+        //{
+        //    IEnumerable<SelectListItem> stages = null;
+        //    var project = (id == null || id == 0) ? new ProjectDTO() : (await _projectsService.GetAsync((int)id)).Data;
+        //    if (id == null)
+        //    {
+        //        var stagesResponse = await _stagesService.GetAllAsync(1, 0);
+        //        stages = stagesResponse.Data.Collection.Select(x => new SelectListItem()
+        //        {
+        //            Value = x.Id.ToString(),
+        //            Text = $"({x.Sign.Trim()}) {x.Title.Trim()}"
+        //        }).ToList();
+        //    }
+        //    var viewModel = new NewProjectViewModel { Project = project, Stages = stages };
+        //    var partialViewResult = new PartialViewResult
+        //    {
+        //        ViewName = "_ProjectPartialView",
+        //        ViewData = new ViewDataDictionary<NewProjectViewModel>(ViewData, viewModel)
+        //    };
+
+        //    return await Task.FromResult(partialViewResult);
+        //}
     }
 }

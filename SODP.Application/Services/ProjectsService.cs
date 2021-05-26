@@ -5,6 +5,7 @@ using SODP.DataAccess;
 using SODP.Domain.DTO;
 using SODP.Domain.Helpers;
 using SODP.Domain.Managers;
+using SODP.Domain.Models;
 using SODP.Domain.Services;
 using SODP.Model;
 using SODP.Model.Enums;
@@ -91,17 +92,17 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<ProjectDTO>> GetAsync(int projectId)
+        public async Task<ServiceResponse<ProjectDTO>> GetAsync(int id)
         {
             var serviceResponse = new ServiceResponse<ProjectDTO>();
             try
             {
                 var project = await _context.Projects
                     .Include(s => s.Stage)
-                    .FirstOrDefaultAsync(x => x.Id == projectId);
+                    .FirstOrDefaultAsync(x => x.Id == id);
                 if (project == null)
                 {
-                    serviceResponse.SetError($"Błąd: Projekt Id:{projectId} nie odnaleziony.", 404);
+                    serviceResponse.SetError($"Błąd: Projekt Id:{id} nie odnaleziony.", 404);
                 }
                 serviceResponse.SetData(_mapper.Map<ProjectDTO>(project));
             }
@@ -113,19 +114,19 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<ProjectDTO>> CreateAsync(ProjectDTO createProject)
+        public async Task<ServiceResponse<ProjectDTO>> CreateAsync(ProjectDTO newProject)
         {
             var serviceResponse = new ServiceResponse<ProjectDTO>();
             try
             {
-                var exist = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Number == createProject.Number && x.Stage.Id == createProject.StageId);
+                var exist = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Number == newProject.Number && x.Stage.Id == newProject.StageId);
                 if(exist != null)
                 {
                     serviceResponse.SetError($"Błąd: Projekt {exist.Symbol} już istnieje.", 400);
                     return serviceResponse;
                 }
 
-                var project = _mapper.Map<Project>(createProject);
+                var project = _mapper.Map<Project>(newProject);
                 var validationResult = await _validator.ValidateAsync(project);
                 if (!validationResult.IsValid)
                 {
@@ -143,7 +144,7 @@ namespace WebSODP.Application.Services
                     return serviceResponse;
                 }
 
-                project.Location = createProject.ToString();
+                project.Location = newProject.ToString();
                 var entity = await _context.AddAsync(project);
                 await _context.SaveChangesAsync();
                 serviceResponse.SetData(_mapper.Map<ProjectDTO>(entity.Entity));
@@ -158,7 +159,7 @@ namespace WebSODP.Application.Services
 
         public async Task<ServiceResponse> UpdateAsync(ProjectDTO updateProject)
         {
-            var serviceResponse = new ServiceResponse<Project>();
+            var serviceResponse = new ServiceResponse<ProjectDTO>();
             try
             {
                 var oldProject = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Id == updateProject.Id);
@@ -194,7 +195,7 @@ namespace WebSODP.Application.Services
                 oldProject.Location = project.ToString();
                 _context.Projects.Update(oldProject);
                 await _context.SaveChangesAsync();
-                serviceResponse.SetData( oldProject );
+                serviceResponse.SetData( _mapper.Map<ProjectDTO>(oldProject) );
             }
             catch (Exception ex)
             {
@@ -216,13 +217,9 @@ namespace WebSODP.Application.Services
                     return serviceResponse;
                 }
 
-                // tu pierwsze pytanie czy może być SaveChangesAsync()? Tak myślę, że chyba nie.
                 project.Status = ProjectStatus.DuringArchive;
                 _context.SaveChanges();
 
-                // tu drugie pytanie jak prawidłowo wywołać taska który korzysta z zewnętrznych serwisów lub systemu operacyjnego
-                // task może się wykonaywać bardzo długo np. 1godz. 
-                // czy tu nie należałoby jednak również zastosować metody synchronicznej
                 var (Success, Message) = await _folderManager.ArchiveFolderAsync(project);
                 if (!Success)
                 {
@@ -232,7 +229,6 @@ namespace WebSODP.Application.Services
                     return serviceResponse;
                 }
                 
-                // bo z drugiego wynika trzecie pytanie kiedy poniższy zapis się wykona. Chciałbym po zakończeniu archiwizacji
                 project.Status = ProjectStatus.Archived;
                 await _context.SaveChangesAsync();
             }
@@ -252,7 +248,7 @@ namespace WebSODP.Application.Services
                 var project = await _context.Projects.Include(x => x.Stage).FirstOrDefaultAsync(x => x.Id == id); 
                 if(project == null)
                 {
-                    serviceResponse.SetError($"Błąd: Project Id:{id} nie odnaleziony.", 401);
+                    serviceResponse.SetError($"Błąd: Projekt Id:{id} nie odnaleziony.", 401);
                     return serviceResponse;
                 }
                 var (Success, Message) = await _folderManager.DeleteFolderAsync(project);
@@ -335,7 +331,7 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public Task<ServicePageResponse<BranchDTO>> GetBranchesAsync(int projectId)
+        public Task<ServicePageResponse<BranchDTO>> GetBranchesAsync(int id)
         {
             throw new NotImplementedException();
         }

@@ -15,9 +15,10 @@ namespace Tests.DataAccess
         }
 
         [Fact]
-        public void when_project_not_have_first_four_digit_should_return_false()
+        public void When_project_not_have_first_four_digit_should_return_false()
         {
             var projectName = @"123abc_azxcvb";
+
             Assert.False(_validator.Validate(projectName));
         }
     }

@@ -3,6 +3,7 @@
     $('button[data-toggle="ajax-modal"]').click(function (event) {
         var url = $(this).data('url');
         $.get(url).done(function (data) {
+            var placeholderElement = $('#modal-placeholder');
             placeholderElement.html(data);
             placeholderElement.find('.modal').modal('show');
         });
@@ -45,13 +46,14 @@ function InitModalPlaceHolder() {
     var placeholderElement = $('#modal-placeholder');
 
     placeholderElement.on('click', '[data-save="modal"]', function (event) {
-        console.log(event);
         event.preventDefault();
         var form = $(this).parents('.modal').find('form');
         var actionUrl = form.attr('action');
         var dataToSend = form.serialize();
         $.post(actionUrl, dataToSend).done(function (data) {
+            console.log(data);
             var newBody = $('.modal-body', data);
+            console.log(newBody);
             placeholderElement.find('.modal-body').replaceWith(newBody);
             var isValid = newBody.find('[name="IsValidate"]').val() == 'True';
             if (isValid) {

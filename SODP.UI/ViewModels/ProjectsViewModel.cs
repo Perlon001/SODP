@@ -1,5 +1,5 @@
 ﻿using SODP.Domain.DTO;
-using SODP.Domain.Model;
+using SODP.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

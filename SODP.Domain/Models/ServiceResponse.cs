@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SODP.Domain.Services
+namespace SODP.Domain.Models
 {
     public class ServiceResponse
     {

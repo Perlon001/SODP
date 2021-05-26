@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SODP.Domain.Model
+namespace SODP.Domain.Models
 {
     public class PageInfo
     {

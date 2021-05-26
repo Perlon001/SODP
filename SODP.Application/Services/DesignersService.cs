@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using SODP.DataAccess;
 using SODP.Domain.DTO;
 using SODP.Domain.Helpers;
+using SODP.Domain.Models;
 using SODP.Domain.Services;
 using SODP.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SODP.Application.Services
@@ -42,14 +42,14 @@ namespace SODP.Application.Services
                     pageSize = serviceResponse.Data.TotalCount;
                 }
                 IList<Designer> designers = new List<Designer>();
-                serviceResponse.Data.TotalCount = await _context.Designers.Where(x => active ? x.Active : true).CountAsync();
-                if(pageSize == 0)
+                serviceResponse.Data.TotalCount = await _context.Designers.Where(x => !active || x.Active == true).CountAsync();
+                if(pageSize == 0)                                                
                 {
                     pageSize = serviceResponse.Data.TotalCount;
                 }
                 designers = await _context.Designers.OrderBy(x => x.Lastname)
                     .ThenBy(y => y.Firstname)
-                    .Where(z => active ? z.Active : true)
+                    .Where(z => !active || z.Active)
                     .Skip(currentPage * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
@@ -90,15 +90,15 @@ namespace SODP.Application.Services
             var serviceResponse = new ServiceResponse<DesignerDTO>();
             try
             {
-                var exist = await _context.Designers.FirstOrDefaultAsync(x => x.Firstname.Trim().Equals(createDesigner.Firstname.Trim()) && x.Lastname.Trim().Equals(createDesigner.Lastname.Trim()));
-                if (exist != null)
+                var designer = await _context.Designers.FirstOrDefaultAsync(x => x.Firstname.Trim().Equals(createDesigner.Firstname.Trim()) && x.Lastname.Trim().Equals(createDesigner.Lastname.Trim()));
+                if (designer != null)
                 {
-
                     serviceResponse.SetError($"Projektant {createDesigner} już istnieje.", 400);
                     serviceResponse.ValidationErrors.Add("Designer", "Projektant już istnieje.");
                     return serviceResponse;
                 }
-                var designer = _mapper.Map<Designer>(createDesigner);
+
+                designer = _mapper.Map<Designer>(createDesigner);
                 var validationResult = await _validator.ValidateAsync(designer);
                 if (!validationResult.IsValid)
                 {
@@ -110,7 +110,6 @@ namespace SODP.Application.Services
                 var entity = await _context.AddAsync(designer);
                 await _context.SaveChangesAsync();
 
-                serviceResponse.SetData(_mapper.Map<DesignerDTO>(entity.Entity));
             }
             catch (Exception ex)
             {
@@ -120,16 +119,63 @@ namespace SODP.Application.Services
             return serviceResponse;
 
         }
-
-        public Task<ServiceResponse<DesignerDTO>> UpdateAsync(DesignerDTO designer)
+        public async Task<ServiceResponse> UpdateAsync(DesignerDTO updateDesigner)
         {
-            throw new NotImplementedException();
+            var serviceResponse = new ServiceResponse();
+            try
+            {
+                var oldDesigner = await _context.Designers.FirstOrDefaultAsync(x => x.Id == updateDesigner.Id);
+                if(oldDesigner == null)
+                {
+                    serviceResponse.SetError($"Błąd: Projektant Id:{updateDesigner.Id} nie odnaleziony.", 401);
+                    return serviceResponse;
+                }
+
+                var designer = _mapper.Map<Designer>(updateDesigner);
+                var validationResult = await _validator.ValidateAsync(designer);
+                if (!validationResult.IsValid)
+                {
+                    serviceResponse.ValidationErrorProcess(validationResult);
+                    return serviceResponse;
+                }
+
+                designer.Normalize();
+                oldDesigner.Title = designer.Title;
+                oldDesigner.Firstname = designer.Firstname;
+                oldDesigner.Lastname = designer.Lastname;
+                _context.Designers.Update(oldDesigner);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+                throw;
+            }
+
+            return serviceResponse;
         }
 
-        public Task<ServiceResponse> DeleteAsync(int id)
+        public async Task<ServiceResponse> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
-        }
+            var serviceResponse = new ServiceResponse();
+            try
+            {
+                var designer = await _context.Designers.FirstOrDefaultAsync(x => x.Id == id);
+                if(designer == null)
+                {
+                    serviceResponse.SetError($"Błąd: Projektant Id:{id} nie odnaleziony.", 401);
+                    return serviceResponse;
+                }
 
+                _context.Entry(designer).State = EntityState.Deleted;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+
+            return serviceResponse;
+        }
     }
 }

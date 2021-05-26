@@ -24,7 +24,7 @@ namespace SODP.Model.Extensions
             if (str.Length == 1)
                 return char.ToUpper(str[0]).ToString();
             else
-                return char.ToUpper(str[0]) + str.Substring(1);
+                return char.ToUpper(str[0]) + str[1..];
         }
     }
 }

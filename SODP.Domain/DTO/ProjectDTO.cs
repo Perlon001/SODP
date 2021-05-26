@@ -23,5 +23,7 @@ namespace SODP.Domain.DTO
         public string Title { get; set; }
 
         public string Description { get; set; }
+
+        public string Stage { get { return $"({StageSign}) {StageTitle}"; } }
     }
 }

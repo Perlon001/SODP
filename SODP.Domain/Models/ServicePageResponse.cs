@@ -1,7 +1,7 @@
 ﻿using SODP.Domain.DTO;
 using System.Collections.Generic;
 
-namespace SODP.Domain.Services
+namespace SODP.Domain.Models
 {
     public class ServicePageResponse<T> : ServiceResponse<PageResponse<T>> where T : BaseDTO
     {

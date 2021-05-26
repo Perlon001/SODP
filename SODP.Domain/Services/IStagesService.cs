@@ -1,17 +1,12 @@
 ﻿using System.Threading.Tasks;
 using SODP.Domain.DTO;
-using SODP.Model;
+using SODP.Domain.Models;
 
 namespace SODP.Domain.Services
 {
-    public interface IStagesService : IAppService
+    public interface IStagesService : IEntityService<StageDTO>
     {
-        Task<ServicePageResponse<StageDTO>> GetAllAsync(int currentPage = 1, int pageSize = 0);
-        Task<ServiceResponse<StageDTO>> GetAsync(int id);
         Task<ServiceResponse<StageDTO>> GetAsync(string sign);
-        Task<ServiceResponse<StageDTO>> CreateAsync(StageDTO stage);
-        Task<ServiceResponse> UpdateAsync(StageDTO stage);
-        Task<ServiceResponse> DeleteAsync(int id);
         Task<ServiceResponse> DeleteAsync(string sign);
         Task<bool> ExistAsync(int id);
         Task<bool> ExistAsync(string sign);

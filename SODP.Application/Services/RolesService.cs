@@ -1,13 +1,9 @@
-﻿using AutoMapper;
-using FluentValidation;
-using Microsoft.AspNetCore.Identity;
-using SODP.DataAccess;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SODP.Domain.Services;
 using SODP.Model;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SODP.Application.Services
@@ -21,6 +17,6 @@ namespace SODP.Application.Services
             _rolesManager = rolesManager;
         }
 
-        public IList<string> GetAll() => _rolesManager.Roles.Select(x => x.Name).ToList();
+        public async Task<IList<string>> GetAllAsync() => await _rolesManager.Roles.Select(x => x.Name).ToListAsync();
     }
 }

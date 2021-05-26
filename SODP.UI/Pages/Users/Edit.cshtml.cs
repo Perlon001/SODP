@@ -42,7 +42,7 @@ namespace SODP.UI.Pages.Users
             }
             CurrentUser = responseUsers.Data;
 
-            AllRoles = _rolesService.GetAll().ToDictionary(x => x, x => false);
+            AllRoles = (await _rolesService.GetAllAsync()).ToDictionary(x => x, x => false);
 
             return Page();
         }

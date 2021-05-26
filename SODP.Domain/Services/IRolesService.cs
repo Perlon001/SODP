@@ -5,6 +5,6 @@ namespace SODP.Domain.Services
 {
     public interface IRolesService : IAppService
     {
-        IList<string> GetAll();
+        Task<IList<string>> GetAllAsync();
     }
 }

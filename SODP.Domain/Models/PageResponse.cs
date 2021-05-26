@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SODP.Domain.Services
+namespace SODP.Domain.Models
 {
     public class PageResponse<T>
     {

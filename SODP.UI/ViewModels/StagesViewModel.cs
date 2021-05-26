@@ -1,5 +1,5 @@
 ﻿using SODP.Domain.DTO;
-using SODP.Domain.Model;
+using SODP.Domain.Models;
 using System.Collections.Generic;
 
 namespace SODP.UI.ViewModels

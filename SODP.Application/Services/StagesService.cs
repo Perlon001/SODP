@@ -10,6 +10,7 @@ using SODP.Domain.DTO;
 using System.Collections.Generic;
 using FluentValidation;
 using SODP.Domain.Helpers;
+using SODP.Domain.Models;
 
 namespace WebSODP.Application.Services
 {
@@ -61,13 +62,17 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<StageDTO>> GetAsync(int stageId)
+        public async Task<ServiceResponse<StageDTO>> GetAsync(int id)
         {
             var serviceResponse = new ServiceResponse<StageDTO>();
             try
             {
-                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == stageId);
-
+                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == id);
+                if (stage == null)
+                {
+                    serviceResponse.SetError($"Błąd: Stadium Id:{id} nie odnalezione.", 401);
+                    return serviceResponse;
+                }
                 serviceResponse.SetData(_mapper.Map<StageDTO>(stage));
             }
             catch (Exception ex)
@@ -96,20 +101,21 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<StageDTO>> CreateAsync(StageDTO createStage)
+        public async Task<ServiceResponse<StageDTO>> CreateAsync(StageDTO newStage)
         {
             var serviceResponse = new ServiceResponse<StageDTO>();
             try
             {
-                var exist = await _context.Stages.FirstOrDefaultAsync(x => x.Sign.ToUpper() == createStage.Sign.ToUpper());
-                if(exist != null)
+                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Sign.ToUpper() == newStage.Sign.ToUpper());
+                if(stage != null)
                 {
 
-                    serviceResponse.SetError($"Stadium {createStage.Sign.ToUpper()} już istnieje.", 400);
+                    serviceResponse.SetError($"Stadium {newStage.Sign.ToUpper()} już istnieje.", 400);
                     serviceResponse.ValidationErrors.Add("Sign", "Stadium już istnieje.");
                     return serviceResponse;
                 }
-                var stage = _mapper.Map<Stage>(createStage);
+
+                stage = _mapper.Map<Stage>(newStage);
                 var validationResult = await _validator.ValidateAsync(stage);
                 if (!validationResult.IsValid)
                 {
@@ -155,24 +161,24 @@ namespace WebSODP.Application.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse> DeleteAsync(int stageId)
+        public async Task<ServiceResponse> DeleteAsync(int id)
         {
             var serviceResponse = new ServiceResponse();
             try
             {
-                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == stageId);
+                var stage = await _context.Stages.FirstOrDefaultAsync(x => x.Id == id);
                 if (stage == null)
                 {
-                    serviceResponse.SetError($"Stadium [{stageId}] nie odnalezione.", 404);
-                    serviceResponse.ValidationErrors.Add("Id", $"Stadium [{stageId}] nie odnalezione.");
+                    serviceResponse.SetError($"Stadium [{id}] nie odnalezione.", 404);
+                    serviceResponse.ValidationErrors.Add("Id", $"Stadium [{id}] nie odnalezione.");
 
                     return serviceResponse;
                 }
-                var project = await _context.Projects.FirstOrDefaultAsync(x => x.Stage.Id == stageId);
+                var project = await _context.Projects.FirstOrDefaultAsync(x => x.Stage.Id == id);
                 if(project != null)
                 {
                     serviceResponse.SetError($"Stadium {project.Stage.Sign} posiada powiązane projekty.", 400);
-                    serviceResponse.ValidationErrors.Add("Id", $"Stadium [{stageId}] posiada powiązane projekty.");
+                    serviceResponse.ValidationErrors.Add("Id", $"Stadium [{id}] posiada powiązane projekty.");
                     return serviceResponse;
                 }
                 _context.Entry(stage).State = EntityState.Deleted;

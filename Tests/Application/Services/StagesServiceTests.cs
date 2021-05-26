@@ -17,7 +17,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void saves_new_stage_to_database()
+        public void Saves_new_stage_to_database()
         {
 
             Assert.True(true);

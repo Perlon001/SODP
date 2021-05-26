@@ -14,7 +14,8 @@ namespace SODP.Domain
 
             CreateMap<Stage, StageDTO>().ReverseMap();
 
-            CreateMap<Project, ProjectDTO>().ReverseMap();
+            CreateMap<Project, ProjectDTO>();
+            CreateMap<ProjectDTO, Project>().ForMember(dest => dest.Stage, act => act.Ignore());
 
         }
     }

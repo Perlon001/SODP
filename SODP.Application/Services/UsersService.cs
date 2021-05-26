@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SODP.DataAccess;
 using SODP.Domain.DTO;
 using SODP.Domain.Helpers;
+using SODP.Domain.Models;
 using SODP.Domain.Services;
 using SODP.Model;
 using System;
@@ -18,14 +19,12 @@ namespace SODP.Application.Services
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly SODPDBContext _context;
-        private readonly IServiceProvider _serviceProvider;
 
-        public UsersService(IMapper mapper, UserManager<User> userManager, SODPDBContext context, IServiceProvider serviceProvider)
+        public UsersService(IMapper mapper, UserManager<User> userManager, SODPDBContext context)
         {
             _mapper = mapper;
             _userManager = userManager;
             _context = context;
-            _serviceProvider = serviceProvider;
         }
         public async Task<ServicePageResponse<UserDTO>> GetAllAsync()
         {
@@ -147,6 +146,16 @@ namespace SODP.Application.Services
             }
 
             return serviceResponse;
+        }
+
+        public Task<ServicePageResponse<UserDTO>> GetAllAsync(int currentPage = 1, int pageSize = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ServiceResponse<UserDTO>> CreateAsync(UserDTO entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

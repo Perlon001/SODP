@@ -1,5 +1,6 @@
 ﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
+using SODP.Domain.Models;
 using SODP.Domain.Services;
 using System.Collections.Generic;
 using System.Linq;

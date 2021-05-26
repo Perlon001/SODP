@@ -6,7 +6,7 @@
         buttons: true,
         danegerMode: true
     }).then((willRestore) => {
-        console.log(willRestore);
+        console.log(url);
         if (willRestore) {
             $.ajax({
                 type: "POST",

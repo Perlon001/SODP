@@ -106,7 +106,6 @@
                 type: "Get",
                 url: '@Url.Page("Index","StageDetails")&Id=' + currentId,
                 success: function (data) {
-                    console.log(data);
                     $('#modal-placeholder').html(data);
                     $('#editstage').modal('show');
                 }

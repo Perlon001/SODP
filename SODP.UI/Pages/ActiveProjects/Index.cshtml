@@ -26,10 +26,10 @@
         <div class="col-3 justify-content-end">
             <button type="button"
                     class="btn btn-info form-control text-white float-right"
-                    title="Nowe stadium"
+                    title="Nowy projekt"
                     data-toggle="ajax-modal"
                     data-url="@Url.Page("Index","ProjectDetails")">
-                <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium
+                <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowy projekt
             </button>
         </div>
     }
@@ -54,28 +54,16 @@
             </tfoot>
         </table>
     </div>
-
-    <div id="deleteProjectModal" class="modal fade">
-        <div class="modal-dialog">
-            <form>
-                <div class="modal-header">
-                    <h4 class="modal-title">Delete Project</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p>Na pewno skasować ten projekt?</p>
-                    <p class="text-warning"><small>Operacja nie może być cofnięta.</small></p>
-                </div>
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-danger" value="Delete">
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
 @section Scripts{
+    <script src="~/js/delete.js"></script>
+    <script src="~/js/archive.js"></script>
+    <script src="~/js/activeProjectList.js"></script>
+
+    <script src="~/lib/DataTables/DataTables-1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/DataTables/Buttons-1.7.0/js/dataTables.buttons.min.js"></script>
+
     <script>
         var RoleCheck = @(User.IsInRole("ProjectManager") ? "true" : "false");
         var ProjectsArray = @Json.Serialize(Model.Projects.Data.Collection);
@@ -93,11 +81,4 @@
             })
         }
     </script>
-    <script src="~/js/delete.js"></script>
-    <script src="~/js/archive.js"></script>
-    <script src="~/js/activeProjectList.js"></script>
-
-    <script src="~/lib/DataTables/DataTables-1.10.24/js/jquery.dataTables.min.js"></script>
-    <script src="~/lib/DataTables/Buttons-1.7.0/js/dataTables.buttons.min.js"></script>
-
 }

@@ -17,13 +17,15 @@
     {
         <div id="modal-placeholder"></div>
         <div class="col-4 justify-content-end">
-            <button type="button" 
-                    class="btn btn-info form-control text-white float-right"
-                    title="Nowe stadium"
-                    data-toggle="ajax-modal"
-                    data-url="@Url.Page("Index","StageDetails")">
-                <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium
-            </button>
+            <span data-toggle="tooltip" data-placement="top" title="Nowe stadium">
+                <button type="button"
+                        class="btn btn-info form-control text-white float-right"
+                        title="Nowe stadium"
+                        data-toggle="ajax-modal"
+                        data-url="@Url.Page("Index","StageDetails")">
+                    <i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Nowe stadium
+                </button>
+            </span>
         </div>
     }
 
@@ -61,11 +63,11 @@
                                     <div class="row group justify-content-end mr-0">
                                         <div>
                                             <a onclick='DeleteStage("/api/Stages/@stage.Id")'
-                                               class="btn btn-sm btn-danger mb-0 mt-0 ml-1 mr-1 p-1 text-white"
+                                               class="btn btn-lg mb-0 mt-0 ml-1 mr-1 p-1 text-danger"
                                                data-toggle="tooltip"
                                                data-placement="top"
                                                title="Usuń stadium">
-                                                <i class="far fa-trash-alt"></i>
+                                                <i class="fas fa-trash-alt"></i>
                                             </a>
                                         </div>
                                     </div>

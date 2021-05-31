@@ -20,7 +20,7 @@ function InitProjectDataTable() {
             {
                 data: "number",
                 render: function (data, type, row) {
-                    return `<a onclick="OpenProjectEdit(${row.id})" data-toggle="tooltip" title="Edycja nazwy" cursor="">${row.number}</a>`;
+                    return `<a onclick="OpenProjectEdit(${row.id})" data-toggle="tooltip" data-placement="top" title="Edycja nazwy">${row.number}</a>`;
                 }
             },
             {
@@ -39,8 +39,8 @@ function InitProjectDataTable() {
                 data: "id",
                 render: function (data) {
                     var renderTags = `<div class="row group justify-content-center">`;
-                    renderTags += `<a onclick = 'Delete("/api/ActiveProjects/${data}")' class='btn btn-sm btn-danger text-white mb-0 mt-0 ml-1 mr-1 p-1' style = "cursor:pointer; width=70px;" data-toggle="tooltip" data-placement="top" title="Usuń projekt"> <i class="far fa-trash-alt"></i></a >`;
-                    renderTags += `<a onclick = 'Archive("/api/ActiveProjects/${data}")' class='btn btn-sm btn-success text-white mb-0 mt-0 ml-1 mr-1 p-1' style = "cursor:pointer; width=70px;" data-toggle="tooltip" data-placement="top" title="Przenieś projekt do archiwum"> <i class="fas fa-archive"></i></a >`;
+                    renderTags += `<a onclick = 'Delete("/api/ActiveProjects/${data}")' class='btn btn-lg mb-0 mt-0 ml-1 mr-1 p-1 text-danger' style = "cursor:pointer; width=70px;" data-toggle="tooltip" data-placement="top" title="Usuń projekt"> <i class="fas fa-trash-alt"></i></a >`;
+                    renderTags += `<a onclick = 'Archive("/api/ActiveProjects/${data}")' class='btn btn-lg mb-0 mt-0 ml-1 mr-1 p-1 text-success' style = "cursor:pointer; width=70px;" data-toggle="tooltip" data-placement="top" title="Przenieś projekt do archiwum"> <i class="fas fa-archive"></i></a >`;
                     renderTags += `</div >`;
 
                     return renderTags

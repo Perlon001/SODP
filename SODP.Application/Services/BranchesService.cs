@@ -39,7 +39,9 @@ namespace SODP.Application.Services
 
             try
             {
-                var stages = await _context.Branches.OrderBy(x => x.Sign)
+                var stages = await _context.Branches
+                    .Where(x => string.IsNullOrEmpty(x.Sign))
+                    .OrderBy(x => x.Sign)
                     .ToListAsync();
                 serviceResponse.SetData(_mapper.Map<IList<BranchDTO>>(stages));
             }

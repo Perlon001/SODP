@@ -32,7 +32,9 @@ namespace WebSODP.Application.Services
             var serviceResponse = new ServicePageResponse<StageDTO>();
             try
             {
-                IQueryable<Stage> stages = _context.Stages.OrderBy(x => x.Sign);
+                IQueryable<Stage> stages = _context.Stages
+                    .Where(x => !string.IsNullOrEmpty(x.Sign))
+                    .OrderBy(x => x.Sign);
                 serviceResponse.Data.TotalCount = stages.Count();
                 if (pageSize == 0)
                 {

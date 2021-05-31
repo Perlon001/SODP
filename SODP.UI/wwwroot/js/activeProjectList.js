@@ -17,8 +17,18 @@ function InitProjectDataTable() {
     $('#ProjectDataTable').DataTable({
         data: ProjectsArray,
         columns: [
-            { data: "number" },
-            { data: "stageSign" },
+            {
+                data: "number",
+                render: function (data, type, row) {
+                    return `<a onclick="OpenProjectEdit(${row.id})" data-toggle="tooltip" title="Edycja nazwy" cursor="">${row.number}</a>`;
+                }
+            },
+            {
+                data: "stageSign",
+                render: function (data, type, row) {
+                    return `<a onclick="OpenProjectEdit(${row.id})" data-toggle="tooltip" title="Edycja nazwy">${row.stageSign}</a>`;
+                }
+            },
             {
                 data: "title",
                 render: function (data, type, row) {

@@ -8,47 +8,52 @@ namespace SODP.Application.Managers
 {
     public class FolderCommandCreator : IFolderCommandCreator
     {
-        protected readonly IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
         private readonly FolderConfigurator _folderConfigurator;
-        protected readonly string _projectFolder;
-        protected readonly string _archiveFolder;
 
         public FolderCommandCreator(IConfiguration configuration, FolderConfigurator folderConfigurator)
         {
             _configuration = configuration;
             _folderConfigurator = folderConfigurator;
-            _projectFolder = folderConfigurator.ProjectFolder;
-            _archiveFolder = folderConfigurator.ArchiveFolder;
         }
 
-        public string GetCreateFolderCommand(Project project)
+        public string GetCommandCreateFolder(Project project)
         {
-            return $"{GetCommand(FolderCommands.Create)} {_projectFolder} {project}";
+            return $"{GetCommand(FolderCommands.Create)} {_folderConfigurator.ActiveFolder} {project}";
         }
 
-        public string GetRenameFolderCommand(string oldFolderName, Project project)
+        public string GetCommandRenameFolder(Project project, string oldName)
         {
-            return $"{GetCommand(FolderCommands.Rename)} {_projectFolder} {oldFolderName} {project}";
+            return GetCommandRenameFolder(project, oldName, ProjectsFolder.Active);
         }
 
-        public string GetArchiveFolderCommand(Project project)
+        public string GetCommandRenameFolder(Project project, string oldName, ProjectsFolder source)
         {
-            return $"{GetCommand(FolderCommands.Archive)} {_projectFolder} {_archiveFolder} {project}"; 
+
+            return $"{GetCommand(FolderCommands.Rename)} {_folderConfigurator.GetProjectFolder(source)} {oldName} {project}";
         }
 
-        public string GetRestoreFolderCommand(Project project)
+        public string GetCommandArchiveFolder(Project project)
         {
-            return $"{GetCommand(FolderCommands.Restore)} {_archiveFolder} {_projectFolder} {project}";
+            return $"{GetCommand(FolderCommands.Archive)} {_folderConfigurator.ActiveFolder} {_folderConfigurator.ArchiveFolder} {project}"; 
         }
 
-        public string GetDeleteFolderCommand(Project project)
+        public string GetCommandRestoreFolder(Project project)
         {
-            return $"{GetCommand(FolderCommands.Delete)} {_projectFolder} {project}";
+            return $"{GetCommand(FolderCommands.Restore)} {_folderConfigurator.ArchiveFolder} {_folderConfigurator.ActiveFolder} {project}";
+        }
+
+        public string GetCommandDeleteFolder(Project project)
+        {
+            return $"{GetCommand(FolderCommands.Delete)} {_folderConfigurator.ActiveFolder} {project}";
         }
 
         private string GetCommand(FolderCommands command)
         {
-            return _configuration.GetSection($"{_folderConfigurator.OSPrefix}{command}Command").Value;
+            var OSPrefix = $"{Environment.OSVersion.Platform}Settings:";
+            return _configuration.GetSection($"{OSPrefix}{command}Command").Value;
         }
+
+
     }
 }
